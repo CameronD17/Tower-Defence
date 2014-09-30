@@ -1,7 +1,7 @@
 #pragma once
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 640
+#define SCREEN_WIDTH 1440		// 800
+#define SCREEN_HEIGHT 900		// 640
 
 #define BOARD_WIDTH 18
 #define BOARD_HEIGHT 20

@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-#define CRTDBG_MAP_ALLOC
 
 /*	
  *	There are three main components of this tower defence game - the engine, the menu, and the game itself
@@ -76,5 +75,4 @@ int main(int argc, char* args[])
 
 	sc.close();					// Finish the game and clean up objects	
 	return 0;
-	_CrtDumpMemoryLeaks();
 }

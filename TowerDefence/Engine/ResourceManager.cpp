@@ -112,7 +112,7 @@ Mix_Music * ResourceManager::loadMusic(string filepath)
 
 SDL_Texture * ResourceManager::getImage(string filepath)
 {
-	SDL_Texture *imgTexture = SDL_CreateTextureFromSurface(renderer, loadImage("image is null"));
+	SDL_Texture *imgTexture = SDL_CreateTextureFromSurface(renderer, loadImage("Engine/Images/broken.gif"));
 	int i = 0;
 	
 	for(vector<string>::iterator s = imgFilePath.begin(); s != imgFilePath.end(); ++s)
