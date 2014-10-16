@@ -88,6 +88,31 @@ bool Physics::move(Object *o, int dir, int amt)
 	return false;
 }
 
+bool Physics::checkPosition(button b)
+{
+	int x, y;
+	SDL_GetMouseState(&x, &y);
+
+	if (x < b.rect.x)
+	{
+		return false;
+	}
+	else if (x > b.rect.x + b.rect.w)
+	{
+		return false;
+	}
+	else if (y < b.rect.y)
+	{
+		return false;
+	}
+	else if (y > b.rect.y + b.rect.h)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 bool Physics::impreciseCollision(Object *a, Object *b)
 {
 	float aX = (float)a->getX() + BLOCK_SIZE/2;		// Makes the enemy coordinates into the

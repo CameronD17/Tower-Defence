@@ -8,7 +8,15 @@
  * results to be dealt with elsewhere in the engine
  *-------------------------------------------------------- */
 
+struct input
+{
+	bool keyPress;
+	SDL_Keycode key;
 
+	bool mouseDown;
+	int x;
+	int y;
+};
 
 class InterfaceManager
 {
@@ -18,6 +26,8 @@ public:
 	InterfaceManager(int x, int y);
 	~InterfaceManager(void);
 
-	SDL_Keycode getInput();
+	input getInput();
+
+	//SDL_Keycode getInput();
 	SDL_Event getGeneralInput();
 };

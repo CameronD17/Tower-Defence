@@ -8,6 +8,14 @@
  * recognise when I passed things to it
  *-------------------------------------------------------- */
 
+struct button
+{
+	SDL_Rect rect;
+	string name;
+	bool selected;
+};
+
+
 class Object
 {
 private:

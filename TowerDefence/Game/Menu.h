@@ -11,6 +11,9 @@ private:
 	SystemController engine;	// Engine access	
 	Game game;					// Game access
 
+	void makeButtons();
+	vector<button> buttons;
+
 	// Draw methods
 	void drawGenerics();
 	void drawScores();

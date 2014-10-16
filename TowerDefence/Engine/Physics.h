@@ -36,5 +36,7 @@ public:
 	bool checkDistance(Object *tower, Object *enemy);
 
 	// Get the direction for a tower to fire (oops, hardcoding into the engine...)
-	int getDirection(Object *tower, Object *enemy);	
+	int getDirection(Object *tower, Object *enemy);
+
+	bool checkPosition(button b);
 };

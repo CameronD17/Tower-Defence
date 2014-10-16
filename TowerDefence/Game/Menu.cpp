@@ -28,6 +28,45 @@ void Menu::init()	// Setting up the Menu
 	engine.audio.playMusic();
 }
 
+void Menu::makeButtons()
+{
+	button settings;
+	settings.name = "Settings";
+	settings.rect.x = 10;										settings.rect.y = 10;
+	settings.rect.w = (int)(SCREEN_WIDTH * 0.3);				settings.rect.h = (int)(SCREEN_HEIGHT * 0.2);
+	buttons.push_back(settings);
+
+	button highscores;
+	highscores.name = "Highscores";
+	highscores.rect.x = (int)(SCREEN_WIDTH * 0.7) - 10;			highscores.rect.y = 10;
+	highscores.rect.w = (int)(SCREEN_WIDTH * 0.3);				highscores.rect.h = (int)(SCREEN_HEIGHT * 0.2);
+	buttons.push_back(highscores);
+
+	button towerDefenceButton;
+	towerDefenceButton.name = "TowerDefence";
+	towerDefenceButton.rect.x = 10;								towerDefenceButton.rect.y = (int)(SCREEN_HEIGHT * 0.2) + 20;
+	towerDefenceButton.rect.w = (int)(SCREEN_WIDTH * 0.5) - 15; towerDefenceButton.rect.h = (int)(SCREEN_HEIGHT * 0.4) - 20;
+	buttons.push_back(towerDefenceButton);
+
+	button tetrisButton;
+	tetrisButton.name = "Tetris";
+	tetrisButton.rect.x = (int)(SCREEN_WIDTH / 2) + 5;			tetrisButton.rect.y = (int)(SCREEN_HEIGHT * 0.2) + 20;
+	tetrisButton.rect.w = (int)(SCREEN_WIDTH * 0.5) - 15;		tetrisButton.rect.h = (int)(SCREEN_HEIGHT * 0.4) - 20;
+	buttons.push_back(tetrisButton);
+
+	button pongOutButton;
+	pongOutButton.name = "PongOut";
+	pongOutButton.rect.x = 10;									pongOutButton.rect.y = (int)(SCREEN_HEIGHT * 0.6) + 10;
+	pongOutButton.rect.w = (int)(SCREEN_WIDTH * 0.5) - 15;		pongOutButton.rect.h = (int)(SCREEN_HEIGHT * 0.4) - 20;
+	buttons.push_back(pongOutButton);
+
+	button defenderButton;
+	defenderButton.name = "Defender";
+	defenderButton.rect.x = (int)(SCREEN_WIDTH / 2) + 5;		defenderButton.rect.y = (int)(SCREEN_HEIGHT * 0.6) + 10;
+	defenderButton.rect.w = (int)(SCREEN_WIDTH * 0.5) - 15;		defenderButton.rect.h = (int)(SCREEN_HEIGHT * 0.4) - 20;
+	buttons.push_back(defenderButton);
+}
+
 int Menu::run()
 {
 	int state = getInput();
@@ -37,28 +76,54 @@ int Menu::run()
 
 int Menu::getInput()
 {
-	SDL_Keycode k = engine.interfaces.getInput();
-	
-	if(k == SDLK_m)			// Pause the music
+	input k = engine.interfaces.getInput();
+
+	// Input is a keypress
+	if (k.keyPress)
 	{
-		engine.audio.pauseMusic();
+		if (k.key == SDLK_m)			// Pause the music
+		{
+			engine.audio.pauseMusic();
+		}
+		else if (k.key == SDLK_ESCAPE)	// Quit the game / move up a menu level
+		{
+			if (menuDepth == 0)	return -1;
+			else menuDepth--;
+		}
+		else
+		{
+			if (menuDepth == 0)
+			{
+				return mainMenuInput(k.key);
+			}
+			else
+			{
+				return subMenuInput(k.key);
+			}
+		}
 	}
-	else if (k == SDLK_ESCAPE)	// Quit the game / move up a menu level
+
+	// Input is a mouse click
+	else if (k.mouseDown)
 	{
-		if(menuDepth == 0)	return -1;	
-		else menuDepth--;
+		int selection = 0;
+		for (vector<button>::iterator i = buttons.begin(); i != buttons.end(); ++i)
+		{
+			selection++;
+			if (engine.physics.checkPosition(*i))			return selection;
+		}
 	}
+
+	// Input is mouse movement
 	else
 	{
-		if(menuDepth == 0)
+		for (vector<button>::iterator i = buttons.begin(); i != buttons.end(); ++i)
 		{
-			return mainMenuInput(k);
-		}
-		else 
-		{
-			return subMenuInput(k);
+			if (engine.physics.checkPosition(*i))	i->selected = true;
+			else									i->selected = false;
 		}
 	}
+
 	return 0;
 }
 

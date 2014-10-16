@@ -736,107 +736,110 @@ void Game::drawDebugFeatures()
 
 int Game::getInput()
 {
-	SDL_Keycode k = engine.interfaces.getInput();	// Get input from the user
+	input k = engine.interfaces.getInput();	// Get input from the user
 
-	if(k == SDLK_m)			// Pause the music
+	if (k.keyPress)
 	{
-		engine.audio.pauseMusic();
-	}
-	else if (k == SDLK_ESCAPE)	// Quit the game
-	{
-		return -1;		
-	}
-	else				// If the player is in their game
-	{
-		if (k == SDLK_p)	// Pause the game
+		if (k.key == SDLK_m)			// Pause the music
 		{
-			return 1;		
+			engine.audio.pauseMusic();
 		}
-		else					// Handle gameplay
+		else if (k.key == SDLK_ESCAPE)	// Quit the game
 		{
-			switch (k)
+			return -1;
+		}
+		else				// If the player is in their game
+		{
+			if (k.key == SDLK_p)	// Pause the game
 			{
-			case SDLK_UP: 							// Move cursor up
-				engine.physics.move(&cursor, UP, BLOCK_SIZE);
-				break;
-
-			case SDLK_DOWN:							// Move cursor down
-				engine.physics.move(&cursor, DOWN, BLOCK_SIZE);
-				break;
-
-			case SDLK_LEFT:							// Move cursor left
-				engine.physics.move(&cursor, LEFT, BLOCK_SIZE);
-				break;
-
-			case SDLK_RIGHT:						// Move cursor right
-				engine.physics.move(&cursor, RIGHT, BLOCK_SIZE);
-				break;
-
-			case SDLK_0:							// Clear tower type
-				cursor.changeTowerType(0);
-				break;
-
-			case SDLK_1:							// Change tower type to 1
-				cursor.changeTowerType(1);
-				break;
-
-			case SDLK_2:							// Change tower type to 2
-				cursor.changeTowerType(2);
-				break;
-
-			case SDLK_3:							// Change tower type to 3
-				cursor.changeTowerType(3);
-				break;			
-
-			case SDLK_SPACE:						// Place a tower
-				if(!placeTower()) 
+				return 1;
+			}
+			else					// Handle gameplay
+			{
+				switch (k.key)
 				{
-					if(!deleteTower())
+				case SDLK_UP: 							// Move cursor up
+					engine.physics.move(&cursor, UP, BLOCK_SIZE);
+					break;
+
+				case SDLK_DOWN:							// Move cursor down
+					engine.physics.move(&cursor, DOWN, BLOCK_SIZE);
+					break;
+
+				case SDLK_LEFT:							// Move cursor left
+					engine.physics.move(&cursor, LEFT, BLOCK_SIZE);
+					break;
+
+				case SDLK_RIGHT:						// Move cursor right
+					engine.physics.move(&cursor, RIGHT, BLOCK_SIZE);
+					break;
+
+				case SDLK_0:							// Clear tower type
+					cursor.changeTowerType(0);
+					break;
+
+				case SDLK_1:							// Change tower type to 1
+					cursor.changeTowerType(1);
+					break;
+
+				case SDLK_2:							// Change tower type to 2
+					cursor.changeTowerType(2);
+					break;
+
+				case SDLK_3:							// Change tower type to 3
+					cursor.changeTowerType(3);
+					break;
+
+				case SDLK_SPACE:						// Place a tower
+					if (!placeTower())
 					{
-						engine.audio.playSound("Game/Audio/error.wav");
+						if (!deleteTower())
+						{
+							engine.audio.playSound("Game/Audio/error.wav");
+						}
 					}
+					break;
+
+				case SDLK_s:
+					if (credit >= 50 && !slowMode)
+					{
+						slowMode = true;
+						sTimer = SDL_GetTicks() + SLOW_TIMER;
+						credit -= 50;
+						enemySpeed = 1200;
+					}
+
+				case SDLK_DELETE:
+					break;
+
+				case SDLK_TAB:								// Toggle debug mode
+					debugMode ? debugMode = false : debugMode = true;
+					break;
+
+					// The following cases can only be triggered when in debug mode
+
+				case SDLK_o:		// Trigger an immediate gameover
+					if (debugMode)	currentHealth = 0;
+					break;
+
+				case SDLK_b:		// View walkability
+					if (debugMode) debugWalkability ? debugWalkability = false : debugWalkability = true;
+					break;
+
+				case SDLK_r:		// Show A* path
+					if (debugMode) debugPath ? debugPath = false : debugPath = true;
+					break;
+
+				case SDLK_c:		// Free Cash!
+					if (debugMode) credit += 50;
+					break;
+
+				default:
+					break;
 				}
-				break;
-			
-			case SDLK_s:
-				if(credit >= 50 && !slowMode)
-				{
-					slowMode = true;
-					sTimer = SDL_GetTicks() + SLOW_TIMER;
-					credit -= 50;
-					enemySpeed = 1200;
-				}
 
-			case SDLK_DELETE:
-				break;
-
-			case SDLK_TAB:								// Toggle debug mode
-				debugMode ? debugMode = false : debugMode = true;
-				break;
-		
-			// The following cases can only be triggered when in debug mode
-		
-			case SDLK_o:		// Trigger an immediate gameover
-				if(debugMode)	currentHealth = 0;
-				break;
-
-			case SDLK_b:		// View walkability
-				if(debugMode) debugWalkability ? debugWalkability = false : debugWalkability = true;
-				break;
-
-			case SDLK_r:		// Show A* path
-				if(debugMode) debugPath ? debugPath = false : debugPath = true;
-				break;
-
-			case SDLK_c:		// Free Cash!
-				if(debugMode) credit += 50;
-				break;
-
-			default:
-				break;
-			}   
-
-		} 
+			}
+		}
 	}
     return 0;
 }
@@ -916,8 +919,8 @@ bool Game::deleteTower()
 int Game::pause()
 {
 	paused = true;
-	SDL_Keycode k = engine.interfaces.getInput();
-	if (k == SDLK_p) 
+	input k = engine.interfaces.getInput();
+	if (k.key == SDLK_p) 
 	{
 		paused = false;
 		return 0;
@@ -932,14 +935,14 @@ int Game::pause()
 
 int Game::over()
 {
-	SDL_Keycode k = engine.interfaces.getInput();
+	input k = engine.interfaces.getInput();
 
-	if (k == SDLK_RETURN && initials.length() != 0) 
+	if (k.key == SDLK_RETURN && initials.length() != 0) 
 	{
 		saveScore();
 		return 0;
 	}
-	else if(k == SDLK_BACKSPACE)
+	else if(k.key == SDLK_BACKSPACE)
 	{
 		if(initials.length() != 0)
 		{
@@ -948,7 +951,7 @@ int Game::over()
 	}
 	else if(initials.length() < 3)	// Maximum number of initials
 	{
-		switch(k)
+		switch(k.key)
 		{
 		case SDLK_a:
 			initials += 'A';
