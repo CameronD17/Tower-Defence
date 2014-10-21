@@ -20,7 +20,7 @@ bool Graphics::init(int w, int h, ResourceManager *r)
 	width = w;	height = h;
 
 	//Create window
-	window = SDL_CreateWindow("Tower Defence!", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("Planet Defenders!", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN);
 	if(window == NULL) 
 	{
 		printf("Window could not be created! SDL Error: %s\n", SDL_GetError());			success = false;

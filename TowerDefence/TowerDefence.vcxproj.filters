@@ -25,12 +25,6 @@
     <Filter Include="Source Files\Game">
       <UniqueIdentifier>{06aac456-17cd-4d5f-a6f8-a4ea23b56176}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Game\Pong">
-      <UniqueIdentifier>{2e022e47-24c5-421e-b697-7c31f9888f91}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Game\Pong">
-      <UniqueIdentifier>{35f38159-c1a2-4394-9f5b-37a26ebb0f30}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TowerDefence.cpp">
@@ -54,35 +48,17 @@
     <ClCompile Include="Engine\ResourceManager.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\SystemController.cpp">
-      <Filter>Source Files\Engine</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Audio.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Menu.cpp">
-      <Filter>Source Files\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Tower.cpp">
-      <Filter>Source Files\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Bullet.cpp">
-      <Filter>Source Files\Game</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Cursor.cpp">
-      <Filter>Source Files\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Enemy.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
     <ClCompile Include="Game\Game.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Pong\Ball.cpp">
-      <Filter>Source Files\Game\Pong</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Pong\Pong.cpp">
-      <Filter>Source Files\Game\Pong</Filter>
+    <ClCompile Include="Engine\Engine.cpp">
+      <Filter>Source Files\Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -107,35 +83,17 @@
     <ClInclude Include="Engine\ResourceManager.h">
       <Filter>Header Files\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\SystemController.h">
-      <Filter>Header Files\Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Bullet.h">
-      <Filter>Header Files\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Constants.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
     <ClInclude Include="Game\Cursor.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Enemy.h">
-      <Filter>Header Files\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Game.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Menu.h">
-      <Filter>Header Files\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Tower.h">
-      <Filter>Header Files\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Pong\Ball.h">
-      <Filter>Header Files\Game\Pong</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Pong\Pong.h">
-      <Filter>Header Files\Game\Pong</Filter>
+    <ClInclude Include="Engine\Engine.h">
+      <Filter>Header Files\Engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,11 +1,8 @@
 #pragma once
 
-#include "../Engine/SystemController.h"
+#include "../Engine/Engine.h"
 #include "Constants.h"
 #include "Cursor.h"
-#include "Tower.h"
-#include "Enemy.h"
-#include "Bullet.h"
 #include <vector>
 #include <iostream>
 #include <sstream>
@@ -52,9 +49,6 @@ private:
 	
 	// Game pieces
 	Cursor cursor;							// Players in-game cursor 
-	vector<Tower*>  towers;					// Vector holding all in-game towers
-	vector<Enemy*>  enemies;				// Vector holding all in-game enemies for the current level
-	
 	
 	// *** METHODS *** //
 	
@@ -78,16 +72,14 @@ private:
 
 public:	
 	Game(void);					// Default Constructor
-	Game(SystemController &sc);	// Constructor	
-	SystemController engine;	// Engine access
+	Game(Engine &sc);	// Constructor	
+	Engine engine;	// Engine access
 
 	bool gameOver;				// Track if the player has lost the game (damn it...)
 	
 	void newGame(int m, int d);	// Initialise the game to be played		
 	int run();
     int getInput();				// Get any input from the player (input can also be quitting or pausing the game)
-	int pause();				// Check if the player has unpaused the game	
-	int over();					// Check if the player has graciously accepted defeat
 	void update();				// Update the players cursor, the game board, and the bots		
 	void draw();				// Redraw
 };

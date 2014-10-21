@@ -1,14 +1,14 @@
-#include "SystemController.h"
+#include "Engine.h"
 
-SystemController::SystemController()
+Engine::Engine()
 {
 }
 
-SystemController::~SystemController(void)
+Engine::~Engine(void)
 {
 }
 
-bool SystemController::init()
+bool Engine::init()
 {
 	//Initialization flag
 	bool success = true;
@@ -55,19 +55,14 @@ bool SystemController::init()
 		}
 	}	
 	
-	success = graphics.init(SCREEN_WIDTH, SCREEN_HEIGHT, &resources);
+	success = graphics.init(WINDOW_WIDTH, WINDOW_HEIGHT, &resources);
 	resources.init(graphics.renderer);
 	audio.init(&resources);
 
 	return success;
 }
 
-void SystemController::refresh()
-{
-
-}
-
-void SystemController::close(void)
+void Engine::close(void)
 {
 	graphics.close();
 	resources.close();

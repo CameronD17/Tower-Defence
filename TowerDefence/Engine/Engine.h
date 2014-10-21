@@ -10,7 +10,7 @@
 
 
 /*-------------------------------------------------------- *
- * SYSTEM CONTROLLER (Initialise / Shut down) 
+ * Engine (Initialise / Shut down) 
  * This class will initialise the game appropriately (start-
  * ing libraries, loading resources etc), and shut down the 
  * game cleanly, cleaning up memory, destroying resources
@@ -18,12 +18,12 @@
  *-------------------------------------------------------- */
 
 
-class SystemController
+class Engine
 {
 public:	
 
-	SystemController();
-	~SystemController(void);
+	Engine();
+	~Engine(void);
 
 	// Access all aspects of the engine
 	Audio audio;
@@ -35,8 +35,6 @@ public:
 	
 	// Initialise libraries and load any functions needed
 	bool init();
-
-	void refresh();
 
 	// This should be the last thing run in the system
 	void close(void);

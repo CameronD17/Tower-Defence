@@ -127,7 +127,7 @@ bool Physics::impreciseCollision(Object *a, Object *b)
 bool Physics::preciseCollision(Object *bat, Object *ball, int angle)
 {
 	// If the ball is in the right side of the screen
-	if(ball->getX() > SCREEN_WIDTH/2)
+	if(ball->getX() > WINDOW_WIDTH/2)
 	{
 		// Left-Right collision
 		if (!(ball->getX() + BALL_SIZE + angle >= bat->getX()))
