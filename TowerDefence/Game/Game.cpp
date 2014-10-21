@@ -86,7 +86,11 @@ void Game::drawBoardBackground()
 
 void Game::drawGamePieces()
 {
-	
+	for (std::vector<Tower*>::iterator t = towers.begin(); t != towers.end(); ++t)
+	{
+		engine.graphics.drawRectangle((*t)->getX(), (*t)->getY(), BLOCK_SIZE*2, BLOCK_SIZE*2, 255, 0, 0);
+		engine.graphics.drawRectangleOL((*t)->getX() - 1, (*t)->getY() - 1, (BLOCK_SIZE * 2) + 2, (BLOCK_SIZE * 2) + 2, 255, 255, 255);
+	}
 
 }
 
@@ -94,8 +98,6 @@ void Game::drawBoardForeground()
 {
 	Uint8 red, green, blue;
 	string text = "";
-
-
 
 	red = 154; green = 0; blue = 0; text = "Expert";
 	
@@ -138,9 +140,8 @@ void Game::drawCursor()
 
 void Game::drawDebugFeatures()
 {
+
 }
-
-
 
 // *** GAMEPLAY METHODS *** //
 
@@ -157,7 +158,8 @@ int Game::getInput()
 	}
 	else if (k.mouseDown)
 	{
-
+		Tower * t = new Tower(cursor.getX() + BLOCK_SIZE, cursor.getY() + BLOCK_SIZE, 1);
+		towers.push_back(t);
 	}
 	else
 	{
@@ -172,9 +174,27 @@ int Game::getInput()
 		}
 		else 
 		{
-			cursor.setType(0);
-				(x > BORDER) ? cursor.setX((BOARD_WIDTH*BLOCK_SIZE) - BLOCK_SIZE * 2) : cursor.setX(BORDER - BLOCK_SIZE);
-				(y > BORDER) ? cursor.setY((BOARD_HEIGHT*BLOCK_SIZE) - BLOCK_SIZE * 2) : cursor.setY(BORDER - BLOCK_SIZE);
+			if (cursor.getType() != 0)
+			{
+				cursor.setType(0);
+				if (x > BORDER && (y > BORDER && y < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE) - BLOCK_SIZE)))
+				{
+					cursor.setX((BOARD_WIDTH*BLOCK_SIZE) - BLOCK_SIZE * 2);
+				}
+				else if (x < (BORDER + (BOARD_WIDTH*BLOCK_SIZE) - BLOCK_SIZE) && (y > BORDER && y < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE) - BLOCK_SIZE)))
+				{
+					cursor.setX(BORDER - BLOCK_SIZE);
+				}
+
+				if (y > BORDER && (x > BORDER && x < (BORDER + (BOARD_WIDTH*BLOCK_SIZE) - BLOCK_SIZE)))
+				{
+					cursor.setY((BOARD_HEIGHT*BLOCK_SIZE) - BLOCK_SIZE * 2);
+				}
+				else if (y < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE) - BLOCK_SIZE)&& (x > BORDER && x < (BORDER + (BOARD_WIDTH*BLOCK_SIZE) - BLOCK_SIZE)))
+				{
+					cursor.setY(BORDER - BLOCK_SIZE);
+				}
+			}
 		}
 			
 	}

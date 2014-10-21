@@ -14,20 +14,14 @@ Tower::Tower(int x, int y)
 	setX(x);
 	setY(y);
 	setType(0);
-	damage = 10;
-};
+}
 
-Tower::Tower(int x, int y, int t, SDL_Texture * tex) 
+Tower::Tower(int x, int y, int t) 
 {
-	level = 0;
-	killCount = 0;
 	setX(x);
 	setY(y);
 	setType(t);
-	damage = 10*t;
-	reloadRate = t*BULLET_TICK_LENGTH;
-	texture = tex;
-	getTargets();
+	setStats(t);
 };
 
 Tower::~Tower()
@@ -35,48 +29,45 @@ Tower::~Tower()
 
 }
 
-void Tower::fire(int dir)
+void Tower::setStats(int t)
 {
-	Bullet * b = new Bullet((getX() + (BLOCK_SIZE/2)), (getY() + (BLOCK_SIZE/2)), dir);
-	bullets.push_back(b);
-}
+	level = 0;
+	hits = 0;
+	kills = 0;
 
-void Tower::getTargets()
-{
-	switch(getType())
+	switch (t)
 	{
+
+	// Machine Gun
 	case 1:
-		antiGround = true;
-		antiAir = true;
+		cost = 50;
+		damage = 4;
+		range = 7;
+		reload = 20;
 		break;
+
+	// Light Cannon
 	case 2:
-		antiAir = true;
-		antiGround = false;
+		cost = 75;
+		damage = 10;
+		range = 7;
+		reload = 100;
 		break;
-	case 3:
-		antiAir = false;
-		antiGround = true;
-		break;
-	default:
-		antiAir = true;
-		antiGround = true;
+
+	// Default
+	case 0: default:
+		cost = 0;
+		damage = 0;
+		range = 0;
+		reload = 0;
 		break;
 	}
 }
 
-void Tower::levelUp()
+void Tower::fire(long dir)
 {
-	killCount++;
-	if(killCount % 5 == 0)
-	{
-		level++;
-		if(level < 4)
-		{
-			damage+=10;
-		}
-		else if (level < 6)
-		{
-			reloadRate /= 2;
-		}
-	}
+	//Bullet * b = new Bullet((getX() + (BLOCK_SIZE/2)), (getY() + (BLOCK_SIZE/2)), dir);
+	//bullets.push_back(b);
 }
+
+

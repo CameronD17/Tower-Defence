@@ -3,6 +3,7 @@
 #include "../Engine/Engine.h"
 #include "Constants.h"
 #include "Cursor.h"
+#include "Tower.h"
 #include <vector>
 #include <iostream>
 #include <sstream>
@@ -49,6 +50,7 @@ private:
 	
 	// Game pieces
 	Cursor cursor;							// Players in-game cursor 
+	vector<Tower*>  towers;
 	
 	// *** METHODS *** //
 	
