@@ -5,6 +5,7 @@
 #include "Physics.h"
 #include "Profiling.h"
 #include "ResourceManager.h"
+#include "AStar.h"
 #include "../Game/Constants.h"
 
 
@@ -27,6 +28,7 @@ public:
 
 	// Access all aspects of the engine
 	Audio audio;
+	AStar astar;
 	Graphics graphics;
 	InterfaceManager interfaces;
 	Physics physics;

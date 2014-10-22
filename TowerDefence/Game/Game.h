@@ -4,6 +4,7 @@
 #include "Constants.h"
 #include "Cursor.h"
 #include "Tower.h"
+#include "Enemy.h"
 #include <vector>
 #include <iostream>
 #include <sstream>
@@ -51,6 +52,9 @@ private:
 	// Game pieces
 	Cursor cursor;							// Players in-game cursor 
 	vector<Tower*>  towers;
+	vector<Enemy*>  enemies;
+
+	Map mapm;
 	
 	// *** METHODS *** //
 	

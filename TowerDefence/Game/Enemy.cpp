@@ -7,7 +7,7 @@ Enemy::Enemy()
 	setType(0);
 	targetX = 0;
 	targetY = 0;
-	health = 30;
+	currentHealth = 30;
 	value = 150;
 	bounty = 20;
 }
@@ -19,7 +19,7 @@ Enemy::Enemy(ResourceManager &rm, int x, int y, int t, int tX, int tY, int hea, 
 	targetX = tX;
 	targetY = tY;
 	maxHealth = hea;
-	health = hea;
+	currentHealth = hea;
 	value = val;
 	bounty = bou;
 	pathToFollow = makeTestPath();
@@ -27,7 +27,7 @@ Enemy::Enemy(ResourceManager &rm, int x, int y, int t, int tX, int tY, int hea, 
 	leftBase = false;
 	resource = rm;
 	getSprites();
-	loc = 0;
+	location = 0;
 }
 
 Enemy::~Enemy()
@@ -70,13 +70,13 @@ void Enemy::getSprites()
 
 void Enemy::locationTracker()
 {
-	if(loc < BLOCK_SIZE)
+	if(location < BLOCK_SIZE)
 	{
-		loc += BULLET_SIZE;
+		location += BULLET_SIZE;
 	}
 	else
 	{
-		loc = 0;
+		location = 0;
 		pathToFollow.pop_back();
 	}
 }

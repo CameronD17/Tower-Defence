@@ -1,9 +1,10 @@
 #pragma once
 #include "Constants.h"
-#include "../Engine/Engine.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
+
+using namespace std;
 
 class Map
 {

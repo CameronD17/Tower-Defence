@@ -8,12 +8,22 @@ Game::Game(Engine &sc)
 {
 	engine = sc;												// The game relies on an "engine" in the form of the Engine
 	cursor.init(engine.resources);								// This initialises the cursor with the engine
-
+	startX = BORDER, startY = BORDER, targetX = 480, targetY = 480;
 }
 	
 void Game::newGame(int m, int d)								// Setting up the game
 {	
-	srand(time(NULL));											// Initialise randomisatio
+	srand(time(NULL));											// Initialise randomisation
+	Enemy * e = new Enemy(					// Create a new enemy:	
+		engine.resources,						// Resource manager
+		startX, startY,							// Starting position of the enemy
+		type,									// Enemy "type"
+		targetX, targetY,						// Target for the enemy to attack
+		100,									// Starting health of the enemy
+		100,									// Value (in points) of the enemy
+		8);
+	e->pathToFollow = engine.astar.findPath(startX, startY, targetX, targetY, mapm, false);
+	enemies.push_back(e);
 
 	newLevel();													// Start a new level
 }
@@ -92,6 +102,11 @@ void Game::drawGamePieces()
 		engine.graphics.drawRectangleOL((*t)->getX() - 1, (*t)->getY() - 1, (BLOCK_SIZE * 2) + 2, (BLOCK_SIZE * 2) + 2, 255, 255, 255);
 	}
 
+	for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
+	{
+		engine.graphics.drawRectangle((*e)->getX(), (*e)->getY(), BLOCK_SIZE, BLOCK_SIZE, 255, 255, 0);
+		engine.graphics.drawRectangleOL((*e)->getX() - 1, (*e)->getY() - 1, (BLOCK_SIZE) + 2, (BLOCK_SIZE) + 2, 255, 255, 255);
+	}
 }
 
 void Game::drawBoardForeground()

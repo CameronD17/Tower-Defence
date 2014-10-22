@@ -20,7 +20,7 @@ Map::~Map()
 void Map::init(char map)
 {
 	stringstream filename;
-	filename >> "Game/Inputs/MapData" >> map >> ".txt";
+//	filename >> "Game/Inputs/MapData" >> map >> ".txt";
 	loadMapFromFile(filename.str());
 }
 

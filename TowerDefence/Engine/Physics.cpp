@@ -124,33 +124,6 @@ bool Physics::impreciseCollision(Object *a, Object *b)
 	return (((aX - bX) * (aX - bX)) + ((aY - bY) * (aY - bY))) <= BLOCK_SIZE;
 }
 
-bool Physics::preciseCollision(Object *bat, Object *ball, int angle)
-{
-	// If the ball is in the right side of the screen
-	if(ball->getX() > WINDOW_WIDTH/2)
-	{
-		// Left-Right collision
-		if (!(ball->getX() + BALL_SIZE + angle >= bat->getX()))
-			return false; 
-		if (ball->getX() > bat->getX() + PADDLE_WIDTH)
-			return false;
-		if (!(ball->getY() + BALL_SIZE > bat->getY() && ball->getY() <= bat->getY() + PADDLE_HEIGHT))
-			return false;
-	}
-	else
-	{
-		// Right-left collision
-		if (!(ball->getX() + angle <= bat->getX() + PADDLE_WIDTH))
-			return false;
-		if (ball->getX() < bat->getX())
-			return false;
-		if (!(ball->getY() + BALL_SIZE >= bat->getY() && ball->getY() <= bat->getY() + PADDLE_HEIGHT))
-			return false;
-	}
-
-	return true;
-}
-
 bool Physics::checkDistance(Object *tower, Object *enemy)
 {
 	return (	enemy->getX() > (tower->getX() - (BORDER + BLOCK_SIZE * tower->getType()))			// Within Left boundary
