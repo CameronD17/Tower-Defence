@@ -81,6 +81,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\AStar.cpp" />
     <ClCompile Include="Engine\Audio.cpp" />
     <ClCompile Include="Engine\Graphics.cpp" />
     <ClCompile Include="Engine\InterfaceManager.cpp" />
@@ -91,10 +92,12 @@
     <ClCompile Include="Engine\Engine.cpp" />
     <ClCompile Include="Game\Cursor.cpp" />
     <ClCompile Include="Game\Game.cpp" />
+    <ClCompile Include="Game\Map.cpp" />
     <ClCompile Include="Game\Tower.cpp" />
     <ClCompile Include="TowerDefence.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\AStar.h" />
     <ClInclude Include="Engine\Audio.h" />
     <ClInclude Include="Engine\Graphics.h" />
     <ClInclude Include="Engine\InterfaceManager.h" />
@@ -106,6 +109,7 @@
     <ClInclude Include="Game\Constants.h" />
     <ClInclude Include="Game\Cursor.h" />
     <ClInclude Include="Game\Game.h" />
+    <ClInclude Include="Game\Map.h" />
     <ClInclude Include="Game\Tower.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

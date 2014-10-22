@@ -23,9 +23,12 @@
 #define LEFT 7
 #define UPLEFT 8
 
-#define PADDLE_WIDTH 10
-#define PADDLE_HEIGHT 60
-#define BALL_SIZE 10
+#define CLEARTERRAIN 1
+#define WATERTERRAIN 2
+#define ROUGHTERRAIN 3
+#define BLOCKEDTERRAIN 4
+#define DIAGONALCOST 14
+#define ORTHOGONALCOST 10
 
 //#define UP 1
 //#define UPRIGHT 2
