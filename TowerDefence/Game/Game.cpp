@@ -8,12 +8,15 @@ Game::Game(Engine &sc)
 {
 	engine = sc;												// The game relies on an "engine" in the form of the Engine
 	cursor.init(engine.resources);								// This initialises the cursor with the engine
-	startX = BORDER, startY = BORDER, targetX = 480, targetY = 480;
+	startX = 960, startY = 720, targetX = 96, targetY = 72;
 }
 	
 void Game::newGame(int m, int d)								// Setting up the game
 {	
 	srand(time(NULL));											// Initialise randomisation
+	eTimer = SDL_GetTicks() + 300;
+	moves = 0;
+
 	Enemy * e = new Enemy(					// Create a new enemy:	
 		engine.resources,						// Resource manager
 		startX, startY,							// Starting position of the enemy
@@ -22,7 +25,7 @@ void Game::newGame(int m, int d)								// Setting up the game
 		100,									// Starting health of the enemy
 		100,									// Value (in points) of the enemy
 		8);
-	e->pathToFollow = engine.astar.findPath(startX, startY, targetX, targetY, mapm, false);
+	e->pathToFollow = engine.astar.findPath(e->getX(), e->getY(), targetX, targetY, mapm, false);
 	enemies.push_back(e);
 
 	newLevel();													// Start a new level
@@ -49,7 +52,23 @@ int Game::run()
 
 void Game::update()
 {		
-	cleanup();			// Remove any destroyed enemies or spent bullets, refresh any messages
+	if (SDL_GetTicks() > eTimer)
+	{
+		for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
+		{
+			if ((*e)->pathToFollow.size() > 0)
+			{
+				engine.physics.move((*e), (*e)->pathToFollow.back(), 1);
+				moves++;				
+			}
+			if (moves == 24)
+			{
+				(*e)->pathToFollow.pop_back();
+				moves = 0;
+			}
+		}
+		eTimer = SDL_GetTicks() + 10;
+	}
 }
 
 void Game::newLevel()
@@ -107,6 +126,8 @@ void Game::drawGamePieces()
 		engine.graphics.drawRectangle((*e)->getX(), (*e)->getY(), BLOCK_SIZE, BLOCK_SIZE, 255, 255, 0);
 		engine.graphics.drawRectangleOL((*e)->getX() - 1, (*e)->getY() - 1, (BLOCK_SIZE) + 2, (BLOCK_SIZE) + 2, 255, 255, 255);
 	}
+
+	engine.graphics.drawRectangleOL(targetX, targetY, BLOCK_SIZE+2, BLOCK_SIZE+2, 255, 255, 255);
 }
 
 void Game::drawBoardForeground()

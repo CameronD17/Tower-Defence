@@ -40,6 +40,8 @@ private:
 	int nextType;							// The next enemy to launch
 	int enemySpeed;							// The time length in milliseconds between enemy moves
 
+	int moves;
+
 	// Game state trackers
 	bool paused;							// Track if the game is paused			
 	bool newPath;							// Track if the enemies need to calculate a new path

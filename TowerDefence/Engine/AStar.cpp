@@ -14,7 +14,7 @@ vector<int> AStar::findPath(int sX, int sY, int tX, int tY, Map map, bool swim)
 
 	onOpenList = 0, onClosedList = 10, numberOfOpenListItems = 0, 
 	parentXval = 0, parentYval = 0, pathLocation = 0,
-	targetX = tX, targetY = tY, startX = sX, startY = sY;
+	targetX = tX / BLOCK_SIZE, targetY = tY / BLOCK_SIZE, startX = sX / BLOCK_SIZE, startY = sY / BLOCK_SIZE;
 	
 	int m = 0, u = 0, v = 0, temp = 0,
 	addedGCost = 0, tempGcost = 0, path = 0,
@@ -22,7 +22,7 @@ vector<int> AStar::findPath(int sX, int sY, int tX, int tY, Map map, bool swim)
 
 	// Step 1: check trivial cases
 
-	if (startX == targetX && startY == targetY == 0)
+	if (startX == targetX && startY == targetY)
 		return vector<int>(0);
 
 	// Step 2: Clear shit up 
@@ -70,7 +70,7 @@ vector<int> AStar::findPath(int sX, int sY, int tX, int tY, Map map, bool swim)
 				for (int a = parentXval - 1; a <= parentXval + 1; a++)
 				{
 					//	If not off the map (do this first to avoid array out-of-bounds errors)
-					if (a != -1 && b != -1 && a != BOARD_WIDTH && b != BOARD_HEIGHT)
+					if (a != -1 && b != -1 && a != BOARD_WIDTH+1 && b != BOARD_HEIGHT+1)
 					{
 						//	If not already on the closed list (items on the closed list have
 						//	already been considered and can now be ignored).			
@@ -94,9 +94,9 @@ vector<int> AStar::findPath(int sX, int sY, int tX, int tY, Map map, bool swim)
 
 										//Figure out its G cost
 										if (abs(a - parentXval) == 1 && abs(b - parentYval) == 1)
-											addedGCost = DIAGONALCOST * (terrain[a][b]);//cost of going to diagonal squares	
+											addedGCost = DIAGONALCOST * (terrain[a][b] + 1);//cost of going to diagonal squares	
 										else
-											addedGCost = ORTHOGONALCOST * (terrain[a][b]);//cost of going to non-diagonal squares			
+											addedGCost = ORTHOGONALCOST * (terrain[a][b] + 1);//cost of going to non-diagonal squares			
 
 										Gcost[a][b] = Gcost[parentXval][parentYval] + addedGCost;
 
@@ -134,9 +134,9 @@ vector<int> AStar::findPath(int sX, int sY, int tX, int tY, Map map, bool swim)
 									{
 										//Figure out its G cost
 										if (abs(a - parentXval) == 1 && abs(b - parentYval) == 1)
-											addedGCost = DIAGONALCOST * (terrain[a][b]);//cost of going to diagonal squares	
+											addedGCost = DIAGONALCOST * (terrain[a][b] + 1);//cost of going to diagonal squares	
 										else
-											addedGCost = ORTHOGONALCOST * (terrain[a][b]);//cost of going to non-diagonal squares				
+											addedGCost = ORTHOGONALCOST * (terrain[a][b] + 1);//cost of going to non-diagonal squares				
 										tempGcost = Gcost[parentXval][parentYval] + addedGCost;
 
 										//If this path is shorter (G cost is lower) then change
@@ -214,9 +214,7 @@ vector<int> AStar::findPath(int sX, int sY, int tX, int tY, Map map, bool swim)
 void AStar::calcPath()
 {
 	int tempx = 0;
-
 	pathX = targetX; pathY = targetY;
-	int cellPosition = pathLength * 2; //start at the end	
 
 	do
 	{
@@ -234,28 +232,28 @@ void AStar::calcPath()
 
 void AStar::calcDirections(int x, int y, int pX, int pY)
 {
-	if (pY < y)				// Next step is north...
+	if (pY < y)				// Previous step was north...
+	{
+		if (pX < x)			// ...west...
+			directions.push_back(DOWNRIGHT);	// ...so we go south-east
+		else if (pX > x)	// ...east
+			directions.push_back(DOWNLEFT);		// ...so we go south-west
+		else				// ...exactly
+			directions.push_back(DOWN);			// ...so we go south
+	}
+	else if (pY > y)		// Previous step was south...
 	{
 		if (pX < x)			// ...west
-			directions.push_back(UPLEFT);
+			directions.push_back(UPRIGHT);		// ...so we go north-east
 		else if (pX > x)	// ...east
-			directions.push_back(UPRIGHT);
+			directions.push_back(UPLEFT);		// ...so we go north-west
 		else				// ...exactly
-			directions.push_back(UP);
+			directions.push_back(UP);			// ...so we go north
 	}
-	else if (pY > y)		// Next step is south...
-	{
-		if (pX < x)			// ...west
-			directions.push_back(DOWNLEFT);
-		else if (pX > x)	// ...east
-			directions.push_back(DOWNRIGHT);
-		else				// ...exactly
-			directions.push_back(DOWN);
-	}
-	else if (pX < x)		// Next step is west
-		directions.push_back(LEFT);
-	else if (pX > x)		// Next step is east
-		directions.push_back(RIGHT);
+	else if (pX < x)		// Previous step was west
+		directions.push_back(RIGHT);			// ...so we go east
+	else if (pX > x)		// Previous step was east
+		directions.push_back(LEFT);				// ...so we go west
 }
 
 void AStar::binaryHeap()
