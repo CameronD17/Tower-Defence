@@ -10,6 +10,7 @@ Enemy::Enemy()
 	currentHealth = 30;
 	value = 150;
 	bounty = 20;
+	stepsTaken = 0;
 }
 
 Enemy::Enemy(ResourceManager &rm, int x, int y, int t, int tX, int tY, int hea, int val, int bou){
@@ -28,6 +29,7 @@ Enemy::Enemy(ResourceManager &rm, int x, int y, int t, int tX, int tY, int hea, 
 	resource = rm;
 	getSprites();
 	location = 0;
+	stepsTaken = 0;
 }
 
 Enemy::~Enemy()

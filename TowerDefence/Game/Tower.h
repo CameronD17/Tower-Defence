@@ -12,6 +12,8 @@ public:
 
 	void fire(long dir);
 
+	int getCost();
+
 private:
 	int x, y;
 

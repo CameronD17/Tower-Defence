@@ -14,10 +14,11 @@ public:
 
 	void init(char map);
 
-	void loadMapFromFile(string filename);
+	bool loadMapFromFile(string filename);
 
 	char getTerrain(int x, int y);
 
+	void setTerrain(int x, int y, char m);
 private:
 
 	char terrain[BOARD_WIDTH][BOARD_HEIGHT];

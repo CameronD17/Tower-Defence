@@ -23,10 +23,11 @@
 #define LEFT 7
 #define UPLEFT 8
 
-#define CLEARTERRAIN 1
-#define WATERTERRAIN 2
-#define ROUGHTERRAIN 3
-#define BLOCKEDTERRAIN 4
+#define CLEARTERRAIN 'C'
+#define WATERTERRAIN 'W'
+#define ROUGHTERRAIN 'R'
+#define BLOCKEDTERRAIN 'B'
+
 #define DIAGONALCOST 14
 #define ORTHOGONALCOST 10
 

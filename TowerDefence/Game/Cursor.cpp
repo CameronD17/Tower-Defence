@@ -35,19 +35,19 @@ int Cursor::changeTowerType(int t)
 			setType(t);
 			break;
 		case 1:		//Machine Gun						//BLUE
-			texture = resource.getImage("Game/Images/Sprites/tower1.png"); 
+			//texture = resource.getImage("Game/Images/Sprites/tower1.png"); 
 			setType(t);
             break;
         case 2:		//Cannon							//YELLOW
-			texture = resource.getImage("Game/Images/Sprites/tower2.png"); 
+			//texture = resource.getImage("Game/Images/Sprites/tower2.png"); 
 			setType(t);
             break;
         case 3:		//Laser								//PINK
-			texture = resource.getImage("Game/Images/Sprites/tower3.png"); 
+			//texture = resource.getImage("Game/Images/Sprites/tower3.png"); 
 			setType(t);
             break;
 		case 4:		//Dummy								//BROWN
-			texture = resource.getImage("Game/Images/Sprites/tower4.png");  
+			//texture = resource.getImage("Game/Images/Sprites/tower4.png");  
 			setType(-1);
 			break;
         default:

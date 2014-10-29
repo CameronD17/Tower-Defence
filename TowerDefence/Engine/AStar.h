@@ -3,9 +3,6 @@
 #include "../Game/Constants.h"
 #include <vector>
 
-#define PATHFOUND true
-#define NOPATH false
-
 class AStar
 {
 public: 
@@ -17,17 +14,17 @@ public:
 
 	void setMapValues(Map m, bool swim);
 
+	int getGCost(int x, int y, int pX, int pY);
+
 	void binaryHeap();
+
+	void bubbleNewF(int m);
 
 	bool cutCorner(int a, int b);
 
 	void calcPath();
 
-	void calcDirections(int pathX, int pathY, int parentX, int parentY);
-
-	int onOpenList, onClosedList, numberOfOpenListItems, 
-		parentXval, parentYval, pathLocation,
-		pathLength, pathX, pathY, 
+	int openListSize, parentXval, parentYval,
 		startX, startY, targetX, targetY;
 	
 	//Create needed arrays
@@ -44,10 +41,6 @@ public:
 
 	int Fcost[BOARD_WIDTH*BOARD_HEIGHT + 2];	//1d array to store F cost of a cell on the open list
 	int Gcost[BOARD_WIDTH + 1][BOARD_HEIGHT + 1]; 	//2d array to store G cost for each cell.
-	int Hcost[BOARD_WIDTH*BOARD_HEIGHT + 2];	//1d array to store H cost of a cell on the open list
 
-	vector<int> coordinates;
-	vector<int> directions;
-	
+	vector<int> directions;	
 };
-

@@ -30,7 +30,7 @@ private:
 	float eCount;							// Number of enemies to launch
 
 	// Per-game values
-	int map, difficulty;					// Player-set map and difficulty
+	int difficulty;							// Player-set map and difficulty
 	bool passable[BOARD_WIDTH*BOARD_HEIGHT];// Array that covers the entire board of "tiles", marking whether or not it's passable for enemies.	
 	bool ignore[BOARD_WIDTH*BOARD_HEIGHT];	// Array that covers the entire board of "tiles", ignoring any obstacles.						
 	int score, credit;						// Current score, remaining credits
@@ -39,8 +39,6 @@ private:
 	string initials;						// Players initials for the highscore
 	int nextType;							// The next enemy to launch
 	int enemySpeed;							// The time length in milliseconds between enemy moves
-
-	int moves;
 
 	// Game state trackers
 	bool paused;							// Track if the game is paused			
@@ -56,7 +54,7 @@ private:
 	vector<Tower*>  towers;
 	vector<Enemy*>  enemies;
 
-	Map mapm;
+	Map map;
 	
 	// *** METHODS *** //
 	
@@ -77,6 +75,9 @@ private:
 	void cleanup();
 	void saveScore();
 	void setMessage(string m);
+
+	bool pathAvailable(int xPos, int yPos);
+	bool clearToBuild(int xPos, int yPos);
 
 public:	
 	Game(void);					// Default Constructor

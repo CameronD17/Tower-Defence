@@ -70,4 +70,7 @@ void Tower::fire(long dir)
 	//bullets.push_back(b);
 }
 
-
+int Tower::getCost()
+{
+	return cost;
+}

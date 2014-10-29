@@ -7,7 +7,7 @@ class Enemy : public Object
 {
 
 public:
-	int targetX, targetY, currentHealth, maxHealth, value, bounty, location;
+	int targetX, targetY, currentHealth, maxHealth, value, bounty, location, stepsTaken;
 
 	std::vector<int>  pathToFollow;
 	std::vector<SDL_Texture*> sprites;

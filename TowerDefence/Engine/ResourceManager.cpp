@@ -12,11 +12,11 @@ ResourceManager::~ResourceManager(void)
 void ResourceManager::init(SDL_Renderer	*r)
 {
 	renderer = r;
-	preloadImages("Game/Inputs/IMAGE_FILEPATHS.txt");
-	preloadSounds("Game/Inputs/SOUND_FILEPATHS.txt");
+	preloadImages("Assets/Inputs/IMAGE_FILEPATHS.txt");
+	preloadSounds("Assets/Inputs/SOUND_FILEPATHS.txt");
 	preloadFonts();
 
-	music = loadMusic("Game/Audio/background.mp3");
+	music = loadMusic("Assets/Audio/background.mp3");
 }
 
 
@@ -72,7 +72,7 @@ void ResourceManager::preloadFonts()
 
 TTF_Font *ResourceManager::loadFont(int size)
 {
-	TTF_Font *font = TTF_OpenFont("Engine/Fonts/imagine.ttf", size);
+	TTF_Font *font = TTF_OpenFont("Assets/Fonts/imagine.ttf", size);
 
 	if(font == NULL) printf("Failed to load font - SDL_TTF Error: %s\n", TTF_GetError());
 
@@ -112,7 +112,7 @@ Mix_Music * ResourceManager::loadMusic(string filepath)
 
 SDL_Texture * ResourceManager::getImage(string filepath)
 {
-	SDL_Texture *imgTexture = SDL_CreateTextureFromSurface(renderer, loadImage("Engine/Images/broken.gif"));
+	SDL_Texture *imgTexture = SDL_CreateTextureFromSurface(renderer, loadImage("Assets/Images/broken.gif"));
 	int i = 0;
 	
 	for(vector<string>::iterator s = imgFilePath.begin(); s != imgFilePath.end(); ++s)

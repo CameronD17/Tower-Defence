@@ -35,7 +35,7 @@ bool Graphics::init(int w, int h, ResourceManager *r)
 		}
 		else 
 		{
-			SDL_Surface *surface = resource->loadImage("Engine/Images/icon.png");
+			SDL_Surface *surface = resource->loadImage("Assets/Images/icon.png");
 			SDL_SetWindowIcon(window, surface); 
 			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 		}
@@ -46,7 +46,7 @@ bool Graphics::init(int w, int h, ResourceManager *r)
 
 void Graphics::clear()
 {
-	SDL_SetRenderDrawColor(renderer,0,0,0,0);	// Draw a black rectangle over the whole screen
+	SDL_SetRenderDrawColor(renderer,0,0,0,0);		// Draw a black rectangle over the whole screen
 	SDL_RenderClear(renderer);						// Clear the renderer
 }
 
@@ -75,10 +75,6 @@ void Graphics::drawRectangleOL(int x, int y, int w, int h, Uint8 r, Uint8 g, Uin
 
 void Graphics::renderText(int x, int y, string text, int size, int r, int g, int b, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {	
-	// Placeholders for the size of the text being rendered
-	int width;
-	int height;
-	
 	// The colour to render the text. Default is white (255, 255, 255)
 	SDL_Color textColor = {r, g, b};
 
@@ -117,8 +113,8 @@ void Graphics::renderText(int x, int y, string text, int size, int r, int g, int
 	else
 	{
 		//Get image dimensions
-		width = textSurface->w;
-		height = textSurface->h;
+		int width = textSurface->w;
+		int height = textSurface->h;
 	
 		//Set rendering space and render to screen
 		SDL_Rect renderQuad = {x, y, textSurface->w, textSurface->h};
@@ -132,7 +128,6 @@ void Graphics::renderText(int x, int y, string text, int size, int r, int g, int
 
 		//Render to screen
 		SDL_RenderCopyEx(renderer, fontText, clip, &renderQuad, angle, center, flip);
-
 		SDL_FreeSurface(textSurface);
 		SDL_DestroyTexture(fontText);
 	}
