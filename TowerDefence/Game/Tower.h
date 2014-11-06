@@ -1,5 +1,6 @@
 #pragma once
 #include "../Engine/Object.h"
+#include "Map.h"
 
 class Tower : public Object
 {
@@ -12,11 +13,15 @@ public:
 
 	void fire(long dir);
 
+	bool checkForEnemies(Map* m);
+
 	int getCost();
+
+	
 
 private:
 	int x, y;
-
+	bool enemyDetected;
 	int type;
 	int cost;
 	int damage;

@@ -20,44 +20,32 @@ class Game
 private:
 	// *** VARIABLES *** //
 
+	// Timers
+	unsigned int eTimer;
+
 	// Initial values for game setup
-	int startHealth, currentHealth;			// Start health of the target, current health of the target
-	unsigned int eTimer, bTimer,			// Uints for timing (enemy, bullet)
-		mTimer, wTimer, pTimer, sTimer;		// Uints for timing (message, wave, print-wave, slowed enemies)
-	int targetX, targetY,					// Coordinates of the enemy's target	
-		startX, startY;						// Coordinates of the enemy's base	
-	int type;								// Type of enemy to launch
-	float eCount;							// Number of enemies to launch
+	int startHealth, currentHealth;
+	int targetX, targetY;				
+	int startX, startY;	
+	int type, enemyCount;
 
-	// Per-game values
-	int difficulty;							// Player-set map and difficulty
-	bool passable[BOARD_WIDTH*BOARD_HEIGHT];// Array that covers the entire board of "tiles", marking whether or not it's passable for enemies.	
-	bool ignore[BOARD_WIDTH*BOARD_HEIGHT];	// Array that covers the entire board of "tiles", ignoring any obstacles.						
-	int score, credit;						// Current score, remaining credits
-	int level;								// Current level the player has reached
-	string message;							// Hold a message for the user
-	string initials;						// Players initials for the highscore
-	int nextType;							// The next enemy to launch
-	int enemySpeed;							// The time length in milliseconds between enemy moves
-
-	// Game state trackers
-	bool paused;							// Track if the game is paused			
-	bool newPath;							// Track if the enemies need to calculate a new path
-	bool slowMode;							// Track if the player has enabled 'slow-mode'	
-
-	// DEBUG - TO REMOVE
-	bool debugMode;							// Track if debug mode is enabled. Debug features are not part of the game
-	bool debugWalkability, debugPath;
+	// Per-game values				
+	int score, credit, level, nextEnemy;
+	string message;	
+	string initials;
+	bool hasEnemy[BOARD_WIDTH][BOARD_HEIGHT];
+	bool debugMode;
 	
 	// Game pieces
-	Cursor cursor;							// Players in-game cursor 
+	Map map;
+	Cursor cursor;
 	vector<Tower*>  towers;
 	vector<Enemy*>  enemies;
-
-	Map map;
+	
 	
 	// *** METHODS *** //
-	
+			
+
 	// Draw methods
 	void drawBoardBackground();
 	void drawGamePieces();
@@ -66,10 +54,9 @@ private:
 	void drawDebugFeatures();
 
 	// Gameplay methods
-	void loadMap();
-	void newLevel();
-	bool placeTower();
-	bool deleteTower();
+	void placeTower();
+	void launchEnemy();
+	void deleteTower();
 	void moveEnemies();
 	void moveBullets();
 	void cleanup();
@@ -80,15 +67,12 @@ private:
 	bool clearToBuild(int xPos, int yPos);
 
 public:	
-	Game(void);					// Default Constructor
-	Game(Engine &sc);	// Constructor	
-	Engine engine;	// Engine access
-
-	bool gameOver;				// Track if the player has lost the game (damn it...)
+	Game(void);
+	Game(Engine &sc);	
+	Engine engine;
 	
-	void newGame(int m, int d);	// Initialise the game to be played		
-	int run();
-    int getInput();				// Get any input from the player (input can also be quitting or pausing the game)
-	void update();				// Update the players cursor, the game board, and the bots		
-	void draw();				// Redraw
+	void newGame();
+	int getInput();
+	void update();
+	void draw(float interpolation);
 };

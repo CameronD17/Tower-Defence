@@ -1,111 +1,31 @@
 #include "Game.h"
 
-// *** CONSTRUCTORS AND INITIALISATION METHODS *** //
-
 Game::Game(void){}
 
-Game::Game(Engine &sc)
+Game::Game(Engine &e)
 {
-	engine = sc;												// The game relies on an "engine" in the form of the Engine
-	cursor.init(engine.resources);								// This initialises the cursor with the engine
+	engine = e;
+	cursor.init(engine.resources);				
 	startX = 24, startY = 24, targetX = 96, targetY = 72;
 }
 	
-void Game::newGame(int m, int d)								// Setting up the game
+void Game::newGame()								// Setting up the game
 {	
 	map.init(0);
-	srand(time(NULL));	
+	srand((unsigned int)time(NULL));	
 	eTimer = SDL_GetTicks() + 300;
+	enemyCount = 1;
 
-	Enemy * e = new Enemy(					// Create a new enemy:	
-		engine.resources,						// Resource manager
-		startX, startY,							// Starting position of the enemy
-		type,									// Enemy "type"
-		targetX, targetY,						// Target for the enemy to attack
-		100,									// Starting health of the enemy
-		100,									// Value (in points) of the enemy
-		8);
-	e->pathToFollow = engine.astar.findPath(e->getX(), e->getY(), targetX, targetY, map, false);
+	int health = 100, value = 100, bounty = 8;
+
+	Enemy * e = new Enemy(engine.resources,	startX, startY,	type, targetX, targetY, health, value, bounty, &map, enemyCount);
 	enemies.push_back(e);
-
-	newLevel();													// Start a new level
 }
-
-void Game::loadMap()
-{
-	
-}
-
-
-
-// *** UPDATE METHODS *** //
-
-int Game::run()
-{
-	int gameState = getInput();	// Get any input from the player. If the player pauses or quits, this is recorded
-		
-	update();					// Update the players cursor, the game board, and the bots		
-	draw();						// Clear the screen and redraw the updates
-
-	return gameState;
-}
-
-void Game::update()
-{		
-	if (SDL_GetTicks() > eTimer)
-	{
-		for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
-		{
-			if ((*e)->pathToFollow.size() > 0)
-			{
-				engine.physics.move((*e), (*e)->pathToFollow.back(), 2);
-				(*e)->stepsTaken++;				
-			}
-			if ((*e)->stepsTaken == 12)
-			{
-				(*e)->pathToFollow.pop_back();
-				(*e)->stepsTaken = 0;
-			}
-		}
-		eTimer = SDL_GetTicks() + 10;
-	}
-
-	if (newPath)
-	{
-		for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
-		{
-			(*e)->setX((*e)->getX() - (*e)->getX() % BLOCK_SIZE);
-			(*e)->setY((*e)->getY() - (*e)->getY() % BLOCK_SIZE);
-			(*e)->stepsTaken = 0;
-
-			(*e)->pathToFollow = engine.astar.findPath(
-				(*e)->getX(), (*e)->getY(), 
-				targetX, targetY, map, false);
-		}
-		newPath = false;
-	}
-}
-
-void Game::newLevel()
-{
-	
-}
-
-void Game::cleanup()
-{
-	
-}
-
-void Game::setMessage(string m)
-{
-
-}
-
 
 
 // *** DRAW METHODS *** //
 
-void Game::draw()
+void Game::draw(float interpolation)
 {
 	engine.graphics.clear();			// Clear the graphics
 	
@@ -141,9 +61,9 @@ void Game::drawBoardBackground()
 			{
 				engine.graphics.drawRectangle(x + BORDER, y + BORDER, BLOCK_SIZE, BLOCK_SIZE, 0, 255, 0);
 			}
-			else if (map.getTerrain(x, y) == CLEARTERRAIN)
+			else if (map.getTerrain(x, y) == HASENEMY)
 			{
-				//engine.graphics.drawRectangleOL(x + BORDER, y + BORDER, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 255);
+				engine.graphics.drawRectangleOL(x + BORDER, y + BORDER, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 255);
 			}
 		}
 	}
@@ -153,16 +73,25 @@ void Game::drawGamePieces()
 {
 	for (std::vector<Tower*>::iterator t = towers.begin(); t != towers.end(); ++t)
 	{
-		//engine.graphics.drawRectangle((*t)->getX(), (*t)->getY(), BLOCK_SIZE*2, BLOCK_SIZE*2, 255, 0, 0);
-		engine.graphics.drawRectangleOL((*t)->getX() - 1, (*t)->getY() - 1, (BLOCK_SIZE * 2) + 2, (BLOCK_SIZE * 2) + 2, 255, 255, 255);
+		if ((*t)->checkForEnemies(&map))
+		{
+			engine.graphics.drawRectangle((*t)->getX(), (*t)->getY(), BLOCK_SIZE, BLOCK_SIZE, 255, 0, 255);
+			engine.graphics.drawRectangleOL((*t)->getX() - 1, (*t)->getY() - 1, (BLOCK_SIZE) + 2, (BLOCK_SIZE) + 2, 255, 255, 255);
+		}
+		else
+		{
+			engine.graphics.drawRectangle((*t)->getX(), (*t)->getY(), BLOCK_SIZE, BLOCK_SIZE, 255, 255, 255);
+			engine.graphics.drawRectangleOL((*t)->getX() - 1, (*t)->getY() - 1, (BLOCK_SIZE) + 2, (BLOCK_SIZE) + 2, 255, 255, 255);
+		}
 	}
 
 	for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
 	{
-		engine.graphics.drawRectangle((*e)->getX(), (*e)->getY(), BLOCK_SIZE, BLOCK_SIZE, 0, 0, 255);
+		engine.graphics.drawRectangle((*e)->getX(), (*e)->getY(), BLOCK_SIZE, BLOCK_SIZE, 255, 0, 0);
+		engine.graphics.drawRectangleOL((*e)->getX()-1, (*e)->getY()-1, BLOCK_SIZE+2, BLOCK_SIZE+2, 255, 255, 255);
 	}	
 
-	engine.graphics.drawRectangleOL(targetX, targetY, BLOCK_SIZE+2, BLOCK_SIZE+2, 255, 255, 255);
+	engine.graphics.drawRectangleOL(targetX - 1, targetY - 1, BLOCK_SIZE + 2, BLOCK_SIZE + 2, 0, 255, 255);
 }
 
 void Game::drawBoardForeground()
@@ -206,7 +135,7 @@ void Game::drawDebugFeatures()
 	if (debugMode)
 	{
 		// Enemy path
-		if (!enemies.empty())
+		/*if (!enemies.empty())
 		{
 			Enemy *e = enemies.front();
 
@@ -258,7 +187,7 @@ void Game::drawDebugFeatures()
 
 				engine.graphics.drawRectangle(xp + (BLOCK_SIZE / 4), yp + (BLOCK_SIZE / 4), BLOCK_SIZE / 2, BLOCK_SIZE / 2, 0xd3, 0xd3, 0xd3);
 			}
-		}
+		}*/
 		// Cursor Position
 		stringstream cursorText;
 		int x, y;
@@ -266,17 +195,6 @@ void Game::drawDebugFeatures()
 		cursorText << "Cursor: (" << cursor.getX() << "," << cursor.getY() << ")  Actual: (" << x << "," << y << ")";
 		engine.graphics.renderText(10, 10, cursorText.str(), 20, 255, 255, 255);
 
-
-		// Enemy Statistics
-		stringstream enemyStats;
-		Enemy *e = enemies.back();
-		enemyStats << "Path Length: " << e->pathToFollow.size() << " Target: (" << targetX << ", " << targetY << ") Path: (";
-		for (std::vector<int>::iterator t = e->pathToFollow.begin(); t != e->pathToFollow.end(); ++t)
-		{
-			enemyStats << (*t) << ", ";
-		}
-		enemyStats << ")";
-		engine.graphics.renderText(10, 750, enemyStats.str(), 20, 255, 255, 255);
 		// Map Statistics
 		for (int x = 0; x < BOARD_WIDTH*BLOCK_SIZE; x+=BLOCK_SIZE)
 		{
@@ -290,7 +208,26 @@ void Game::drawDebugFeatures()
 }
 
 
-// *** GAMEPLAY METHODS *** //
+// *** UPDATE METHODS *** //
+
+void Game::update()
+{
+	if (SDL_GetTicks() > eTimer)
+	{
+		for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
+		{
+			if (map.walkable((*e)->getXCoord(), (*e)->getYCoord()) || map.getEnemy((*e)->getXCoord(), (*e)->getYCoord()) == (*e)->getID())
+			{
+				engine.physics.move((*e), (*e)->currentDirection(&map), 2);
+			}
+			else if ((*e)->stepsTaken != 0)
+			{
+				(*e)->updatePath(&map);
+			}
+		}
+		eTimer = SDL_GetTicks() + 10;
+	}
+}
 
 int Game::getInput()
 {
@@ -332,7 +269,15 @@ int Game::getInput()
 		if (cursor.getType() == 0)
 		{
 			targetX = cursor.getX(); targetY = cursor.getY();
-			newPath = true;
+			for (vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
+			{
+				(*e)->updateTarget(targetX, targetY);
+				(*e)->updatePath(&map);
+			}
+		}
+		else if (cursor.getType() == 3)
+		{
+			launchEnemy();
 		}
 		else
 		{
@@ -373,60 +318,66 @@ int Game::getInput()
 					cursor.setY(BORDER - BLOCK_SIZE);
 				}
 			}
-		}
-			
+		}			
 	}
 
     return 0;
 }
 
-bool Game::placeTower()
+void Game::launchEnemy()
 {
-	// Only build a tower if:  
-	// a) The terrain can be built upon
-	// b) The player has selected a tower type to build
-	// c) The player has enough credit to build the tower
-	// d) The tower is not blocking the spawn point of the enemies
+	enemyCount++;
+	Enemy * e = new Enemy(engine.resources, cursor.getX(), cursor.getY(), 0, targetX, targetY, 100, 100, 100, &map, enemyCount);
+	enemies.push_back(e);
+}
 
+void Game::placeTower()
+{    
+	/* Only build a tower if:  
+	 * a) The terrain can be built upon
+	 * b) The player has enough credit to build the tower
+	 * c) The tower is not blocking the spawn point of the enemies
+	 * d) The tower does not completely block a route from the enemy spawn point to the base
+	 */
 	int xPos = cursor.getX() - BORDER, yPos = cursor.getY() - BORDER;
 
-	if (	clearToBuild(xPos, yPos)
-		//&& cursor.getType() != 0										
-		//&& credit >= (10 * cursor.getType())								
-		//&& !(cursor.getX() + ((1 + cursor.getType())*BLOCK_SIZE) > startX	
-		//&&	cursor.getY() - ((cursor.getType())*BLOCK_SIZE) < startY))	
-		)
+	if (clearToBuild(xPos, yPos))
 	{
 		if (pathAvailable(xPos, yPos))
-		{		
-			Tower * t = new Tower(cursor.getX(), cursor.getY(), cursor.getType());
-			towers.push_back(t);
-			credit -= (t->getCost());
-			return true;
+		{
+			//if (credit >= (10 * cursor.getType()))
+			//{
+				Tower * t = new Tower(cursor.getX(), cursor.getY(), cursor.getType());
+				towers.push_back(t);
+				//credit -= (t->getCost());
+			//}
+			//else
+			//{
+			//	setMessage("Insufficient funds available to build.");
+			//}
 		}
-		
+		else
+		{
+			setMessage("Invalid placement - you cannot block the route to your base.");
+		}
 	}
-	else if (cursor.getType() != 0)
+	else
 	{
-		/*if (!passable[i])													setMessage("Location impassable!");
-		else if (credit < (10 * cursor.getType()))							setMessage("Insufficient funds!");
-		else if ((cursor.getX() + ((1 + cursor.getType())*BLOCK_SIZE) > startX
-			&& cursor.getY() - ((cursor.getType())*BLOCK_SIZE) < startY))			setMessage("Too close to enemy base!");*/
+		setMessage("Invalid placement - this terrain is obstructed.");
 	}
-	return false;
 }
 
 bool Game::clearToBuild(int x, int y)
 {
-	char	s1 = map.getTerrain(x, y), 
-			s2 = map.getTerrain(x + BLOCK_SIZE, y),
+	char	s1 = map.getTerrain(x, y);
+			/*s2 = map.getTerrain(x + BLOCK_SIZE, y),
 			s3 = map.getTerrain(x, y + BLOCK_SIZE), 
-			s4 = map.getTerrain(x + BLOCK_SIZE, y + BLOCK_SIZE);
+			s4 = map.getTerrain(x + BLOCK_SIZE, y + BLOCK_SIZE);*/
 
-	if (	(s1 == CLEARTERRAIN || s1 == ROUGHTERRAIN)
+	if (	(s1 == CLEARTERRAIN || s1 == ROUGHTERRAIN)/*
 		&&	(s2 == CLEARTERRAIN || s2 == ROUGHTERRAIN)
 		&&	(s3 == CLEARTERRAIN || s3 == ROUGHTERRAIN)
-		&&	(s4 == CLEARTERRAIN || s4 == ROUGHTERRAIN))
+		&&	(s4 == CLEARTERRAIN || s4 == ROUGHTERRAIN)*/)
 	{
 		return true;
 	}
@@ -436,34 +387,54 @@ bool Game::clearToBuild(int x, int y)
 
 bool Game::pathAvailable(int x, int y)
 {
-	char terrainReset[4];
-	
-	terrainReset[0] = map.getTerrain(x, y), terrainReset[1] = map.getTerrain(x + BLOCK_SIZE, y),
-	terrainReset[2] = map.getTerrain(x, y + BLOCK_SIZE), terrainReset[3] = map.getTerrain(x + BLOCK_SIZE, y + BLOCK_SIZE);
-
-	map.setTerrain(x, y, BLOCKEDTERRAIN);
-	map.setTerrain(x + BLOCK_SIZE, y, BLOCKEDTERRAIN);
-	map.setTerrain(x, y + BLOCK_SIZE, BLOCKEDTERRAIN);
-	map.setTerrain(x + BLOCK_SIZE, y + BLOCK_SIZE, BLOCKEDTERRAIN);
-	
-	vector<int> test = engine.astar.findPath(startX, startY, targetX, targetY, map, false);
-
-	if (!test.empty())
+	// Check that the new tower wouldn't be blocking the spawn point of enemies
+	if ((cursor.getX() + ((1 + cursor.getType())*BLOCK_SIZE) > startX &&	cursor.getY() - ((cursor.getType())*BLOCK_SIZE) < startY))
 	{
-		// The map has changed, so the enemies need to find a new path
-		for (vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)	
-		{
-			(*e)->newPath = true;											
-		}
-		return true;
+		return false;
 	}
 	
-	// If there is no path available, undo the map changes
-	map.setTerrain(x, y, terrainReset[0]);
-	map.setTerrain(x + BLOCK_SIZE, y, terrainReset[1]);
-	map.setTerrain(x, y + BLOCK_SIZE, terrainReset[2]);
-	map.setTerrain(x + BLOCK_SIZE, y + BLOCK_SIZE, terrainReset[3]);
+	char terrainReset[4];
+	bool pathAvailable = true;
+	
+	terrainReset[0] = map.getTerrain(x, y)/*, terrainReset[1] = map.getTerrain(x + BLOCK_SIZE, y),
+	terrainReset[2] = map.getTerrain(x, y + BLOCK_SIZE), terrainReset[3] = map.getTerrain(x + BLOCK_SIZE, y + BLOCK_SIZE)*/;
 
-	setMessage("Invalid placement - path blocked");	
-	return false;
+	map.setTerrain(x, y, BLOCKEDTERRAIN);
+	/*map.setTerrain(x + BLOCK_SIZE, y, BLOCKEDTERRAIN);
+	map.setTerrain(x, y + BLOCK_SIZE, BLOCKEDTERRAIN);
+	map.setTerrain(x + BLOCK_SIZE, y + BLOCK_SIZE, BLOCKEDTERRAIN);*/
+	
+	/*
+	This method may well cause bugs later on in development; it may be possible to place a tower behind the last enemy
+	in a wave, blocking off all future waves but none of the existing enemies. MAY REQUIRE A REWRITE (test enemy made and
+	destroyed, perhaps?)
+	*/
+
+	for (vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
+	{
+		if (!(*e)->checkPathFromBase(&map))
+		{
+			pathAvailable = false;
+
+			map.setTerrain(x, y, terrainReset[0]);
+			/*map.setTerrain(x + BLOCK_SIZE, y, terrainReset[1]);
+			map.setTerrain(x, y + BLOCK_SIZE, terrainReset[2]);
+			map.setTerrain(x + BLOCK_SIZE, y + BLOCK_SIZE, terrainReset[3]);*/
+
+			setMessage("Invalid placement - path blocked");
+		}		
+		(*e)->updatePath(&map);
+	}
+
+	return pathAvailable;
+}
+
+void Game::cleanup()
+{
+
+}
+
+void Game::setMessage(string m)
+{
+
 }

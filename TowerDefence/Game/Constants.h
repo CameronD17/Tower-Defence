@@ -27,6 +27,7 @@
 #define WATERTERRAIN 'W'
 #define ROUGHTERRAIN 'R'
 #define BLOCKEDTERRAIN 'B'
+#define HASENEMY 'E'
 
 #define DIAGONALCOST 14
 #define ORTHOGONALCOST 10

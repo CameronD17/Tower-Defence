@@ -65,7 +65,27 @@ char Map::getTerrain(int x, int y)
 	return terrain[x / BLOCK_SIZE][y / BLOCK_SIZE];
 }
 
+int Map::getEnemy(int x, int y)
+{
+	return enemyPos[x / BLOCK_SIZE][y / BLOCK_SIZE];
+}
+
 void Map::setTerrain(int x, int y, char m)
 {
 	terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = m;
+}
+
+void Map::setEnemy(int x, int y, int id)
+{
+	enemyPos[x / BLOCK_SIZE][y / BLOCK_SIZE] = id;
+}
+
+bool Map::walkable(int x, int y)
+{
+	bool walkable = true;
+	if (terrain[(x / BLOCK_SIZE)][(y / BLOCK_SIZE)] == BLOCKEDTERRAIN || terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] == HASENEMY)
+	{
+		walkable = false;
+	}
+	return walkable;
 }

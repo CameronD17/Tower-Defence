@@ -76,4 +76,6 @@ SDL_Event InterfaceManager::getGeneralInput()
 	{
 		return event;
 	}
+
+	return event;
 }

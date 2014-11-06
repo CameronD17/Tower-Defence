@@ -163,7 +163,7 @@ Mix_Music * ResourceManager::getMusic()
 void ResourceManager::close()
 {
 	// Clean up images
-	for(int i = 0; i < images.size(); i++)
+	for(unsigned int i = 0; i < images.size(); i++)
 	{
 		if (images.at(i) != NULL) 
 		{ 
@@ -174,7 +174,7 @@ void ResourceManager::close()
 
 	// Clean up sounds
 	Mix_FreeMusic(music);	
-	for(int i = 0; i < sounds.size(); i++)
+	for (unsigned int i = 0; i < sounds.size(); i++)
 	{
 		if (sounds.at(i) != NULL) 
 		{ 
@@ -184,7 +184,7 @@ void ResourceManager::close()
 	}
 
 	// Clean up fonts	
-	for(int i = 0; i < fonts.size(); i++)
+	for (unsigned int i = 0; i < fonts.size(); i++)
 	{
 		if (fonts.at(i) != NULL) 
 		{ 

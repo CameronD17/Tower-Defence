@@ -3,27 +3,39 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-
-/*	
- *	There are three main components of this tower defence game - the engine, the menu, and the game itself
- *	The menu gives the player five options - start a new game, resume an existing game, view the highscores, play a minigame (Pong) and quit
- */
+#define UPDATESPERSECOND 10
+#define SKIPTICKS (1000 / UPDATESPERSECOND)
 
 int main(int argc, char* args[])
 {
-	Engine engine;	// Instantiate a new engine
-	engine.init();				// Initialise everything engine-related (graphics, resource-management, etc.)
-	
-	Game g(engine);				// Initialise a new game using the new engine
-	g.newGame(0, 0);
+	Engine engine;
+	engine.init();
 
-	int gameState = 0;		// To check if the player has quit or paused the game
+	Game game(engine);	
+	game.newGame();
+
+	int gameState = 0;
+
+	float nextUpdate = SDL_GetTicks();
+	float currentTime;
 	
-	while(gameState != -1)
+	while (gameState != -1) 
 	{
-		gameState = g.run();
+		currentTime = SDL_GetTicks();
+
+		gameState = game.getInput();
+
+		while (nextUpdate < currentTime) 
+		{
+			game.update();
+			nextUpdate += SKIPTICKS;
+		}
+
+		float interpolation = (currentTime + SKIPTICKS - nextUpdate) / SKIPTICKS;
+		game.draw(interpolation);
 	}
 
-	engine.close();					// Finish the game and clean up objects	
+
+	engine.close();
 	return 0;
 }

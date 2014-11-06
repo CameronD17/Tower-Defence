@@ -34,6 +34,7 @@ void Tower::setStats(int t)
 	level = 0;
 	hits = 0;
 	kills = 0;
+	enemyDetected = false;
 
 	switch (t)
 	{
@@ -42,7 +43,7 @@ void Tower::setStats(int t)
 	case 1:
 		cost = 50;
 		damage = 4;
-		range = 7;
+		range = 4;
 		reload = 20;
 		break;
 
@@ -50,7 +51,7 @@ void Tower::setStats(int t)
 	case 2:
 		cost = 75;
 		damage = 10;
-		range = 7;
+		range = 3;
 		reload = 100;
 		break;
 
@@ -62,6 +63,8 @@ void Tower::setStats(int t)
 		reload = 0;
 		break;
 	}
+
+	range *= BLOCK_SIZE;
 }
 
 void Tower::fire(long dir)
@@ -73,4 +76,19 @@ void Tower::fire(long dir)
 int Tower::getCost()
 {
 	return cost;
+}
+
+bool Tower::checkForEnemies(Map* m)
+{
+	for (int x = getX() - range; x < getX() + range; x += BLOCK_SIZE)
+	{
+		for (int y = getY() - range; y < getY() + range; y += BLOCK_SIZE)
+		{
+			if ((*m).getTerrain(x, y) == HASENEMY)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }
