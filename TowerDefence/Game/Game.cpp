@@ -6,19 +6,17 @@ Game::Game(Engine &e)
 {
 	engine = e;
 	cursor.init(engine.resources);				
-	startX = 24, startY = 24, targetX = 96, targetY = 72;
+	startX = 24, startY = 24, targetX = 384, targetY = 408;
 }
 	
 void Game::newGame()								// Setting up the game
 {	
 	map.init(0);
-	srand((unsigned int)time(NULL));	
+	//srand((unsigned int)time(NULL));	
 	eTimer = SDL_GetTicks() + 300;
 	enemyCount = 1;
 
-	int health = 100, value = 100, bounty = 8;
-
-	Enemy * e = new Enemy(engine.resources,	startX, startY,	type, targetX, targetY, health, value, bounty, &map, enemyCount);
+	Enemy * e = new Enemy(engine.resources,	startX, startY,	type, targetX, targetY, 1, &map, enemyCount);
 	enemies.push_back(e);
 }
 
@@ -64,6 +62,9 @@ void Game::drawBoardBackground()
 			else if (map.getTerrain(x, y) == HASENEMY)
 			{
 				engine.graphics.drawRectangleOL(x + BORDER, y + BORDER, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 255);
+				stringstream ID2;
+				ID2 << map.getEnemy(x, y);
+				engine.graphics.renderText(x + BORDER + 4, y + BORDER + 4, ID2.str(), 10, 255, 255, 0);
 			}
 		}
 	}
@@ -89,6 +90,9 @@ void Game::drawGamePieces()
 	{
 		engine.graphics.drawRectangle((*e)->getX(), (*e)->getY(), BLOCK_SIZE, BLOCK_SIZE, 255, 0, 0);
 		engine.graphics.drawRectangleOL((*e)->getX()-1, (*e)->getY()-1, BLOCK_SIZE+2, BLOCK_SIZE+2, 255, 255, 255);
+		stringstream idNo;
+		idNo << (*e)->getID();
+		engine.graphics.renderText((*e)->getX() + 4, (*e)->getY() + 4, idNo.str(), 20);
 	}	
 
 	engine.graphics.drawRectangleOL(targetX - 1, targetY - 1, BLOCK_SIZE + 2, BLOCK_SIZE + 2, 0, 255, 255);
@@ -216,15 +220,16 @@ void Game::update()
 	{
 		for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
 		{
-			if (map.walkable((*e)->getXCoord(), (*e)->getYCoord()) || map.getEnemy((*e)->getXCoord(), (*e)->getYCoord()) == (*e)->getID())
+			if ((*e)->canWalk(&map))
 			{
-				engine.physics.move((*e), (*e)->currentDirection(&map), 2);
+				engine.physics.move((*e), (*e)->nextMove(), (*e)->getStepSize());
 			}
-			else if ((*e)->stepsTaken != 0)
+			else
 			{
-				(*e)->updatePath(&map);
+				//(*e)->holdPosition(&map);
 			}
 		}
+
 		eTimer = SDL_GetTicks() + 10;
 	}
 }
@@ -327,7 +332,7 @@ int Game::getInput()
 void Game::launchEnemy()
 {
 	enemyCount++;
-	Enemy * e = new Enemy(engine.resources, cursor.getX(), cursor.getY(), 0, targetX, targetY, 100, 100, 100, &map, enemyCount);
+	Enemy * e = new Enemy(engine.resources, cursor.getX(), cursor.getY(), 0, targetX, targetY, 1, &map, enemyCount);
 	enemies.push_back(e);
 }
 

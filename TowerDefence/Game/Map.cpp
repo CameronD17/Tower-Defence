@@ -22,7 +22,7 @@ void Map::init(char map)
 		{
 			for (int y = 0; y < BOARD_HEIGHT; y++)
 			{
-				terrain[x][y] = CLEARTERRAIN;
+				tiles[x][y].terrain = CLEARTERRAIN;
 			}
 		}
 	}
@@ -44,7 +44,7 @@ bool Map::loadMapFromFile(string filename)
 		{
 			if (x < BOARD_WIDTH)
 			{
-				terrain[x][y] = nextCheck;
+				tiles[x][y].terrain = nextCheck;
 				x++;
 			}
 			else
@@ -62,30 +62,30 @@ bool Map::loadMapFromFile(string filename)
 
 char Map::getTerrain(int x, int y)
 {
-	return terrain[x / BLOCK_SIZE][y / BLOCK_SIZE];
+	return tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].terrain;
 }
 
 int Map::getEnemy(int x, int y)
 {
-	return enemyPos[x / BLOCK_SIZE][y / BLOCK_SIZE];
+	return tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].enemy;
 }
 
 void Map::setTerrain(int x, int y, char m)
 {
-	terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = m;
+	tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].terrain = m;
 }
 
 void Map::setEnemy(int x, int y, int id)
 {
-	enemyPos[x / BLOCK_SIZE][y / BLOCK_SIZE] = id;
+	tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].enemy = id;
 }
 
-bool Map::walkable(int x, int y)
+bool Map::walkable(int x, int y, int id)
 {
-	bool walkable = true;
-	if (terrain[(x / BLOCK_SIZE)][(y / BLOCK_SIZE)] == BLOCKEDTERRAIN || terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] == HASENEMY)
+	if (tiles[(x / BLOCK_SIZE)][(y / BLOCK_SIZE)].terrain == BLOCKEDTERRAIN 
+		|| (tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].terrain == HASENEMY && tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].enemy != id))
 	{
-		walkable = false;
+		return false;
 	}
-	return walkable;
+	return true;
 }

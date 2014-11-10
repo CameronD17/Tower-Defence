@@ -6,6 +6,12 @@
 
 using namespace std;
 
+struct Tile {
+	char terrain;
+	int enemy;
+};
+
+
 class Map
 {
 public:
@@ -21,11 +27,10 @@ public:
 	void setTerrain(int x, int y, char m);
 	void setEnemy(int x, int y, int id);
 
-	bool walkable(int x, int y);
+	bool walkable(int x, int y, int id = 0);
 
 private:
 
-	char terrain[BOARD_WIDTH][BOARD_HEIGHT];
-	int enemyPos[BOARD_WIDTH][BOARD_HEIGHT];
+	Tile tiles[BOARD_WIDTH][BOARD_HEIGHT];
 };
 

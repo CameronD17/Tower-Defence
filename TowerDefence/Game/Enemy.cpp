@@ -12,35 +12,50 @@ Enemy::Enemy()
 	bounty = 20;
 	stepsTaken = 0;
 	id = 0;
+	waitingPeriod = 0;
 }
 
-Enemy::Enemy(ResourceManager &rm, int x, int y, int t, int tX, int tY, int hea, int val, int bou, Map* m, int i)
+Enemy::Enemy(ResourceManager &rm, int x, int y, int t, int tX, int tY, int l, Map* m, int i)
 {
-    setX(x);
-    setY(y);
-	setType(t);
-	targetX = (tX - BORDER) / BLOCK_SIZE;
-	targetY = (tY - BORDER) / BLOCK_SIZE;
-	maxHealth = hea;
-	currentHealth = hea;
-	value = val;
-	bounty = bou;
-	canSwim = false;		// Change to check type
-	leftBase = false;
 	resource = rm;
-	speed = 0;				// Change to check type
-	stepsTaken = 0;
 	id = i;
-	findPath(x, y, m);
-	getSprites();
+	
+	leftBase = false;
+	stepsTaken = 0;
+	waitingPeriod = 0;
 
-	(*m).setTerrain(x - BORDER, y - BORDER, HASENEMY);
-	(*m).setEnemy(x - BORDER, y - BORDER, id);
+	initialise(x, y, tX, tY, t, m);
+	setStats(l);
 }
 
 Enemy::~Enemy()
 {
 
+}
+
+void Enemy::initialise(int x, int y, int tX, int tY, int t, Map* m)
+{
+	setX(x);
+	setY(y);
+	setType(t);
+
+	updateTarget(tX, tY);
+	updatePath(m);
+
+	(*m).setTerrain(x - BORDER, y - BORDER, HASENEMY);
+	(*m).setEnemy(x - BORDER, y - BORDER, id);
+}
+
+void Enemy::setStats(int level)
+{
+	maxHealth = level * HEALTH_MULTIPLIER;
+	currentHealth = maxHealth;
+	value = level * VALUE_MULTIPLIER;
+	bounty = level * BOUNTY_MULTIPLIER;
+	canSwim = false;		// Change to check type
+	speed = 0;				// Change to check type
+	stepSize = 2;
+	stepsPerSquare = BLOCK_SIZE / stepSize;
 }
 
 void Enemy::updateTarget(int x, int y)
@@ -60,9 +75,14 @@ void Enemy::updatePath(Map* m)
 	findPath(getX(), getY(), m);
 }
 
-int Enemy::getID()
+int Enemy::getID()const
 {
 	return id;
+}
+
+int Enemy::getStepSize()const
+{
+	return stepSize;
 }
 
 void Enemy::getSprites()
@@ -84,70 +104,7 @@ void Enemy::getSprites()
 	}
 }
 
-int Enemy::currentDirection(Map* m)
-{
-	int thisX = (getX() - BORDER);
-	int thisY = (getY() - BORDER);	
-
-	if (stepsTaken == 12)
-	{		
-		switch (pathToFollow.back())
-		{
-		case UP:
-			(*m).setTerrain(thisX, thisY + BLOCK_SIZE, CLEARTERRAIN);
-			break;
-		case UPRIGHT:
-			(*m).setTerrain(thisX - BLOCK_SIZE, thisY + BLOCK_SIZE, CLEARTERRAIN);
-			break;
-		case RIGHT:
-			(*m).setTerrain(thisX - BLOCK_SIZE, thisY, CLEARTERRAIN);
-			break;
-		case DOWNRIGHT:
-			(*m).setTerrain(thisX - BLOCK_SIZE, thisY - BLOCK_SIZE, CLEARTERRAIN);
-			break;
-		case DOWN:
-			(*m).setTerrain(thisX, thisY - BLOCK_SIZE, CLEARTERRAIN);
-			break;
-		case DOWNLEFT:
-			(*m).setTerrain(thisX + BLOCK_SIZE, thisY - BLOCK_SIZE, CLEARTERRAIN);
-			break;
-		case LEFT:
-			(*m).setTerrain(thisX  + BLOCK_SIZE, thisY, CLEARTERRAIN);
-			break;
-		case UPLEFT:
-			(*m).setTerrain(thisX + BLOCK_SIZE, thisY + BLOCK_SIZE, CLEARTERRAIN);
-			break;
-		default:
-			break;
-		}
-
-		pathToFollow.pop_back();
-
-		//int nextX = (xCoordinates.back() * BLOCK_SIZE) - BORDER;
-		//int nextY = (yCoordinates.back() * BLOCK_SIZE) - BORDER;
-		//(*m).setTerrain(getXCoord() - BORDER, getYCoord() - BORDER, HASENEMY);
-
-		xCoordinates.pop_back();
-		yCoordinates.pop_back();
-		stepsTaken = 0;
-
-		(*m).setTerrain(thisX, thisY, HASENEMY);
-		(*m).setEnemy(thisX, thisY, id);
-	}
-	
-	if (pathToFollow.size() > 0)
-	{
-		stepsTaken++;
-
-		//(*m).setTerrain(thisX, thisY, HASENEMY);
-		//((*m).getTerrain(thisX, thisY) == HASENEMY) ? (*m).setTerrain(thisX, thisY, CLEARTERRAIN) : (*m).setTerrain(thisX, thisY, (*m).getTerrain(thisX, thisY));
-		return pathToFollow.back();
-	}
-
-	return 0;
-}
-
-int Enemy::getXCoord()
+int Enemy::getNextX()const
 {
 	switch (pathToFollow.back())
 	{
@@ -161,7 +118,7 @@ int Enemy::getXCoord()
 	return -1;
 }
 
-int Enemy::getYCoord()
+int Enemy::getNextY()const
 {
 	switch (pathToFollow.back())
 	{
@@ -173,6 +130,161 @@ int Enemy::getYCoord()
 		return ((yCoordinates.back() - 1) * BLOCK_SIZE);
 	}
 	return -1;
+}
+
+bool Enemy::canWalk(Map* map)
+{
+	// Hey, you've committed to moving into the next square. Trust your instincts.
+	if (stepsTaken > 0 && stepsTaken < stepsPerSquare)
+	{
+		stepsTaken++;
+		return true;
+	}
+
+	// Ooh, time to try and move into a new square. Just make sure you haven't reached the end of your path though. That would make everyone look silly.
+	else if (nextMove() != 0)
+	{	
+		// Okay, we haven't reached the base yet. Let's make sure that the next square isn't occupied.
+		if (map->walkable(getNextX(), getNextY(), id))
+		{
+			// GET IN! The next tile is available. Let's move!
+			moveIntoNewTile(map);
+			return true;
+		}
+		
+		// Well shit, we can't move. Is there some other way we can get around to the base?
+		// Let's hope so. We'll update the path with the new values and try again next move.
+		else
+		{
+			holdPosition(map);
+			return false;
+		}
+	}
+
+	// You've reached the end of your path! No need to move :)
+	holdPosition(map);
+	return false;	
+}
+
+int Enemy::nextMove()
+{
+	int nextDir = (pathToFollow.size() > 0) ?  pathToFollow.back() : 0;
+
+	return nextDir;
+}
+
+void Enemy::moveIntoNewTile(Map* map)
+{
+	releaseAllMyTiles(map);
+
+	if (stepsTaken == stepsPerSquare)
+	{
+		pathToFollow.pop_back();
+		xCoordinates.pop_back();
+		yCoordinates.pop_back();
+	}
+
+	lockThisTile(map);
+	lockNextTile(map);
+	stepsTaken = 1;	
+}
+
+void Enemy::holdPosition(Map* map)
+{
+	releaseAllMyTiles(map);
+	lockThisTile(map);
+}
+
+void Enemy::releaseAllMyTiles(Map* map)
+{
+	/* This is too brute-forcey, should be able to optimise this! */
+
+	for (int x = 0; x < BOARD_WIDTH*BLOCK_SIZE; x += BLOCK_SIZE)
+	{
+		for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y += BLOCK_SIZE)
+		{
+			if (map->getEnemy(x, y) == id)
+			{
+				map->setTerrain(x, y, CLEARTERRAIN);
+				map->setEnemy(x, y, 0);
+			}
+		}
+	}
+}
+
+void Enemy::lockThisTile(Map* map)
+{
+	int thisX = getX() - (getX() % BLOCK_SIZE) - BORDER;
+	int thisY = getY() - (getY() % BLOCK_SIZE) - BORDER;
+
+	if (map->walkable(thisX, thisY, id))
+	{
+		map->setTerrain(thisX, thisY, HASENEMY);
+		map->setEnemy(thisX, thisY, id);
+	}
+}
+
+void Enemy::lockNextTile(Map* map)
+{
+	int thisX = getX() - (getX() % BLOCK_SIZE) - BORDER;
+	int thisY = getY() - (getY() % BLOCK_SIZE) - BORDER;
+	int otherX = thisX;
+	int otherY = thisY;	
+
+	switch (pathToFollow.back())
+	{
+	case UP: 
+		thisY -= BLOCK_SIZE;
+		break;
+	case RIGHT:
+		thisX += BLOCK_SIZE;
+		break;
+	case DOWN:
+		thisY += BLOCK_SIZE;
+		break;
+	case LEFT:
+		thisX -= BLOCK_SIZE;
+		break;
+	case UPLEFT:
+		thisX -= BLOCK_SIZE;
+		thisY -= BLOCK_SIZE;
+		break;
+	case UPRIGHT:
+		thisX += BLOCK_SIZE;
+		thisY -= BLOCK_SIZE;
+		break;
+	case DOWNRIGHT:
+		thisX += BLOCK_SIZE;
+		thisY += BLOCK_SIZE;
+		break;
+	case DOWNLEFT:
+		thisX -= BLOCK_SIZE;
+		thisY += BLOCK_SIZE;
+		break;
+	default:
+		break;
+	}
+
+	if (map->walkable(thisX, thisY, id))
+	{
+		map->setTerrain(thisX, thisY, HASENEMY);
+		map->setEnemy(thisX, thisY, id);
+	}
+
+	if (pathToFollow.back() == UPRIGHT || pathToFollow.back() == UPLEFT || pathToFollow.back() == DOWNRIGHT || pathToFollow.back() == DOWNLEFT)
+	{
+		if (map->walkable(otherX, thisY, id))
+		{
+			map->setTerrain(otherX, thisY, HASENEMY);
+			map->setEnemy(otherX, thisY, id);
+		}
+
+		if (map->walkable(thisX, otherY, id))
+		{
+			map->setTerrain(thisX, otherY, HASENEMY);
+			map->setEnemy(thisX, otherY, id);
+		}
+	}
 }
 
 

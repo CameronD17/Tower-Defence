@@ -32,13 +32,6 @@
 #define DIAGONALCOST 14
 #define ORTHOGONALCOST 10
 
-//#define UP 1
-//#define UPRIGHT 2
-//#define RIGHT 3
-//#define DOWNRIGHT 4
-//#define DOWN 5
-//#define DOWNLEFT 6
-//#define LEFT 7
-//#define UPLEFT 8
-//#define SCREEN_FPS 30
-//#define SCREEN_TICK (1000/SCREEN_FPS)
+#define BOUNTY_MULTIPLIER 10
+#define VALUE_MULTIPLIER 10
+#define HEALTH_MULTIPLIER 100

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-#define UPDATESPERSECOND 10
+#define UPDATESPERSECOND 60
 #define SKIPTICKS (1000 / UPDATESPERSECOND)
 
 int main(int argc, char* args[])
@@ -17,7 +17,7 @@ int main(int argc, char* args[])
 	int gameState = 0;
 
 	float nextUpdate = SDL_GetTicks();
-	float currentTime;
+	unsigned int currentTime;
 	
 	while (gameState != -1) 
 	{
