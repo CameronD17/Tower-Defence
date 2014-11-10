@@ -143,8 +143,16 @@ bool Enemy::canWalk(Map* map)
 
 	// Ooh, time to try and move into a new square. Just make sure you haven't reached the end of your path though. That would make everyone look silly.
 	else if (nextMove() != 0)
-	{	
-		// Okay, we haven't reached the base yet. Let's make sure that the next square isn't occupied.
+	{
+		// Okay, we haven't reached the base yet. Pop-off the path coordinates of the current tile to access the next tile
+		if (stepsTaken == stepsPerSquare)
+		{
+			pathToFollow.pop_back();
+			xCoordinates.pop_back();
+			yCoordinates.pop_back();
+		}
+
+		// Let's make sure that the next square isn't occupied.
 		if (map->walkable(getNextX(), getNextY(), id))
 		{
 			// GET IN! The next tile is available. Let's move!
@@ -156,12 +164,13 @@ bool Enemy::canWalk(Map* map)
 		// Let's hope so. We'll update the path with the new values and try again next move.
 		else
 		{
-			holdPosition(map);
+			updatePath(map);
 			return false;
 		}
 	}
 
-	// You've reached the end of your path! No need to move :)
+	// You've reached the end of your path! No need to move :) let's just make sure there isn't a better way.
+	updatePath(map);
 	holdPosition(map);
 	return false;	
 }
@@ -176,14 +185,6 @@ int Enemy::nextMove()
 void Enemy::moveIntoNewTile(Map* map)
 {
 	releaseAllMyTiles(map);
-
-	if (stepsTaken == stepsPerSquare)
-	{
-		pathToFollow.pop_back();
-		xCoordinates.pop_back();
-		yCoordinates.pop_back();
-	}
-
 	lockThisTile(map);
 	lockNextTile(map);
 	stepsTaken = 1;	

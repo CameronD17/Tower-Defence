@@ -23,6 +23,7 @@ void Map::init(char map)
 			for (int y = 0; y < BOARD_HEIGHT; y++)
 			{
 				tiles[x][y].terrain = CLEARTERRAIN;
+				tiles[x][y].enemy = 0;
 			}
 		}
 	}
@@ -82,8 +83,8 @@ void Map::setEnemy(int x, int y, int id)
 
 bool Map::walkable(int x, int y, int id)
 {
-	if (tiles[(x / BLOCK_SIZE)][(y / BLOCK_SIZE)].terrain == BLOCKEDTERRAIN 
-		|| (tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].terrain == HASENEMY && tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].enemy != id))
+	if ((tiles[(x / BLOCK_SIZE)][(y / BLOCK_SIZE)].terrain == BLOCKEDTERRAIN 
+		|| (tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].terrain == HASENEMY)) && tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].enemy != id)
 	{
 		return false;
 	}

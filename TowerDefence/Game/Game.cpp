@@ -95,6 +95,20 @@ void Game::drawGamePieces()
 		engine.graphics.renderText((*e)->getX() + 4, (*e)->getY() + 4, idNo.str(), 20);
 	}	
 
+	for (int x = 0; x < BOARD_WIDTH*BLOCK_SIZE; x += BLOCK_SIZE)
+	{
+		for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y += BLOCK_SIZE)
+		{
+			if (map.getTerrain(x, y) == HASENEMY)
+			{
+				engine.graphics.drawRectangleOL(x + BORDER, y + BORDER, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 255);
+				stringstream ID2;
+				ID2 << map.getEnemy(x, y);
+				engine.graphics.renderText(x + BORDER + 4, y + BORDER + 4, ID2.str(), 10, 255, 255, 0);
+			}
+		}
+	}
+
 	engine.graphics.drawRectangleOL(targetX - 1, targetY - 1, BLOCK_SIZE + 2, BLOCK_SIZE + 2, 0, 255, 255);
 }
 
