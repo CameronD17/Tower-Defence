@@ -39,6 +39,8 @@ public:
 		
 	void update();	// Update the window with redrawn data
 
+	void drawLine(int x1, int y1, int x2, int y2);
+
 	void drawRectangle(int x, int y, int w, int h, Uint8 r, Uint8 g, Uint8 b);
 
 	void drawRectangleOL(int x, int y, int w, int h, Uint8 r, Uint8 g, Uint8 b);

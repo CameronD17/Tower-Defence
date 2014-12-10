@@ -55,6 +55,11 @@ void Graphics::update()
     SDL_RenderPresent(renderer);					// Update the renderer
 }
 
+void Graphics::drawLine(int x1, int y1, int x2, int y2)
+{
+	SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+}
+
 void Graphics::drawRectangle(int x, int y, int w, int h, Uint8 r, Uint8 g, Uint8 b)
 {
 	SDL_Rect rect;

@@ -34,7 +34,7 @@ void Tower::setStats(int t)
 	level = 0;
 	hits = 0;
 	kills = 0;
-	enemyDetected = false;
+	currentlyFired = 0;
 
 	switch (t)
 	{
@@ -45,6 +45,7 @@ void Tower::setStats(int t)
 		damage = 4;
 		range = 4;
 		reload = 20;
+		maxCapacity = 1;
 		break;
 
 	// Light Cannon
@@ -53,6 +54,7 @@ void Tower::setStats(int t)
 		damage = 10;
 		range = 3;
 		reload = 100;
+		maxCapacity = 1;
 		break;
 
 	// Default
@@ -61,16 +63,40 @@ void Tower::setStats(int t)
 		damage = 0;
 		range = 0;
 		reload = 0;
+		maxCapacity = 1;
 		break;
 	}
 
 	range *= BLOCK_SIZE;
 }
 
-void Tower::fire(long dir)
+void Tower::update(Map* m, vector<Enemy*>* enemies)
 {
-	//Bullet * b = new Bullet((getX() + (BLOCK_SIZE/2)), (getY() + (BLOCK_SIZE/2)), dir);
-	//bullets.push_back(b);
+	hasEnemy = checkForEnemies(m, enemies);
+
+	if (hasEnemy)
+	{
+		fire();
+	}
+
+	for (std::vector<Bullet*>::iterator b = bullets.begin(); b != bullets.end(); ++b)
+	{
+		if ((*b)->hitTarget())
+		{
+			currentlyFired--;
+		}
+	}
+}
+
+
+void Tower::fire()
+{
+	if (currentlyFired <= maxCapacity)
+	{
+		currentlyFired++;
+		Bullet * b = new Bullet((getX() + (BLOCK_SIZE / 2)), (getY() + (BLOCK_SIZE / 2)), (enemy->getX() + (BLOCK_SIZE / 2)), (enemy->getY() + (BLOCK_SIZE / 2)), range);
+		bullets.push_back(b);
+	}
 }
 
 int Tower::getCost()
@@ -78,7 +104,7 @@ int Tower::getCost()
 	return cost;
 }
 
-bool Tower::checkForEnemies(Map* m)
+bool Tower::checkForEnemies(Map* m, vector<Enemy*>* enemies)
 {
 	for (int x = getX() - range; x < getX() + range; x += BLOCK_SIZE)
 	{
@@ -86,7 +112,14 @@ bool Tower::checkForEnemies(Map* m)
 		{
 			if ((*m).getTerrain(x, y) == HASENEMY)
 			{
-				return true;
+				for (std::vector<Enemy*>::iterator e = enemies->begin(); e != enemies->end(); ++e)
+				{
+					if ((*e)->getID() == (*m).getEnemy(x, y))
+					{
+						enemy = (*e);
+						return true;
+					}
+				}
 			}
 		}
 	}

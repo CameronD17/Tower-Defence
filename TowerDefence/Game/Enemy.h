@@ -17,10 +17,13 @@ public:
 	Enemy(ResourceManager &rm, int x, int y, int type, int targetX, int targetY, int level, Map* m, int i);
 	~Enemy();
 
+	void update(Map* m);
 	bool checkPathFromBase(Map* m);
 	void updatePath(Map* m);
 	void updateTarget(int tX, int tY);
 	int nextMove();
+	int getMapX()const;
+	int getMapY()const;
 	int getNextX()const;
 	int getNextY()const;
 	int getID()const;
@@ -28,6 +31,7 @@ public:
 	bool canWalk(Map* map);
 	void moveIntoNewTile(Map* m);
 	void holdPosition(Map* m);
+	bool checkWalkabilityOfNextTile(Map* m);
 	int stepsTaken;
 
 private:
@@ -50,6 +54,8 @@ private:
 	void releaseAllMyTiles(Map* m);
 	void lockThisTile(Map* m);
 	void lockNextTile(Map* m);
+
+	bool reachTarget(Map* m);
 
 	void aStarSetMapValues(Map* m, bool swim);
 	int aStarGetGCost(int x, int y, int pX, int pY);

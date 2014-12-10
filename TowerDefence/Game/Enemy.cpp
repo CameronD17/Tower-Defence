@@ -104,6 +104,16 @@ void Enemy::getSprites()
 	}
 }
 
+int Enemy::getMapX()const
+{
+	return (getX() - BORDER) / BLOCK_SIZE;
+}
+
+int Enemy::getMapY()const
+{
+	return (getY() - BORDER) / BLOCK_SIZE;
+}
+
 int Enemy::getNextX()const
 {
 	switch (pathToFollow.back())
@@ -134,6 +144,9 @@ int Enemy::getNextY()const
 
 bool Enemy::canWalk(Map* map)
 {
+	// Check if you're there first to avoid unnecessary calculations
+	if (reachTarget(map)) return false;
+
 	// Hey, you've committed to moving into the next square. Trust your instincts.
 	if (stepsTaken > 0 && stepsTaken < stepsPerSquare)
 	{
@@ -288,6 +301,57 @@ void Enemy::lockNextTile(Map* map)
 	}
 }
 
+bool Enemy::checkWalkabilityOfNextTile(Map* map)
+{
+	bool isFree = false;
+
+	switch (pathToFollow.back())
+	{
+	case UP: case DOWN: case LEFT: case RIGHT:
+		isFree = (map->walkable(getNextX(), getNextY(), id));
+		break;
+
+	case UPRIGHT: 
+		isFree = (	map->walkable(getNextX(), getNextY(), id) 
+			&& map->walkable(getNextX(), getNextY() - BLOCK_SIZE, id) 
+			&& map->walkable(getNextX() + BLOCK_SIZE, getNextY(), id));
+		break;
+
+	case UPLEFT:
+		isFree = (map->walkable(getNextX(), getNextY(), id)
+			&& map->walkable(getNextX(), getNextY() - BLOCK_SIZE, id)
+			&& map->walkable(getNextX() - BLOCK_SIZE, getNextY(), id));
+		break;
+
+	case DOWNRIGHT:
+		isFree = (map->walkable(getNextX(), getNextY(), id)
+			&& map->walkable(getNextX(), getNextY() + BLOCK_SIZE, id)
+			&& map->walkable(getNextX() + BLOCK_SIZE, getNextY(), id));
+		break;
+
+	case DOWNLEFT:
+		isFree = (map->walkable(getNextX(), getNextY(), id)
+			&& map->walkable(getNextX(), getNextY() + BLOCK_SIZE, id)
+			&& map->walkable(getNextX() - BLOCK_SIZE, getNextY(), id));
+		break;
+
+	default:
+		break;
+	}
+
+	return isFree;
+}
+
+bool Enemy::reachTarget(Map* map)
+{
+	if (targetX == getMapX() && targetY == getMapY())
+	{
+		setDeleted(true);
+		releaseAllMyTiles(map);
+		return true;
+	}
+	return false;
+}
 
 
 // *** A-Star Pathfinding functions *** //
