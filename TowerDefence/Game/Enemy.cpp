@@ -19,13 +19,7 @@ Enemy::Enemy(ResourceManager &rm, int x, int y, int t, int tX, int tY, int l, Ma
 {
 	resource = rm;
 	id = i;
-	
-	leftBase = false;
-	stepsTaken = 0;
-	waitingPeriod = 0;
-
-	initialise(x, y, tX, tY, t, m);
-	setStats(l);
+	initialise(l, x, y, tX, tY, t, m);	
 }
 
 Enemy::~Enemy()
@@ -33,21 +27,15 @@ Enemy::~Enemy()
 
 }
 
-void Enemy::initialise(int x, int y, int tX, int tY, int t, Map* m)
+void Enemy::initialise(int level, int x, int y, int tX, int tY, int t, Map* m)
 {
 	setX(x);
 	setY(y);
 	setType(t);
 
-	updateTarget(tX, tY);
-	updatePath(m);
-
-	(*m).setTerrain(x - BORDER, y - BORDER, HASENEMY);
-	(*m).setEnemy(x - BORDER, y - BORDER, id);
-}
-
-void Enemy::setStats(int level)
-{
+	leftBase = false;
+	stepsTaken = 0;
+	waitingPeriod = 0;
 	maxHealth = level * HEALTH_MULTIPLIER;
 	currentHealth = maxHealth;
 	value = level * VALUE_MULTIPLIER;
@@ -56,6 +44,12 @@ void Enemy::setStats(int level)
 	speed = 0;				// Change to check type
 	stepSize = 2;
 	stepsPerSquare = BLOCK_SIZE / stepSize;
+
+	updateTarget(tX, tY);
+	updatePath(m);
+
+	(*m).setTerrain(x - BORDER, y - BORDER, HASENEMY);
+	(*m).setEnemy(x - BORDER, y - BORDER, id);
 }
 
 void Enemy::updateTarget(int x, int y)
@@ -398,7 +392,7 @@ bool Enemy::findPath(int sX, int sY, Map* map)
 		{
 			for (int x = parentXval - 1; x <= parentXval + 1; x++)
 			{
-				if (x > -1 && y > -1 && x < BOARD_WIDTH + 1 && y < BOARD_HEIGHT + 1		// If the tile is not off the map
+				if (x > -1 && y > -1 && x < BOARD_WIDTH && y < BOARD_HEIGHT	// If the tile is not off the map
 					&& whichList[x][y] != CLOSED										// and if not already on the closed list
 					&& terrain[x][y] != BLOCKEDTERRAIN									// and terrain is not impassable
 					&& aStarCutCorner(x, y))											// and you aren't cutting a corner

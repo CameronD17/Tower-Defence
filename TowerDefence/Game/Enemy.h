@@ -45,8 +45,7 @@ private:
 	vector<int> yCoordinates;
 	vector<SDL_Texture*> sprites;
 
-	void initialise(int x, int y, int tX, int tY, int type, Map* m);
-	void setStats(int level);
+	void initialise(int level, int x, int y, int tX, int tY, int type, Map* m);
 
 	bool findPath(int startX, int startY, Map* m);
 	void getSprites();
