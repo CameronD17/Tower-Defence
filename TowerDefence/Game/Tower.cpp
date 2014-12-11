@@ -106,9 +106,9 @@ int Tower::getCost()
 
 bool Tower::checkForEnemies(Map* m, vector<Enemy*>* enemies)
 {
-	for (int x = getX() - range; x < getX() + range; x += BLOCK_SIZE)
+	for (int x = getX() - range; (x < getX() + range) && (x < BOARD_WIDTH * BLOCK_SIZE); x += BLOCK_SIZE)
 	{
-		for (int y = getY() - range; y < getY() + range; y += BLOCK_SIZE)
+		for (int y = getY() - range; (y < getY() + range) && (y < BOARD_HEIGHT * BLOCK_SIZE); y += BLOCK_SIZE)
 		{
 			if ((*m).getTerrain(x, y) == HASENEMY)
 			{
