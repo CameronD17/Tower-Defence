@@ -27,7 +27,7 @@ public:
 	int getNextX()const;
 	int getNextY()const;
 	int getID()const;
-	int getStepSize()const;
+	int getSpeed()const;
 	bool canWalk(Map* map);
 	void moveIntoNewTile(Map* m);
 	void holdPosition(Map* m);
@@ -36,7 +36,7 @@ public:
 
 private:
 
-	int id, targetX, targetY, currentHealth, maxHealth, value, bounty, speed, stepSize, stepsPerSquare;
+	int id, targetX, targetY, currentHealth, maxHealth, value, bounty, speed, stepsPerSquare;
 	unsigned int waitingPeriod;
 	bool leftBase, isBoss, canSwim, isWaiting;
 	string category;

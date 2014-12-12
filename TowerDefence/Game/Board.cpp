@@ -28,7 +28,7 @@ void Board::update()
 		{
 			if ((*e)->canWalk(&map))
 			{
-				engine.physics.move((*e), (*e)->nextMove(), (*e)->getStepSize());
+				engine.physics.move((*e), (*e)->nextMove(), (*e)->getSpeed());
 			}
 		}
 

@@ -21,10 +21,9 @@ Bullet::Bullet(int x, int y, int tX, int tY, int r)
 	startY = y;
 	targetX = tX;
 	targetY = tY;
-	speed = 10;
-	angle = atan2(tY - y, tX - x) * 180 / M_PI;
-	dX = speed*cos(angle);
-	dY = speed*sin(angle);
+	speed = 4;
+	dX = ((tX - x) / BLOCK_SIZE) * speed;
+	dY = ((tY - y) / BLOCK_SIZE) * speed;
 }
 
 bool Bullet::hitTarget()

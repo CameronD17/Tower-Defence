@@ -41,9 +41,8 @@ void Enemy::initialise(int level, int x, int y, int tX, int tY, int t, Map* m)
 	value = level * VALUE_MULTIPLIER;
 	bounty = level * BOUNTY_MULTIPLIER;
 	canSwim = false;		// Change to check type
-	speed = 0;				// Change to check type
-	stepSize = 2;
-	stepsPerSquare = BLOCK_SIZE / stepSize;
+	speed = (rand() % 4) + 1;				// Change to check type
+	stepsPerSquare = (int)(BLOCK_SIZE / speed);
 
 	updateTarget(tX, tY);
 	updatePath(m);
@@ -72,11 +71,6 @@ void Enemy::updatePath(Map* m)
 int Enemy::getID()const
 {
 	return id;
-}
-
-int Enemy::getStepSize()const
-{
-	return stepSize;
 }
 
 void Enemy::getSprites()
@@ -134,6 +128,11 @@ int Enemy::getNextY()const
 		return ((yCoordinates.back() - 1) * BLOCK_SIZE);
 	}
 	return -1;
+}
+
+int Enemy::getSpeed()const
+{
+	return speed;
 }
 
 bool Enemy::canWalk(Map* map)
