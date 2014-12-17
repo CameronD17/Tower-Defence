@@ -1,21 +1,25 @@
 #include "Game.h"
 
-Game::Game(void){}
-
-Game::Game(Engine &e)
+Game::Game()
 {
-	engine = e;
-}
-
-void Game::newGame()
-{
+	engine.init();
 	board.setup(engine);
 	//sidebar.setup(engine);
 }
 
+Game::~Game()
+{
+	close();
+}
+
+void Game::close()
+{
+	engine.close();
+}
+
 // *** DRAW METHODS *** //
 
-void Game::draw(float interpolation)
+void Game::draw()
 {
 	engine.graphics.clear();			// Clear the graphics
 	
@@ -51,13 +55,6 @@ void Game::drawBoardBackground()
 			{
 				engine.graphics.drawRectangle(x + BORDER, y + BORDER, BLOCK_SIZE, BLOCK_SIZE, 0, 255, 0);
 			}
-			else if (board.map.getTerrain(x, y) == HASENEMY)
-			{
-				engine.graphics.drawRectangleOL(x + BORDER, y + BORDER, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 255);
-				stringstream ID2;
-				ID2 << board.map.getEnemy(x, y);
-				engine.graphics.renderText(x + BORDER + 4, y + BORDER + 4, ID2.str(), 10, 255, 255, 0);
-			}
 		}
 	}
 }
@@ -69,7 +66,6 @@ void Game::drawGamePieces()
 		if ((*t)->hasEnemy)
 		{
 			engine.graphics.drawRectangle((*t)->getX(), (*t)->getY(), BLOCK_SIZE, BLOCK_SIZE, 255, 0, 255);
-			engine.graphics.drawRectangleOL((*t)->getX() - 1, (*t)->getY() - 1, (BLOCK_SIZE) + 2, (BLOCK_SIZE) + 2, 255, 255, 255);
 			//engine.graphics.drawLine((*t)->getX() + (BLOCK_SIZE / 2), (*t)->getY() + (BLOCK_SIZE / 2), (*t)->enemy->getX() + (BLOCK_SIZE / 2), (*t)->enemy->getY() + (BLOCK_SIZE / 2));
 		}
 		else
@@ -87,24 +83,6 @@ void Game::drawGamePieces()
 	for (std::vector<Enemy*>::iterator e = board.enemies.begin(); e != board.enemies.end(); ++e)
 	{
 		engine.graphics.drawRectangle((*e)->getX(), (*e)->getY(), BLOCK_SIZE, BLOCK_SIZE, 255, 0, 0);
-		engine.graphics.drawRectangleOL((*e)->getX()-1, (*e)->getY()-1, BLOCK_SIZE+2, BLOCK_SIZE+2, 255, 255, 255);
-		stringstream idNo;
-		idNo << (*e)->getID();
-		engine.graphics.renderText((*e)->getX() + 4, (*e)->getY() + 4, idNo.str(), 20);
-	}	
-
-	for (int x = 0; x < BOARD_WIDTH*BLOCK_SIZE; x += BLOCK_SIZE)
-	{
-		for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y += BLOCK_SIZE)
-		{
-			if (board.map.getTerrain(x, y) == HASENEMY)
-			{
-				engine.graphics.drawRectangleOL(x + BORDER, y + BORDER, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 255);
-				stringstream ID2;
-				ID2 << board.map.getEnemy(x, y);
-				engine.graphics.renderText(x + BORDER + 4, y + BORDER + 4, ID2.str(), 10, 255, 255, 0);
-			}
-		}
 	}
 
 	engine.graphics.drawRectangleOL(board.targetX - 1, board.targetY - 1, BLOCK_SIZE + 2, BLOCK_SIZE + 2, 0, 255, 255);
@@ -150,60 +128,6 @@ void Game::drawDebugFeatures()
 {
 	if (board.debugMode)
 	{
-		// Enemy path
-		/*if (!enemies.empty())
-		{
-			Enemy *e = enemies.front();
-
-			int xp = e->getX() - (e->getX() % BLOCK_SIZE);	int yp = e->getY() - (e->getY() % BLOCK_SIZE);
-
-			for (vector<int>::reverse_iterator i = e->pathToFollow.rbegin(); i != e->pathToFollow.rend(); ++i)
-			{
-				switch ((*i))
-				{
-				case UP:
-					yp -= BLOCK_SIZE;
-					break;
-
-				case UPRIGHT:
-					yp -= BLOCK_SIZE;
-					xp += BLOCK_SIZE;
-					break;
-
-				case RIGHT:
-					xp += BLOCK_SIZE;
-					break;
-
-				case DOWNRIGHT:
-					xp += BLOCK_SIZE;
-					yp += BLOCK_SIZE;
-					break;
-
-				case DOWN:
-					yp += BLOCK_SIZE;
-					break;
-
-				case DOWNLEFT:
-					yp += BLOCK_SIZE;
-					xp -= BLOCK_SIZE;
-					break;
-
-				case LEFT:
-					xp -= BLOCK_SIZE;
-					break;
-
-				case UPLEFT:
-					xp -= BLOCK_SIZE;
-					yp -= BLOCK_SIZE;
-					break;
-
-				default:
-					break;
-				}
-
-				engine.graphics.drawRectangle(xp + (BLOCK_SIZE / 4), yp + (BLOCK_SIZE / 4), BLOCK_SIZE / 2, BLOCK_SIZE / 2, 0xd3, 0xd3, 0xd3);
-			}
-		}*/
 		// Cursor Position
 		stringstream cursorText;
 		int x, y;
@@ -211,13 +135,56 @@ void Game::drawDebugFeatures()
 		cursorText << "Cursor: (" << board.cursor.getX() << "," << board.cursor.getY() << ")  Actual: (" << x << "," << y << ")";
 		engine.graphics.renderText(10, 10, cursorText.str(), 20, 255, 255, 255);
 
-		// Map Statistics
-		for (int x = 0; x < BOARD_WIDTH*BLOCK_SIZE; x+=BLOCK_SIZE)
+		//// Map Statistics
+		//for (int x = 0; x < BOARD_WIDTH*BLOCK_SIZE; x+=BLOCK_SIZE)
+		//{
+		//	for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y+=BLOCK_SIZE)
+		//	{
+		//		string terrainType(1, board.map.getTerrain(x, y));
+		//		engine.graphics.renderText(BORDER + x, BORDER + y, terrainType, 20, 255, 255, 255);
+		//	}
+		//}
+
+		for (std::vector<Enemy*>::iterator e = board.enemies.begin(); e != board.enemies.end(); ++e)
 		{
-			for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y+=BLOCK_SIZE)
+			stringstream idNo;
+			idNo << (*e)->getID();
+			engine.graphics.renderText((*e)->getX() + 4, (*e)->getY() + 4, idNo.str(), 20);
+		}
+
+		for (int x = 0; x < BOARD_WIDTH*BLOCK_SIZE; x += BLOCK_SIZE)
+		{
+			for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y += BLOCK_SIZE)
 			{
-				string terrainType(1, board.map.getTerrain(x, y));
-				engine.graphics.renderText(BORDER + x, BORDER + y, terrainType, 20, 255, 255, 255);
+				if (board.map.getTerrain(x, y) == HASENEMY)
+				{
+					engine.graphics.drawRectangleOL(x + BORDER, y + BORDER, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 255);
+					stringstream ID2;
+					ID2 << board.map.getEnemy(x, y);
+					engine.graphics.renderText(x + BORDER + 4, y + BORDER + 4, ID2.str(), 10, 255, 255, 0);
+				}
+			}
+		}
+
+		for (int x = 0; x < BOARD_WIDTH*BLOCK_SIZE; x += BLOCK_SIZE)
+		{
+			for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y += BLOCK_SIZE)
+			{
+				if (board.map.getTerrain(x, y) == HASENEMY)
+				{
+					engine.graphics.drawRectangleOL(x + BORDER, y + BORDER, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 255);
+					stringstream ID2;
+					ID2 << board.map.getEnemy(x, y);
+					engine.graphics.renderText(x + BORDER + 4, y + BORDER + 4, ID2.str(), 10, 255, 255, 0);
+				}
+			}
+		}
+
+		for (std::vector<Tower*>::iterator t = board.towers.begin(); t != board.towers.end(); ++t)
+		{
+			if ((*t)->hasEnemy)
+			{
+				engine.graphics.drawLine((*t)->getX() + (BLOCK_SIZE / 2), (*t)->getY() + (BLOCK_SIZE / 2), (*t)->enemy->getX() + (BLOCK_SIZE / 2), (*t)->enemy->getY() + (BLOCK_SIZE / 2));
 			}
 		}
 	}

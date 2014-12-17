@@ -88,7 +88,6 @@ void Tower::update(Map* m, vector<Enemy*>* enemies)
 	}
 }
 
-
 void Tower::fire()
 {
 	if (currentlyFired <= maxCapacity)

@@ -1,44 +1,18 @@
-﻿#include "Engine\Engine.h"
-#include "Game\Game.h"
-#include <stdlib.h>
-#include <crtdbg.h>
-
-// TESTING PUSH FOR SAM 10-DEC 21:45
-// COLLABORATION A-GO-GO!!
-
-#define UPDATESPERSECOND 60
-#define SKIPTICKS (1000 / UPDATESPERSECOND)
+﻿#include "Game\Game.h"
 
 int main(int argc, char* args[])
 {
-	Engine engine;
-	engine.init();
+	Game game;	
 
-	Game game(engine);	
-	game.newGame();
+	int state = 0;
 
-	int gameState = 0;
-
-	float nextUpdate = SDL_GetTicks();
-	unsigned int currentTime;
-	
-	while (gameState != -1) 
+	while (state != -1) 
 	{
-		currentTime = SDL_GetTicks();
-
-		gameState = game.getInput();
-
-		while (nextUpdate < currentTime) 
-		{
-			game.update();
-			nextUpdate += SKIPTICKS;
-		}
-
-		float interpolation = (currentTime + SKIPTICKS - nextUpdate) / SKIPTICKS;
-		game.draw(interpolation);
+		state = game.getInput();
+		game.update();
+		game.draw();
 	}
 
-
-	engine.close();
+	game.close();
 	return 0;
 }

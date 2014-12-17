@@ -173,7 +173,7 @@ void ResourceManager::close()
 	}
 
 	// Clean up sounds
-	Mix_FreeMusic(music);	
+	// Mix_FreeMusic(music);	
 	for (unsigned int i = 0; i < sounds.size(); i++)
 	{
 		if (sounds.at(i) != NULL) 

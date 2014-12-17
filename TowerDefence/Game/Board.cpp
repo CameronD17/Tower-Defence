@@ -42,7 +42,7 @@ void Board::update()
 			}
 		}
 
-		eTimer = SDL_GetTicks() + 10;
+		eTimer = SDL_GetTicks() + 0;
 	}
 
 	destroyObjects();

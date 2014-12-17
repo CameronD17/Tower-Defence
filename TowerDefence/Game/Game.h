@@ -11,13 +11,7 @@ class Game
 {
 
 private:
-	// *** VARIABLES *** //
-
 	
-	// *** METHODS *** //
-			
-
-	// Draw methods
 	void drawBoardBackground();
 	void drawGamePieces();
 	void drawBoardForeground();
@@ -26,8 +20,8 @@ private:
 
 
 public:	
-	Game(void);
-	Game(Engine &sc);	
+	Game();	
+	~Game();
 	Engine engine;
 	Board board;
 	Sidebar sidebar;
@@ -35,5 +29,6 @@ public:
 	void newGame();
 	int getInput();
 	void update();
-	void draw(float interpolation);
+	void draw();
+	void close();
 };
