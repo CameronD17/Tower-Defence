@@ -2,9 +2,9 @@
 
 #include "../Engine/Engine.h"
 #include "Constants.h"
-#include "Cursor.h"
 #include "Tower.h"
 #include "Enemy.h"
+#include "Cursor.h"
 #include <vector>
 #include <iostream>
 #include <sstream>
@@ -35,15 +35,13 @@ private:
 	// *** METHODS *** //
 
 	// Gameplay methods
-	void placeTower();
-	void launchEnemy();
+	void placeTower(Cursor &cursor);
+	void launchEnemy(Cursor &cursor);
 	void deleteTower();
 	void moveEnemies();
 	void moveBullets();
 	void destroyObjects();
 	void cleanup();
-	void saveScore();
-	void setMessage(string m);
 
 	bool pathAvailable(int xPos, int yPos);
 	bool clearToBuild(int xPos, int yPos);
@@ -60,12 +58,12 @@ public:
 
 	Engine engine;
 	Map map;
-	Cursor cursor;
+
 	vector<Tower*>  towers;
 	vector<Enemy*>  enemies;
 
 	void setup(Engine &e);
-	int getInput();
+	int getInput(Cursor &cursor);
 	void update();
 	void draw(float interpolation);
 };

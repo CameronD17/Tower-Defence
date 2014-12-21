@@ -1,26 +1,10 @@
 #include "Tower.h"
 #include <iostream>
 
-Tower::Tower() 
-{
-	setX(0);
-    setY(0);
-	setType(0);
-	damage = 10;
-}
-
-Tower::Tower(int x, int y) 
-{
-	setX(x);
-	setY(y);
-	setType(0);
-}
-
 Tower::Tower(int x, int y, int t) 
 {
 	setX(x);
 	setY(y);
-	setType(t);
 	setStats(t);
 };
 
@@ -31,6 +15,7 @@ Tower::~Tower()
 
 void Tower::setStats(int t)
 {
+	type = t;
 	level = 0;
 	hits = 0;
 	kills = 0;

@@ -9,8 +9,8 @@ class Tower : public Object
 {
 
 public:
-	Tower();
-	Tower(int x, int y);
+	Tower() : Object(){};
+	Tower(int x, int y) : Object(){};
 	Tower(int x, int y, int t);
 	~Tower();
 
@@ -23,7 +23,6 @@ public:
 	bool hasEnemy;	
 
 private:
-	int x, y;
 	int type;
 	int cost;
 	int damage;
@@ -37,9 +36,7 @@ private:
 	int kills;
 
 	void setStats(int t);
-
 	void fire();
-
 	bool checkForEnemies(Map* m, vector<Enemy*>* enemies);
 };
 

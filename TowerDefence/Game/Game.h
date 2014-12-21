@@ -18,13 +18,13 @@ private:
 	void drawCursor();
 	void drawDebugFeatures();
 
-
 public:	
 	Game();	
 	~Game();
 	Engine engine;
 	Board board;
 	Sidebar sidebar;
+	Cursor cursor;
 	
 	void newGame();
 	int getInput();

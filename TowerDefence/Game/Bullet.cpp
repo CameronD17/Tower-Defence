@@ -4,7 +4,6 @@ Bullet::Bullet()
 {
     setX(0);
 	setY(0);
-	setType(0);
 }
 
 Bullet::~Bullet()
@@ -22,8 +21,8 @@ Bullet::Bullet(int x, int y, int tX, int tY, int r)
 	targetX = tX;
 	targetY = tY;
 	speed = 4;
-	dX = ((tX - x) / BLOCK_SIZE) * speed;
-	dY = ((tY - y) / BLOCK_SIZE) * speed;
+	dX = ((tX - x) / BLOCK_SIZE) * (float)speed;
+	dY = ((tY - y) / BLOCK_SIZE) * (float)speed;
 }
 
 bool Bullet::hitTarget()

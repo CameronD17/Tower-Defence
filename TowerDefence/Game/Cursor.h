@@ -9,8 +9,10 @@ public:
 	Cursor(int x, int y); 
 	~Cursor();	
 	int r, g, b;
+	int currentSelection;
 
-	int changeTowerType(int t);
+	int getTowerType()const;
+	void changeTowerType(int t);
 
 	void init(ResourceManager &rm);
 	void reset();

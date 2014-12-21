@@ -5,7 +5,7 @@ Cursor::Cursor()
     setX(0);
     setY(0);
     r = b = g = 0xFF;
-	setType(0);
+	changeTowerType(0);
 }
 
 Cursor::Cursor(int x, int y) //: Object(x, y)
@@ -13,7 +13,7 @@ Cursor::Cursor(int x, int y) //: Object(x, y)
 	setX(0);
 	setY(0);
     r = b = g = 0xFF;
-	setType(0);
+	changeTowerType(0);
 };
 
 Cursor::~Cursor()
@@ -23,37 +23,42 @@ Cursor::~Cursor()
 
 void Cursor::init(ResourceManager &rm)
 {
-	resource = rm;
+	setResources(rm);
 }
 
-int Cursor::changeTowerType(int t)
+void Cursor::changeTowerType(int t)
 {	
-	switch(t){
+	switch(t)
+	{
 		case 0:		//Clear tower type (blank cursor)	//WHITE
 			r = g = b = 0xFF; 
-			texture = NULL;
-			setType(t);
+			setTexture(NULL);
+			currentSelection = t;
 			break;
 		case 1:		//Machine Gun						//BLUE
 			//texture = resource.getImage("Game/Images/Sprites/tower1.png"); 
-			setType(t);
+			currentSelection = t;
             break;
         case 2:		//Cannon							//YELLOW
 			//texture = resource.getImage("Game/Images/Sprites/tower2.png"); 
-			setType(t);
+			currentSelection = t;
             break;
         case 3:		//Laser								//PINK
 			//texture = resource.getImage("Game/Images/Sprites/tower3.png"); 
-			setType(t);
+			currentSelection = t;
             break;
 		case 4:		//Dummy								//BROWN
 			//texture = resource.getImage("Game/Images/Sprites/tower4.png");  
-			setType(-1);
+			currentSelection = t;
 			break;
         default:
             break;
 	}
-	return 0;
+}
+
+int Cursor::getTowerType()const
+{
+	return currentSelection;
 }
 
 void Cursor::reset()
@@ -61,7 +66,7 @@ void Cursor::reset()
 	setX(0);	
     setY(0);
 	r = b = g = 0xFF;
-	texture = NULL;
-	setType(0);
+	setTexture(NULL);
+	changeTowerType(0);
 }
 

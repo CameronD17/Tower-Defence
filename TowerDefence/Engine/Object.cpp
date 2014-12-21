@@ -2,16 +2,16 @@
 
 Object::Object()
 {
-    xPos = 0;
-    yPos = 0;
+    coordinate.xPos = 0;
+	coordinate.yPos = 0;
 	deleted = false;
 	texture = NULL;
 }
 
 Object::Object(int x, int y)
 {
-    xPos = x;
-    yPos = y;
+	coordinate.xPos = x;
+	coordinate.yPos = y;
 	deleted = false;
 	texture = NULL;
 }
@@ -23,17 +23,27 @@ Object::~Object()
 
 int Object::getX()const
 {
-	return xPos;
+	return coordinate.xPos;
 }
 
 int Object::getY()const
 {
-	return yPos;
+	return coordinate.yPos;
 }
 
-int Object::getType()const
+coordinates Object::getCoordinates()const
 {
-	return type;
+	return coordinate;
+}
+
+ResourceManager Object::getResources()const
+{
+	return resource;
+}
+
+SDL_Texture* Object::getTexture()const
+{
+	return texture;
 }
 
 bool Object::isDeleted()const
@@ -43,17 +53,28 @@ bool Object::isDeleted()const
 
 void Object::setX(int N)
 {
-	this->xPos = N;
+	coordinate.xPos = N;
 }
 
 void Object::setY(int N)
 {
-	this->yPos = N;
+	coordinate.yPos = N;
 }
 
-void Object::setType(int N)
+void Object::setCoordinates(int x, int y)
 {
-	this->type = N;
+	coordinate.xPos = x;
+	coordinate.yPos = y;
+}
+
+void Object::setResources(ResourceManager r)
+{
+	resource = r;
+}
+
+void Object::setTexture(SDL_Texture* t)
+{
+	texture = t;
 }
 
 void Object::setDeleted(bool d)

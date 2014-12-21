@@ -8,37 +8,39 @@
  * recognise when I passed things to it
  *-------------------------------------------------------- */
 
-struct button
+struct coordinates
 {
-	SDL_Rect rect;
-	string name;
-	bool selected;
+	int xPos, yPos;
 };
 
 
 class Object
 {
 private:
-	int xPos, yPos; 
-	int type;
+	coordinates coordinate;
 	bool deleted;
-
-public:	
 	SDL_Texture *texture;
 	ResourceManager resource;
 
+public:
 	Object();
 	Object(int x, int y);
 	~Object();
 
 	int getX()const;
 	int getY()const;
-	int getType()const;
-	bool isDeleted()const;
+	coordinates getCoordinates()const;
+	ResourceManager getResources()const;
+	SDL_Texture* getTexture()const;
 
 	void setX(int x);
 	void setY(int y);
-	void setType(int type);
+	void setCoordinates(int x, int y);
+	void setResources(ResourceManager r);
+	void setTexture(SDL_Texture *t);
+
 	void setDeleted(bool deleted);
+
+	bool isDeleted()const;
 };
 

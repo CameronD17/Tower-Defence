@@ -3,8 +3,10 @@
 Game::Game()
 {
 	engine.init();
+	cursor.init(engine.resources);
 	board.setup(engine);
 	//sidebar.setup(engine);
+	engine.admin.start();
 }
 
 Game::~Game()
@@ -114,13 +116,13 @@ void Game::drawBoardForeground()
 void Game::drawCursor()
 {	
 	// *** Draw the cursor *** //
-	if(board.cursor.getType() == 0)	// If there is no tower selected by the cursor, draw a plain white cursor. This is the default starting cursor.
+	if(cursor.getTowerType() == 0)	// If there is no tower selected by the cursor, draw a plain white cursor. This is the default starting cursor.
 	{	
-		engine.graphics.drawRectangleOL(board.cursor.getX(), board.cursor.getY(), BLOCK_SIZE, BLOCK_SIZE, board.cursor.r, board.cursor.g, board.cursor.b);
+		engine.graphics.drawRectangleOL(cursor.getX(), cursor.getY(), BLOCK_SIZE, BLOCK_SIZE, cursor.r, cursor.g, cursor.b);
 	}
 	else
 	{
-		engine.graphics.drawRectangle(board.cursor.getX(), board.cursor.getY(), BLOCK_SIZE, BLOCK_SIZE, board.cursor.r, board.cursor.g, board.cursor.b);
+		engine.graphics.drawRectangle(cursor.getX(), cursor.getY(), BLOCK_SIZE, BLOCK_SIZE, cursor.r, cursor.g, cursor.b);
 	}	
 }
 
@@ -132,7 +134,13 @@ void Game::drawDebugFeatures()
 		stringstream cursorText;
 		int x, y;
 		SDL_GetMouseState(&x, &y);
-		cursorText << "Cursor: (" << board.cursor.getX() << "," << board.cursor.getY() << ")  Actual: (" << x << "," << y << ")";
+
+		int totBullets = 0;
+		for (std::vector<Tower*>::iterator t = board.towers.begin(); t != board.towers.end(); ++t){ totBullets += (*t)->bullets.size();}
+
+		cursorText << "Cursor: (" << cursor.getX() << "," << cursor.getY() << ")  Actual: (" << x << "," << y << ")         "
+			<< "Enemies: " << board.enemies.size() << " Towers: " << board.towers.size() << " Bullets: " << totBullets << "   FPS: " << (int)engine.admin.avgFPS;;
+		
 		engine.graphics.renderText(10, 10, cursorText.str(), 20, 255, 255, 255);
 
 		//// Map Statistics
@@ -195,10 +203,92 @@ void Game::drawDebugFeatures()
 
 void Game::update()
 {
+	engine.admin.updateFPS();
 	board.update();
 }
 
 int Game::getInput()
 {
-	return board.getInput();
+	input k = engine.interfaces.getInput();
+
+	int x, y;
+	SDL_GetMouseState(&x, &y);
+
+	if (k.keyPress)
+	{
+		if (k.key == SDLK_ESCAPE)	// Quit the Board
+		{
+			return -1;
+		}
+		else if (k.key == SDLK_0)
+		{
+			cursor.changeTowerType(0);
+		}
+		else if (k.key == SDLK_1)
+		{
+			cursor.changeTowerType(1);
+		}
+		else if (k.key == SDLK_2)
+		{
+			cursor.changeTowerType(2);
+		}
+		else if (k.key == SDLK_3)
+		{
+			cursor.changeTowerType(3);
+		}
+		else if (k.key == SDLK_d)
+		{
+			board.debugMode ? board.debugMode = false : board.debugMode = true;
+		}
+		else
+		{
+			cursor.changeTowerType(1);
+		}
+	}
+	else if (k.mouseDown)
+	{
+		if (x > BORDER && x < (BORDER + (BOARD_WIDTH*BLOCK_SIZE)) && y > BORDER && y < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE)))
+		{
+			return board.getInput(cursor);
+		}
+		else if (x > (BORDER + (BOARD_WIDTH*BLOCK_SIZE)))
+		{
+			//return sidebar.getInput();
+		}
+	}
+	else
+	{
+		if (x > BORDER && x < (BORDER + (BOARD_WIDTH*BLOCK_SIZE)) && y > BORDER && y < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE)))
+		{
+			//cursor.setType(1);
+			cursor.setX((x - (x%BLOCK_SIZE)));
+			cursor.setY((y - (y%BLOCK_SIZE)));
+		}
+		else
+		{
+			if (cursor.getTowerType() != 0)
+			{
+				cursor.changeTowerType(0);
+				if (x > BORDER && (y > BORDER && y < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE))))
+				{
+					cursor.setX((BOARD_WIDTH*BLOCK_SIZE) - BLOCK_SIZE * 2);
+				}
+				else if (x < (BORDER + (BOARD_WIDTH*BLOCK_SIZE)) && (y > BORDER && y < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE))))
+				{
+					cursor.setX(BORDER - BLOCK_SIZE);
+				}
+
+				if (y > BORDER && (x > BORDER && x < (BORDER + (BOARD_WIDTH*BLOCK_SIZE))))
+				{
+					cursor.setY((BOARD_HEIGHT*BLOCK_SIZE) - BLOCK_SIZE * 2);
+				}
+				else if (y < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE)) && (x > BORDER && x < (BORDER + (BOARD_WIDTH*BLOCK_SIZE))))
+				{
+					cursor.setY(BORDER - BLOCK_SIZE);
+				}
+			}
+		}
+	}
+
+	return 0;
 }
