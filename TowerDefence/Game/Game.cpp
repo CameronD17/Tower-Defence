@@ -188,6 +188,27 @@ void Game::drawDebugFeatures()
 			}
 		}
 
+		if (board.enemies.size() > 0)
+		{
+			for (std::vector<Enemy*>::iterator e = board.enemies.begin(); e != board.enemies.end(); ++e)
+			{
+				int thisX = board.targetX + (BLOCK_SIZE / 2);
+				int thisY = board.targetY + (BLOCK_SIZE / 2);
+
+				for (unsigned i = 0; i < (*e)->astar.pathToFollow.size(); i++)
+				{
+					int nextX = ((*e)->astar.xCoordinates.at(i) * BLOCK_SIZE) + (BLOCK_SIZE / 2) + BORDER;
+					int nextY = ((*e)->astar.yCoordinates.at(i) * BLOCK_SIZE) + (BLOCK_SIZE / 2) + BORDER;
+
+					engine.graphics.drawLine(thisX, thisY, nextX, nextY);
+
+					thisX = nextX;
+					thisY = nextY;
+				}
+			}
+		}
+		
+
 		for (std::vector<Tower*>::iterator t = board.towers.begin(); t != board.towers.end(); ++t)
 		{
 			if ((*t)->hasEnemy)

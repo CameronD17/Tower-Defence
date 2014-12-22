@@ -11,6 +11,8 @@ Map::~Map()
 {
 }
 
+
+// This method is temporary, and will be extended to accept different maps based on input
 void Map::init(char map)
 {
 	//stringstream filename;
@@ -89,4 +91,16 @@ bool Map::walkable(int x, int y, int id)
 		return false;
 	}
 	return true;
+}
+
+bool Map::buildable(int x, int y, bool waterTower)
+{
+	if (waterTower)
+	{
+		return (getTerrain(x, y) == WATERTERRAIN);
+	}
+	else
+	{
+		return (getTerrain(x, y) == CLEARTERRAIN || getTerrain(x, y) == ROUGHTERRAIN);
+	}
 }

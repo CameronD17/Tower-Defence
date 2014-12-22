@@ -28,6 +28,7 @@ public:
 	void setEnemy(int x, int y, int id);
 
 	bool walkable(int x, int y, int id = 0);
+	bool buildable(int x, int y, bool waterTower = false);
 
 private:
 

@@ -7,9 +7,9 @@ void Board::setup(Engine &e)								// Setting up the Board
 	engine = e;			
 	startX = 24, startY = 24, targetX = 384, targetY = 408;
 	map.init(0);
-	//srand((unsigned int)time(NULL));	
 	eTimer = SDL_GetTicks() + 300;
 	enemyCount = 1;
+	credit = 100000; 
 
 	Enemy * enemy = new Enemy(engine.resources,	startX, startY,	type, targetX, targetY, 1, &map, enemyCount);
 	enemies.push_back(enemy);
@@ -44,7 +44,7 @@ void Board::update()
 		eTimer = SDL_GetTicks() + 0;
 	}
 
-	destroyObjects();
+	cleanup();
 }
 
 int Board::getInput(Cursor &cursor)
@@ -64,7 +64,7 @@ int Board::getInput(Cursor &cursor)
 	}
 	else
 	{
-		placeTower(cursor);
+		buildTower(cursor);
 	}
 
 	return 0;
@@ -77,79 +77,81 @@ void Board::launchEnemy(Cursor &cursor)
 	enemies.push_back(e);
 }
 
-void Board::placeTower(Cursor &cursor)
-{    
-	/* Only build a tower if:  
-	 * a) The terrain can be built upon
-	 * b) The player has enough credit to build the tower
-	 * c) The tower is not blocking the spawn point of the enemies
-	 * d) The tower does not completely block a route from the enemy spawn point to the base
-	 */
-	int xPos = cursor.getX() - BORDER, yPos = cursor.getY() - BORDER;
-
-	if (clearToBuild(xPos, yPos))
-	{
-		if (pathAvailable(xPos, yPos))
-		{
-			//if (credit >= (10 * cursor.getType()))
-			//{
-				Tower * t = new Tower(cursor.getX(), cursor.getY(), cursor.getTowerType());
-				towers.push_back(t);
-				//credit -= (t->getCost());
-			//}
-			//else
-			//{
-			//	setMessage("Insufficient funds available to build.");
-			//}
-		}
-		else
-		{
-			//setMessage("Invalid placement - you cannot block the route to your base.");
-		}
-	}
-	else
-	{
-		//setMessage("Invalid placement - this terrain is obstructed.");
-	}
-}
-
-bool Board::clearToBuild(int x, int y)
+void Board::buildTower(Cursor &cursor)
 {
-	return (map.getTerrain(x, y) == CLEARTERRAIN || map.getTerrain(x, y) == ROUGHTERRAIN);
-}
-
-bool Board::pathAvailable(int x, int y)
-{	
-	char terrainReset = map.getTerrain(x, y);
-	map.setTerrain(x, y, BLOCKEDTERRAIN);
-
-	// No path found from base to target
-	Pathfinder p;
-	if (!p.findPath(24, 24, targetX, targetY, &map))
+	if (checkTowerPlacement(cursor))
 	{
-		map.setTerrain(x, y, terrainReset);
-		return false;
-	}
+		Tower * t = new Tower(cursor.getX(), cursor.getY(), cursor.getTowerType());
+		towers.push_back(t);
+		//credit -= (t->getCost());
 
-	// Path available, update enemies ONLY IF the tower placed is on their current path
-	for (vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
-	{
-		for (unsigned i = (*e)->astar.pathToFollow.size(); i > 0; i--)
+		/* Update the enemy path if and only if the tower being placed is on their path */
+		for (vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
 		{
-			if ((*e)->astar.xCoordinates.at(i)*BLOCK_SIZE == x && (*e)->astar.xCoordinates.at(i)*BLOCK_SIZE == y)
+			for (unsigned i = (*e)->astar.pathToFollow.size(); i > 0; i--)
 			{
-				(*e)->astar.findPath((*e)->getX(), (*e)->getY(), targetX, targetY, &map);
-				break;
+				int pathX = ((*e)->astar.xCoordinates.at(i)*BLOCK_SIZE) + BORDER;
+				int pathY = ((*e)->astar.yCoordinates.at(i)*BLOCK_SIZE) + BORDER;
+
+				if (pathX == t->getX() && pathY == t->getY())
+				{
+					(*e)->updatePath(&map);
+					break;
+				}
 			}
 		}
 	}
+}
 
-	return true;
+bool Board::checkTowerPlacement(Cursor &cursor)
+{    
+	int x = cursor.getX() - BORDER, y = cursor.getY() - BORDER;		// Store coordinates to make things easier to read.
+
+	// a) Can the terran be built upon (not blocked)?
+	if (map.buildable(x, y))
+	{	
+		// b) Is the player trying to build on the enemy spawn point?
+		if (!(x == startX && y == startY))
+		{
+			// c) Does the player have enough credit to purchase the tower?
+			if (credit >= (10 * cursor.getTowerType()))
+			{
+				char terrainReset = map.getTerrain(x, y);			// Store terrain type in case a reset is required
+				Pathfinder p;										// Pathfinder to check paths
+				map.setTerrain(x, y, BLOCKEDTERRAIN);				// Set the terrain to blocked in order to check the path
+
+				// d) Does the new tower completely block a route from enemy spawn to player base?
+				if (p.findPath(startX, startY, targetX, targetY, &map))
+				{
+					return true;
+				}
+				else // d)
+				{
+					map.setTerrain(x, y, terrainReset);
+					//setMessage("Invalid placement - you cannot block the route to your base.");
+				}
+			}
+			else // c)
+			{
+				//setMessage("Insufficient funds available to build.");
+			}
+		}
+		else // b)
+		{
+			//setMessage("Invalid placement - you cannot build on the enemy spawn point.");
+		}
+	}
+	else // a)
+	{
+		//setMessage("Invalid placement - this terrain is obstructed.");
+	}
+	
+	return false;
 }
 
 void Board::cleanup()
 {
-
+	destroyObjects();
 }
 
 void Board::destroyObjects()

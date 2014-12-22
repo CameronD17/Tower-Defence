@@ -60,6 +60,16 @@ void Enemy::updateTarget(int tX, int tY, Map* m)
 	astar.findPath(getX(), getY(), tX, tY, m);
 }
 
+void Enemy::updatePath(Map* m)
+{
+	setX(getX() - getX() % BLOCK_SIZE);
+	setY(getY() - getY() % BLOCK_SIZE);
+
+	stepsTaken = 0;
+
+	astar.findPath(getX(), getY(), targetX, targetY, m);
+}
+
 int Enemy::getID()const
 {
 	return id;

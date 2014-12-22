@@ -21,7 +21,8 @@ public:
 	Pathfinder astar;
 
 	void update(Map* m);
-	void updateTarget(int tX, int tY, Map* m);
+	void updateTarget(int tX, int tY, Map* m); 
+	void updatePath(Map* m);
 
 	int nextMove();
 	int getID()const;

@@ -35,16 +35,15 @@ private:
 	// *** METHODS *** //
 
 	// Gameplay methods
-	void placeTower(Cursor &cursor);
+	void buildTower(Cursor &cursor);
+	bool checkTowerPlacement(Cursor &cursor);
+	void deleteTower(Cursor &cursor);
+
 	void launchEnemy(Cursor &cursor);
-	void deleteTower();
 	void moveEnemies();
 	void moveBullets();
 	void destroyObjects();
 	void cleanup();
-
-	bool pathAvailable(int xPos, int yPos);
-	bool clearToBuild(int xPos, int yPos);
 
 public:	
 	Board(void);
