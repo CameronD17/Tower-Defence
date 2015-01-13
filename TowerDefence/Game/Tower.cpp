@@ -1,10 +1,11 @@
 #include "Tower.h"
 #include <iostream>
 
-Tower::Tower(int x, int y, int t) 
+Tower::Tower(int x, int y, int t, int id) 
 {
 	setX(x);
 	setY(y);
+	setID(id);
 	setStats(t);
 };
 
@@ -15,44 +16,44 @@ Tower::~Tower()
 
 void Tower::setStats(int t)
 {
-	type = t;
-	level = 0;
-	hits = 0;
-	kills = 0;
-	currentlyFired = 0;
+	stats.type = t;
+	stats.level = 0;
+	stats.hits = 0;
+	stats.kills = 0;
+	stats.currentlyFired = 0;
 
 	switch (t)
 	{
 
 	// Machine Gun
 	case 1:
-		cost = 50;
-		damage = 4;
-		range = 4;
-		reload = 20;
-		maxCapacity = 1;
+		stats.cost = 50;
+		stats.damage = 4;
+		stats.range = 4;
+		stats.reload = 20;
+		stats.maxCapacity = 1;
 		break;
 
 	// Light Cannon
 	case 2:
-		cost = 75;
-		damage = 10;
-		range = 3;
-		reload = 100;
-		maxCapacity = 1;
+		stats.cost = 75;
+		stats.damage = 10;
+		stats.range = 3;
+		stats.reload = 100;
+		stats.maxCapacity = 1;
 		break;
 
 	// Default
 	case 0: default:
-		cost = 0;
-		damage = 0;
-		range = 0;
-		reload = 0;
-		maxCapacity = 1;
+		stats.cost = 0;
+		stats.damage = 0;
+		stats.range = 0;
+		stats.reload = 0;
+		stats.maxCapacity = 1;
 		break;
 	}
 
-	range *= BLOCK_SIZE;
+	stats.range *= BLOCK_SIZE;
 }
 
 void Tower::update(Map* m, vector<Enemy*>* enemies)
@@ -68,31 +69,36 @@ void Tower::update(Map* m, vector<Enemy*>* enemies)
 	{
 		if ((*b)->hitTarget())
 		{
-			currentlyFired--;
+			stats.currentlyFired--;
 		}
 	}
 }
 
 void Tower::fire()
 {
-	if (currentlyFired <= maxCapacity)
+	if (stats.currentlyFired <= stats.maxCapacity)
 	{
-		currentlyFired++;
-		Bullet * b = new Bullet((getX() + (BLOCK_SIZE / 2)), (getY() + (BLOCK_SIZE / 2)), (enemy->getX() + (BLOCK_SIZE / 2)), (enemy->getY() + (BLOCK_SIZE / 2)), range);
+		stats.currentlyFired++;
+		Bullet * b = new Bullet((getX() + (BLOCK_SIZE / 2)), (getY() + (BLOCK_SIZE / 2)), (enemy->getX() + (BLOCK_SIZE / 2)), (enemy->getY() + (BLOCK_SIZE / 2)), stats.range);
 		bullets.push_back(b);
 	}
 }
 
 int Tower::getCost()
 {
-	return cost;
+	return stats.cost;
+}
+
+tStats Tower::getStats()const
+{
+	return stats;
 }
 
 bool Tower::checkForEnemies(Map* m, vector<Enemy*>* enemies)
 {
-	for (int x = getX() - range; (x < getX() + range) && (x < BOARD_WIDTH * BLOCK_SIZE); x += BLOCK_SIZE)
+	for (int x = getX() - stats.range; (x < getX() + stats.range) && (x < BOARD_WIDTH * BLOCK_SIZE); x += BLOCK_SIZE)
 	{
-		for (int y = getY() - range; (y < getY() + range) && (y < BOARD_HEIGHT * BLOCK_SIZE); y += BLOCK_SIZE)
+		for (int y = getY() - stats.range; (y < getY() + stats.range) && (y < BOARD_HEIGHT * BLOCK_SIZE); y += BLOCK_SIZE)
 		{
 			if ((*m).getTerrain(x, y) == HASENEMY)
 			{

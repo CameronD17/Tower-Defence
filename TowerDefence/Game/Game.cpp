@@ -19,24 +19,20 @@ void Game::close()
 	engine.close();
 }
 
+
 // *** DRAW METHODS *** //
 
 void Game::draw()
 {
-	engine.graphics.clear();			// Clear the graphics
-	
-	drawBoardBackground();				// Draw the background to the game and non-gameplay elements
-	
-	drawBoardForeground();				// Draw the non-moving foreground elements
-
-	drawGamePieces();					// Draw the entities of the game
-		
-	drawCursor();						// Draw the player's cursor					
-		
-	drawDebugFeatures();				// Draw debug features (if required)
-			
-	engine.graphics.update();			// Render the graphics
-	engine.admin.countedFrames++;		// Capture the framerate
+	engine.graphics.clear();
+	drawBoardBackground();
+	drawBoardForeground();
+	drawGamePieces();		
+	drawCursor();		
+	drawSidebar();
+	if (board.debugMode)	drawDebugFeatures();
+	engine.graphics.update();
+	engine.admin.countedFrames++;
 }
 
 void Game::drawBoardBackground()
@@ -143,16 +139,6 @@ void Game::drawDebugFeatures()
 		
 		engine.graphics.renderText(10, 10, cursorText.str(), 20, 255, 255, 255);
 
-		//// Map Statistics
-		//for (int x = 0; x < BOARD_WIDTH*BLOCK_SIZE; x+=BLOCK_SIZE)
-		//{
-		//	for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y+=BLOCK_SIZE)
-		//	{
-		//		string terrainType(1, board.map.getTerrain(x, y));
-		//		engine.graphics.renderText(BORDER + x, BORDER + y, terrainType, 20, 255, 255, 255);
-		//	}
-		//}
-
 		for (std::vector<Enemy*>::iterator e = board.enemies.begin(); e != board.enemies.end(); ++e)
 		{
 			stringstream idNo;
@@ -219,6 +205,61 @@ void Game::drawDebugFeatures()
 	}
 }
 
+void Game::drawSidebar()
+{
+	// Set constants (move to Constants.h?)
+	int startXOfSidebar = (BORDER * 2) + (BOARD_WIDTH * BLOCK_SIZE);
+	int widthOfSidebar = WINDOW_WIDTH - startXOfSidebar;
+
+	int startYOfStats = ((BOARD_HEIGHT*BLOCK_SIZE) / 3) * 2;
+	int heightOfStats = WINDOW_HEIGHT - startYOfStats;
+
+	// Static top area
+	engine.graphics.drawRectangleOL(startXOfSidebar + 2, 2, widthOfSidebar - 4, startYOfStats - 4, 255, 255, 255);
+
+	// Stats bottom area
+	if (board.enemySelected)
+	{
+		stringstream IDText, healthText, valueText, bountyText;
+		eStats e = board.pullEnemyStats();
+		int enemyStatsStartX = startXOfSidebar + BLOCK_SIZE;
+		int enemyStatsStartY = startYOfStats + BLOCK_SIZE;
+
+		IDText << "Enemy ID: " << e.id;
+		engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY, IDText.str(), 20, 255, 0, 0, "Anonymous_Pro");
+		healthText << "Health: " << e.currentHealth;
+		engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY + BLOCK_SIZE, healthText.str(), 20, 255, 0, 0, "Anonymous_Pro");
+		valueText << "Value: " << e.value << " points.";
+		engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY + (BLOCK_SIZE * 2), valueText.str(), 20, 255, 0, 0, "Anonymous_Pro");
+		bountyText << "Bounty: " << e.bounty << " credits.";
+		engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY + (BLOCK_SIZE * 3), bountyText.str(), 20, 255, 0, 0, "Anonymous_Pro");
+
+		engine.graphics.drawRectangleOL(startXOfSidebar + 2, startYOfStats + 2, widthOfSidebar - 4, heightOfStats - 4, 255, 0, 0);
+	}
+	else if (board.towerSelected)
+	{
+		stringstream IDText, damageText, rangeText, killsText;
+		tStats t = board.pullTowerStats();
+		int towerStatsStartX = startXOfSidebar + BLOCK_SIZE;
+		int towerStatsStartY = startYOfStats + BLOCK_SIZE;
+
+		IDText << "Tower ID: " << t.id;
+		engine.graphics.renderText(towerStatsStartX, towerStatsStartY, IDText.str(), 20, 255, 255, 255, "Anonymous_Pro");
+		damageText << "Damage: " << t.damage;
+		engine.graphics.renderText(towerStatsStartX, towerStatsStartY + BLOCK_SIZE, damageText.str(), 20, 255, 255, 255, "Anonymous_Pro");
+		rangeText << "Range: " << t.range << " tiles.";
+		engine.graphics.renderText(towerStatsStartX, towerStatsStartY + (BLOCK_SIZE * 2), rangeText.str(), 20, 255, 255, 255, "Anonymous_Pro");
+		killsText << "Total Kills: " << t.kills;
+		engine.graphics.renderText(towerStatsStartX, towerStatsStartY + (BLOCK_SIZE * 3), killsText.str(), 20, 255, 255, 255, "Anonymous_Pro");
+
+		engine.graphics.drawRectangleOL(startXOfSidebar + 2, startYOfStats + 2, widthOfSidebar - 4, heightOfStats - 4, 255, 255, 255);
+	}
+	else
+	{
+		engine.graphics.drawRectangleOL(startXOfSidebar + 2, startYOfStats + 2, widthOfSidebar - 4, heightOfStats - 4, 0, 0, 255);
+	}
+}
+
 
 // *** UPDATE METHODS *** //
 
@@ -231,55 +272,72 @@ void Game::update()
 int Game::getInput()
 {
 	input k = engine.interfaces.getInput();
-
 	int x, y;
 	SDL_GetMouseState(&x, &y);
+	setCursorPosition(x, y);
+	/*	
+	 *	Three different types of input need to be handled - mouse movement, mouse clicks, and key presses.
+	 *	Key presses will probably be removed in the final version, as the game should be playable using only the mouse.
+	*/
 
 	if (k.keyPress)
 	{
-		if (k.key == SDLK_ESCAPE)	// Quit the Board
+		switch (k.key)
 		{
-			return -1;
-		}
-		else if (k.key == SDLK_0)
-		{
+		case SDLK_ESCAPE:
+			if (board.objectSelected)
+			{
+				board.objectSelected = false;
+				board.towerSelected = false;
+				board.enemySelected = false;
+			}
+			else
+			{
+				return -1;
+			}
+			break;
+		case SDLK_0:
 			cursor.changeTowerType(0);
-		}
-		else if (k.key == SDLK_1)
-		{
+			break;
+		case SDLK_1:
 			cursor.changeTowerType(1);
-		}
-		else if (k.key == SDLK_2)
-		{
+			break;
+		case SDLK_2:
 			cursor.changeTowerType(2);
-		}
-		else if (k.key == SDLK_3)
-		{
+			break;
+		case SDLK_3:
 			cursor.changeTowerType(3);
-		}
-		else if (k.key == SDLK_d)
-		{
+			break;
+		case SDLK_4:
+			cursor.changeTowerType(4);
+			break;
+		case SDLK_5:
+			cursor.changeTowerType(5);
+			break;
+		case SDLK_6:
+			cursor.changeTowerType(6);
+			break;
+		case SDLK_d:
 			board.debugMode ? board.debugMode = false : board.debugMode = true;
-		}
-		else
-		{
-			cursor.changeTowerType(1);
+			break;
+		default:
+			break;
 		}
 	}
 	else if (k.mouseDown)
 	{
-		if (x > BORDER && x < (BORDER + (BOARD_WIDTH*BLOCK_SIZE)) && y > BORDER && y < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE)))
+		if (cursorPosition == CURSORONBOARD)
 		{
 			return board.getInput(cursor);
 		}
-		else if (x > (BORDER + (BOARD_WIDTH*BLOCK_SIZE)))
+		else if (cursorPosition == CURSORONSIDEBAR)
 		{
 			//return sidebar.getInput();
 		}
 	}
 	else
 	{
-		if (x > BORDER && x < (BORDER + (BOARD_WIDTH*BLOCK_SIZE)) && y > BORDER && y < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE)))
+		if (cursorPosition == CURSORONBOARD)
 		{
 			//cursor.setType(1);
 			cursor.setX((x - (x%BLOCK_SIZE)));
@@ -287,7 +345,9 @@ int Game::getInput()
 		}
 		else
 		{
-			if (cursor.getTowerType() != 0)
+			cursor.setX(x);
+			cursor.setY(y);
+			/*if (cursor.getTowerType() != 0)
 			{
 				cursor.changeTowerType(0);
 				if (x > BORDER && (y > BORDER && y < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE))))
@@ -307,9 +367,21 @@ int Game::getInput()
 				{
 					cursor.setY(BORDER - BLOCK_SIZE);
 				}
-			}
+			}*/
 		}
 	}
 
 	return 0;
+}
+
+void Game::setCursorPosition(int x, int y)
+{
+	if (x > BORDER && x < (BORDER + (BOARD_WIDTH*BLOCK_SIZE)) && y > BORDER && y < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE)))
+	{
+		cursorPosition = CURSORONBOARD;
+	}
+	else
+	{
+		cursorPosition = CURSORONSIDEBAR;
+	}
 }

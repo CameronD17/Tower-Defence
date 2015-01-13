@@ -12,11 +12,13 @@ class Game
 
 private:
 	
+	void setCursorPosition(int x, int y);
 	void drawBoardBackground();
 	void drawGamePieces();
 	void drawBoardForeground();
 	void drawCursor();
 	void drawDebugFeatures();
+	void drawSidebar();
 
 public:	
 	Game();	
@@ -25,6 +27,7 @@ public:
 	Board board;
 	Sidebar sidebar;
 	Cursor cursor;
+	char cursorPosition;
 	
 	void newGame();
 	int getInput();

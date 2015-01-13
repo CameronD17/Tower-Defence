@@ -18,21 +18,18 @@ class Board
 {
 
 private:
-	// *** VARIABLES *** //
 
 	// Timers
 	unsigned int eTimer;
-
-	
 
 	// Per-game values				
 	int score, credit, level, nextEnemy;
 	string message;	
 	string initials;
 	bool hasEnemy[BOARD_WIDTH][BOARD_HEIGHT];
-	
+	eStats selectedEnemyStats;
+	tStats selectedTowerStats;
 
-	// *** METHODS *** //
 
 	// Gameplay methods
 	void buildTower(Cursor &cursor);
@@ -45,6 +42,8 @@ private:
 	void destroyObjects();
 	void cleanup();
 
+	void checkForObject(Cursor &cursor);
+
 public:	
 	Board(void);
 
@@ -52,8 +51,15 @@ public:
 	int startHealth, currentHealth;
 	int targetX, targetY;				
 	int startX, startY;	
-	int type, enemyCount;
-	bool debugMode;
+	int type, enemyCount, towerCount;
+	bool debugMode; 
+
+	bool enemySelected, towerSelected, objectSelected;
+	eStats pullEnemyStats();
+	tStats pullTowerStats();
+
+	Enemy* getEnemyFromId(int id);
+	Tower* getTowerFromId(int id);
 
 	Engine engine;
 	Map map;

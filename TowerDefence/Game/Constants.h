@@ -27,7 +27,12 @@
 #define WATERTERRAIN 'W'
 #define ROUGHTERRAIN 'R'
 #define BLOCKEDTERRAIN 'B'
+#define HASTOWER 'T'
 #define HASENEMY 'E'
+
+#define CURSORONBOARD 'B'
+#define CURSORONMENU 'M'
+#define CURSORONSIDEBAR 'S'
 
 #define DIAGONALCOST 14
 #define ORTHOGONALCOST 10

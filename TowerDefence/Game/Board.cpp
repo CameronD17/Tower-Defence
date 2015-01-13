@@ -8,7 +8,7 @@ void Board::setup(Engine &e)								// Setting up the Board
 	startX = 24, startY = 24, targetX = 384, targetY = 408;
 	map.init(0);
 	eTimer = SDL_GetTicks() + 300;
-	enemyCount = 1;
+	enemyCount = 1, towerCount = 0;
 	credit = 100000; 
 
 	Enemy * enemy = new Enemy(engine.resources,	startX, startY,	type, targetX, targetY, 1, &map, enemyCount);
@@ -58,16 +58,78 @@ int Board::getInput(Cursor &cursor)
 			(*e)->updateTarget(targetX, targetY, &map);
 		}
 	}
-	else if (cursor.getTowerType() == 3)
+	else if (cursor.getTowerType() == 1)
+	{
+		buildTower(cursor);
+	}
+	else if (cursor.getTowerType() == 2)
 	{
 		launchEnemy(cursor);
 	}
 	else
 	{
-		buildTower(cursor);
+		checkForObject(cursor);
 	}
 
 	return 0;
+}
+
+void Board::checkForObject(Cursor &cursor)
+{
+	int x = cursor.getX() - BORDER, y = cursor.getY() - BORDER;
+
+	if (map.getTerrain(x, y) == HASENEMY)
+	{
+		objectSelected = true;
+		enemySelected = true;
+		towerSelected = false;
+
+		selectedEnemyStats = getEnemyFromId(map.getEnemy(x, y))->getStats();
+	}
+	else if (map.getTerrain(x, y) == HASTOWER)
+	{
+		objectSelected = true;
+		enemySelected = false;
+		towerSelected = true;
+
+		selectedTowerStats = getTowerFromId(map.getTower(x, y))->getStats();
+	}
+}
+
+eStats Board::pullEnemyStats()
+{		
+	return selectedEnemyStats;
+}
+
+tStats Board::pullTowerStats()
+{
+	return selectedTowerStats;
+}
+
+Enemy* Board::getEnemyFromId(int id)
+{
+	for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
+	{
+		if ((*e)->getID() == id)
+		{
+			return (*e);
+		}
+	}
+
+	return NULL;
+}
+
+Tower* Board::getTowerFromId(int id)
+{
+	for (std::vector<Tower*>::iterator t = towers.begin(); t != towers.end(); ++t)
+	{
+		if ((*t)->getID() == id)
+		{
+			return (*t);
+		}
+	}
+
+	return NULL;
 }
 
 void Board::launchEnemy(Cursor &cursor)
@@ -81,7 +143,7 @@ void Board::buildTower(Cursor &cursor)
 {
 	if (checkTowerPlacement(cursor))
 	{
-		Tower * t = new Tower(cursor.getX(), cursor.getY(), cursor.getTowerType());
+		Tower * t = new Tower(cursor.getX(), cursor.getY(), cursor.getTowerType(), towerCount);
 		towers.push_back(t);
 		//credit -= (t->getCost());
 
@@ -118,7 +180,9 @@ bool Board::checkTowerPlacement(Cursor &cursor)
 			{
 				char terrainReset = map.getTerrain(x, y);			// Store terrain type in case a reset is required
 				Pathfinder p;										// Pathfinder to check paths
-				map.setTerrain(x, y, BLOCKEDTERRAIN);				// Set the terrain to blocked in order to check the path
+				map.setTerrain(x, y, HASTOWER);						// Set the terrain to blocked in order to check the path
+				towerCount++;
+				map.setTower(x, y, towerCount);
 
 				// d) Does the new tower completely block a route from enemy spawn to player base?
 				if (p.findPath(startX, startY, targetX, targetY, &map))

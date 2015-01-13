@@ -73,6 +73,11 @@ int Map::getEnemy(int x, int y)
 	return tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].enemy;
 }
 
+int Map::getTower(int x, int y)
+{
+	return tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].tower;
+}
+
 void Map::setTerrain(int x, int y, char m)
 {
 	tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].terrain = m;
@@ -81,6 +86,11 @@ void Map::setTerrain(int x, int y, char m)
 void Map::setEnemy(int x, int y, int id)
 {
 	tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].enemy = id;
+}
+
+void Map::setTower(int x, int y, int id)
+{
+	tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].tower = id;
 }
 
 bool Map::walkable(int x, int y, int id)

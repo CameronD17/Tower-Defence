@@ -12,11 +12,13 @@ ResourceManager::~ResourceManager(void)
 void ResourceManager::init(SDL_Renderer	*r)
 {
 	renderer = r;
-	preloadImages("Assets/Inputs/IMAGE_FILEPATHS.txt");
-	preloadSounds("Assets/Inputs/SOUND_FILEPATHS.txt");
-	preloadFonts();
+	preloadImages("Assets/Inputs/Filepaths/IMAGE_FILEPATHS.txt");
+	preloadSounds("Assets/Inputs/Filepaths/SOUND_FILEPATHS.txt");
+	preloadFonts("Assets/Inputs/Filepaths/FONT_FILEPATHS.txt");
 
 	music = loadMusic("Assets/Audio/background.mp3");
+
+	defaultFontSizes = 6;
 }
 
 
@@ -56,23 +58,34 @@ void ResourceManager::preloadSounds(string filepath)
 	}
 }
 
-void ResourceManager::preloadFonts()
-{	
-	fonts.push_back(loadFont(10));
-	fonts.push_back(loadFont(15));
-	fonts.push_back(loadFont(20));
-	fonts.push_back(loadFont(30));
-	fonts.push_back(loadFont(40));
-	fonts.push_back(loadFont(50));		
+void ResourceManager::preloadFonts(string filepath)
+{
+	string line;
+	ifstream fontData(filepath);
+
+	if (fontData.is_open())
+	{
+		while (getline(fontData, line))
+		{			
+			fonts.push_back(loadFont(line, 10));
+			fonts.push_back(loadFont(line, 15));
+			fonts.push_back(loadFont(line, 20));
+			fonts.push_back(loadFont(line, 30));
+			fonts.push_back(loadFont(line, 40));
+			fonts.push_back(loadFont(line, 50));
+			fontFilePath.push_back(line);
+		}
+		fontData.close();
+	}		
 }
 
-
+//"Assets/Fonts/imagine.ttf"
 
 // Load resources
 
-TTF_Font *ResourceManager::loadFont(int size)
+TTF_Font *ResourceManager::loadFont(string filepath, int size)
 {
-	TTF_Font *font = TTF_OpenFont("Assets/Fonts/imagine.ttf", size);
+	TTF_Font *font = TTF_OpenFont(filepath.c_str(), size);
 
 	if(font == NULL) printf("Failed to load font - SDL_TTF Error: %s\n", TTF_GetError());
 
@@ -146,9 +159,23 @@ Mix_Chunk * ResourceManager::getSound(string filepath)
 	return sound;
 }
 
-TTF_Font * ResourceManager::getFont(int i)
+TTF_Font * ResourceManager::getFont(string fontname, int i)
 {
-	return fonts.at(i);
+	fontname.insert(0, "Assets/Fonts/");
+	fontname.append(".ttf");
+
+	TTF_Font* font = NULL;
+
+	for (vector<string>::iterator f = fontFilePath.begin(); f != fontFilePath.end(); ++f)
+	{
+		if ((*f) == fontname)
+		{
+			font = fonts.at(i);
+			break;
+		}
+		i += defaultFontSizes;
+	}
+	return font;
 }
 
 Mix_Music * ResourceManager::getMusic()

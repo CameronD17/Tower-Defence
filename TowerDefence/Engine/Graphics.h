@@ -45,7 +45,7 @@ public:
 
 	void drawRectangleOL(int x, int y, int w, int h, Uint8 r, Uint8 g, Uint8 b);
 
-	void renderText(int x, int y, string text, int size, int r = 255, int g = 255, int b = 255, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
+	void renderText(int x, int y, string text, int size, int r = 255, int g = 255, int b = 255, string fontName = "imagine", SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 
 	void renderImage(int x, int y, string text, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	

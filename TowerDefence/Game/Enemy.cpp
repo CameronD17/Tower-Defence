@@ -2,22 +2,24 @@
 
 Enemy::Enemy()
 {
+	setID(0);
     setX(0);
     setY(0);
-	targetX = 0;
-	targetY = 0;
-	currentHealth = 30;
-	value = 150;
-	bounty = 20;
+
+	stats.targetX = 0;
+	stats.targetY = 0;
+
+	stats.currentHealth = 30;
+	stats.value = 150;
+	stats.bounty = 20;
 	stepsTaken = 0;
-	id = 0;
-	waitingPeriod = 0;
 }
 
 Enemy::Enemy(ResourceManager &rm, int x, int y, int t, int tX, int tY, int l, Map* m, int i)
 {
 	setResources(rm);
-	id = i;
+	setID(i);
+	stats.id = getID();
 	initialise(l, x, y, tX, tY, t, m);	
 	astar.initialise(x, y, tX, tY, m, i, false);
 }
@@ -32,28 +34,28 @@ void Enemy::initialise(int level, int x, int y, int tX, int tY, int t, Map* m)
 	setX(x);
 	setY(y);
 
-	leftBase = false;
+	stats.targetX = tX;
+	stats.targetY = tY;
+
+	stats.leftBase = false;
+	stats.currentHealth = stats.maxHealth = level * HEALTH_MULTIPLIER;
+	stats.value = level * VALUE_MULTIPLIER;
+	stats.bounty = level * BOUNTY_MULTIPLIER;
+	stats.canSwim = false;		// Change to check type
+	stats.speed = (rand() % 4) + 1;				// Change to check type
+
 	stepsTaken = 0;
-	waitingPeriod = 0;
-	maxHealth = level * HEALTH_MULTIPLIER;
-	currentHealth = maxHealth;
-	value = level * VALUE_MULTIPLIER;
-	bounty = level * BOUNTY_MULTIPLIER;
-	canSwim = false;		// Change to check type
-	speed = (rand() % 4) + 1;				// Change to check type
-	stepsPerSquare = (int)(BLOCK_SIZE / speed);
-	targetX = tX;
-	targetY = tY;
+	stepsPerSquare = (int)(BLOCK_SIZE / stats.speed);
 
 	(*m).setTerrain(x - BORDER, y - BORDER, HASENEMY);
-	(*m).setEnemy(x - BORDER, y - BORDER, id);
+	(*m).setEnemy(x - BORDER, y - BORDER, stats.id);
 }
 
 void Enemy::updateTarget(int tX, int tY, Map* m)
 {
 	setX(getX() - getX() % BLOCK_SIZE);
 	setY(getY() - getY() % BLOCK_SIZE);
-	targetX = tX, targetY = tY;
+	stats.targetX = tX, stats.targetY = tY;
 
 	stepsTaken = 0;
 
@@ -67,12 +69,7 @@ void Enemy::updatePath(Map* m)
 
 	stepsTaken = 0;
 
-	astar.findPath(getX(), getY(), targetX, targetY, m);
-}
-
-int Enemy::getID()const
-{
-	return id;
+	astar.findPath(getX(), getY(), stats.targetX, stats.targetY, m);
 }
 
 void Enemy::getSprites()
@@ -85,7 +82,12 @@ void Enemy::getSprites()
 
 int Enemy::getSpeed()const
 {
-	return speed;
+	return stats.speed;
+}
+
+eStats Enemy::getStats()const
+{
+	return stats;
 }
 
 bool Enemy::canWalk(Map* map)
@@ -112,7 +114,7 @@ bool Enemy::canWalk(Map* map)
 		}
 
 		// Let's make sure that the next square isn't occupied.
-		if (map->walkable(astar.getNextX(), astar.getNextY(), id))
+		if (map->walkable(astar.getNextX(), astar.getNextY(), stats.id))
 		{
 			// GET IN! The next tile is available. Let's move!
 			moveIntoNewTile(map);
@@ -123,7 +125,7 @@ bool Enemy::canWalk(Map* map)
 		// Let's hope so. We'll update the path with the new values and try again next move.
 		else
 		{
-			astar.findPath(getX(), getY(), targetX, targetY, map);
+			astar.findPath(getX(), getY(), stats.targetX, stats.targetY, map);
 			return false;
 		}
 	}
@@ -161,7 +163,7 @@ void Enemy::releaseAllMyTiles(Map* map)
 	{
 		for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y += BLOCK_SIZE)
 		{
-			if (map->getEnemy(x, y) == id)
+			if (map->getEnemy(x, y) == stats.id)
 			{
 				map->setTerrain(x, y, CLEARTERRAIN);
 				map->setEnemy(x, y, 0);
@@ -175,10 +177,10 @@ void Enemy::lockThisTile(Map* map)
 	int thisX = getX() - (getX() % BLOCK_SIZE) - BORDER;
 	int thisY = getY() - (getY() % BLOCK_SIZE) - BORDER;
 
-	if (map->walkable(thisX, thisY, id))
+	if (map->walkable(thisX, thisY, stats.id))
 	{
 		map->setTerrain(thisX, thisY, HASENEMY);
-		map->setEnemy(thisX, thisY, id);
+		map->setEnemy(thisX, thisY, stats.id);
 	}
 }
 
@@ -223,24 +225,24 @@ void Enemy::lockNextTile(Map* map)
 		break;
 	}
 
-	if (map->walkable(thisX, thisY, id))
+	if (map->walkable(thisX, thisY, stats.id))
 	{
 		map->setTerrain(thisX, thisY, HASENEMY);
-		map->setEnemy(thisX, thisY, id);
+		map->setEnemy(thisX, thisY, stats.id);
 	}
 
 	if (astar.pathToFollow.back() == UPRIGHT || astar.pathToFollow.back() == UPLEFT || astar.pathToFollow.back() == DOWNRIGHT || astar.pathToFollow.back() == DOWNLEFT)
 	{
-		if (map->walkable(otherX, thisY, id))
+		if (map->walkable(otherX, thisY, stats.id))
 		{
 			map->setTerrain(otherX, thisY, HASENEMY);
-			map->setEnemy(otherX, thisY, id);
+			map->setEnemy(otherX, thisY, stats.id);
 		}
 
-		if (map->walkable(thisX, otherY, id))
+		if (map->walkable(thisX, otherY, stats.id))
 		{
 			map->setTerrain(thisX, otherY, HASENEMY);
-			map->setEnemy(thisX, otherY, id);
+			map->setEnemy(thisX, otherY, stats.id);
 		}
 	}
 }
@@ -252,31 +254,31 @@ bool Enemy::checkWalkabilityOfNextTile(Map* map)
 	switch (astar.pathToFollow.back())
 	{
 	case UP: case DOWN: case LEFT: case RIGHT:
-		isFree = (map->walkable(astar.getNextX(), astar.getNextY(), id));
+		isFree = (map->walkable(astar.getNextX(), astar.getNextY(), stats.id));
 		break;
 
 	case UPRIGHT: 
-		isFree = (	map->walkable(astar.getNextX(), astar.getNextY(), id) 
-			&& map->walkable(astar.getNextX(), astar.getNextY() - BLOCK_SIZE, id) 
-			&& map->walkable(astar.getNextX() + BLOCK_SIZE, astar.getNextY(), id));
+		isFree = (map->walkable(astar.getNextX(), astar.getNextY(), stats.id)
+			&& map->walkable(astar.getNextX(), astar.getNextY() - BLOCK_SIZE, stats.id)
+			&& map->walkable(astar.getNextX() + BLOCK_SIZE, astar.getNextY(), stats.id));
 		break;
 
 	case UPLEFT:
-		isFree = (map->walkable(astar.getNextX(), astar.getNextY(), id)
-			&& map->walkable(astar.getNextX(), astar.getNextY() - BLOCK_SIZE, id)
-			&& map->walkable(astar.getNextX() - BLOCK_SIZE, astar.getNextY(), id));
+		isFree = (map->walkable(astar.getNextX(), astar.getNextY(), stats.id)
+			&& map->walkable(astar.getNextX(), astar.getNextY() - BLOCK_SIZE, stats.id)
+			&& map->walkable(astar.getNextX() - BLOCK_SIZE, astar.getNextY(), stats.id));
 		break;
 
 	case DOWNRIGHT:
-		isFree = (map->walkable(astar.getNextX(), astar.getNextY(), id)
-			&& map->walkable(astar.getNextX(), astar.getNextY() + BLOCK_SIZE, id)
-			&& map->walkable(astar.getNextX() + BLOCK_SIZE, astar.getNextY(), id));
+		isFree = (map->walkable(astar.getNextX(), astar.getNextY(), stats.id)
+			&& map->walkable(astar.getNextX(), astar.getNextY() + BLOCK_SIZE, stats.id)
+			&& map->walkable(astar.getNextX() + BLOCK_SIZE, astar.getNextY(), stats.id));
 		break;
 
 	case DOWNLEFT:
-		isFree = (map->walkable(astar.getNextX(), astar.getNextY(), id)
-			&& map->walkable(astar.getNextX(), astar.getNextY() + BLOCK_SIZE, id)
-			&& map->walkable(astar.getNextX() - BLOCK_SIZE, astar.getNextY(), id));
+		isFree = (map->walkable(astar.getNextX(), astar.getNextY(), stats.id)
+			&& map->walkable(astar.getNextX(), astar.getNextY() + BLOCK_SIZE, stats.id)
+			&& map->walkable(astar.getNextX() - BLOCK_SIZE, astar.getNextY(), stats.id));
 		break;
 
 	default:
@@ -288,7 +290,7 @@ bool Enemy::checkWalkabilityOfNextTile(Map* map)
 
 bool Enemy::reachTarget(Map* map)
 {
-	if (targetX == getX() && targetY == getY())
+	if (stats.targetX == getX() && stats.targetY == getY())
 	{
 		setDeleted(true);
 		releaseAllMyTiles(map);

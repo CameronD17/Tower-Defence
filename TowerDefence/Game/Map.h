@@ -9,6 +9,7 @@ using namespace std;
 struct Tile {
 	char terrain;
 	int enemy;
+	int tower;
 };
 
 
@@ -23,9 +24,11 @@ public:
 
 	char getTerrain(int x, int y);
 	int getEnemy(int x, int y);
+	int getTower(int x, int y);
 
 	void setTerrain(int x, int y, char m);
 	void setEnemy(int x, int y, int id);
+	void setTower(int x, int y, int id);
 
 	bool walkable(int x, int y, int id = 0);
 	bool buildable(int x, int y, bool waterTower = false);

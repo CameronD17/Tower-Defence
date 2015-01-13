@@ -137,7 +137,6 @@ bool Pathfinder::findPath(int sX, int sY, int tX, int tY, Map* map)
 	}
 
 	if (pathFound)	aStarCalcPath();
-
 	return pathFound;
 }
 
@@ -324,7 +323,7 @@ void Pathfinder::aStarSetMapValues(Map* map, bool swim)
 	{
 		for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y += BLOCK_SIZE)
 		{
-			if (terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] == HASENEMY)
+			if (terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] == HASENEMY || terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] == HASTOWER)
 			{
 				terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = BLOCKEDTERRAIN;
 			}

@@ -78,7 +78,7 @@ void Graphics::drawRectangleOL(int x, int y, int w, int h, Uint8 r, Uint8 g, Uin
 	SDL_RenderDrawRect(renderer, &rect);
 }
 
-void Graphics::renderText(int x, int y, string text, int size, int r, int g, int b, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
+void Graphics::renderText(int x, int y, string text, int size, int r, int g, int b, string fontName, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {	
 	// The colour to render the text. Default is white (255, 255, 255)
 	SDL_Color textColor = {r, g, b};
@@ -88,25 +88,25 @@ void Graphics::renderText(int x, int y, string text, int size, int r, int g, int
 	switch(size)
 	{
 	case 10:
-		textSurface = TTF_RenderText_Solid(resource->getFont(0), text.c_str(), textColor);
+		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 0), text.c_str(), textColor);
 		break;
 	case 15:
-		textSurface = TTF_RenderText_Solid(resource->getFont(1), text.c_str(), textColor);
+		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 1), text.c_str(), textColor);
 		break;
 	case 20:
-		textSurface = TTF_RenderText_Solid(resource->getFont(2), text.c_str(), textColor);
+		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 2), text.c_str(), textColor);
 		break;
 	case 30:
-		textSurface = TTF_RenderText_Solid(resource->getFont(3), text.c_str(), textColor);
+		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 3), text.c_str(), textColor);
 		break;
 	case 40:
-		textSurface = TTF_RenderText_Solid(resource->getFont(4), text.c_str(), textColor);
+		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 4), text.c_str(), textColor);
 		break;
 	case 50:
-		textSurface = TTF_RenderText_Solid(resource->getFont(5), text.c_str(), textColor);
+		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 5), text.c_str(), textColor);
 		break;
 	default:
-		textSurface = TTF_RenderText_Solid(resource->loadFont(size), text.c_str(), textColor);
+		textSurface = TTF_RenderText_Solid(resource->loadFont(fontName, size), text.c_str(), textColor);
 	}	
 		
 	SDL_Texture *fontText = SDL_CreateTextureFromSurface(renderer, textSurface);

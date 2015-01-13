@@ -2,14 +2,16 @@
 
 Object::Object()
 {
+	id = 0;
     coordinate.xPos = 0;
 	coordinate.yPos = 0;
 	deleted = false;
 	texture = NULL;
 }
 
-Object::Object(int x, int y)
+Object::Object(int x, int y, int i)
 {
+	id = i;
 	coordinate.xPos = x;
 	coordinate.yPos = y;
 	deleted = false;
@@ -29,6 +31,11 @@ int Object::getX()const
 int Object::getY()const
 {
 	return coordinate.yPos;
+}
+
+int Object::getID()const
+{
+	return id;
 }
 
 coordinates Object::getCoordinates()const
@@ -59,6 +66,11 @@ void Object::setX(int N)
 void Object::setY(int N)
 {
 	coordinate.yPos = N;
+}
+
+void Object::setID(int N)
+{
+	id = N;
 }
 
 void Object::setCoordinates(int x, int y)

@@ -10,6 +10,13 @@
 #define CLOSED 2
 #define WAITING 100
 
+struct eStats
+{
+	int id, targetX, targetY, currentHealth, maxHealth, value, bounty, speed;
+	bool leftBase, isBoss, canSwim, isWaiting;
+	string category;
+};
+
 class Enemy : public Object
 {
 
@@ -25,21 +32,18 @@ public:
 	void updatePath(Map* m);
 
 	int nextMove();
-	int getID()const;
 	int getSpeed()const;
 
 	bool canWalk(Map* map);
 	void moveIntoNewTile(Map* m);
 	void holdPosition(Map* m);
 	bool checkWalkabilityOfNextTile(Map* m);
-	int stepsTaken;
+	eStats getStats()const;
 
 private:
+	eStats stats;
 
-	int id, targetX, targetY, currentHealth, maxHealth, value, bounty, speed, stepsPerSquare;
-	unsigned int waitingPeriod;
-	bool leftBase, isBoss, canSwim, isWaiting;
-	string category;
+	int stepsTaken, stepsPerSquare;
 	vector<SDL_Texture*> sprites;
 
 	void initialise(int level, int x, int y, int tX, int tY, int type, Map* m);
