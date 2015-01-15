@@ -27,9 +27,9 @@ int Pathfinder::getNextX()const
 	{
 	case UP: case DOWN:
 		return (xCoordinates.back() * BLOCK_SIZE);
-	case UPRIGHT: case RIGHT: case DOWNRIGHT:
+	case UP_RIGHT: case RIGHT: case DOWN_RIGHT:
 		return ((xCoordinates.back() + 1) * BLOCK_SIZE);
-	case UPLEFT: case LEFT: case DOWNLEFT:
+	case UP_LEFT: case LEFT: case DOWN_LEFT:
 		return ((xCoordinates.back() - 1) * BLOCK_SIZE);
 	}
 	return -1;
@@ -41,9 +41,9 @@ int Pathfinder::getNextY()const
 	{
 	case LEFT: case RIGHT:
 		return (yCoordinates.back() * BLOCK_SIZE);
-	case DOWNLEFT: case DOWN: case DOWNRIGHT:
+	case DOWN_LEFT: case DOWN: case DOWN_RIGHT:
 		return ((yCoordinates.back() + 1) * BLOCK_SIZE);
-	case UPLEFT: case UP: case UPRIGHT:
+	case UP_LEFT: case UP: case UP_RIGHT:
 		return ((yCoordinates.back() - 1) * BLOCK_SIZE);
 	}
 	return -1;
@@ -90,9 +90,9 @@ bool Pathfinder::findPath(int sX, int sY, int tX, int tY, Map* map)
 		{
 			for (int x = parentXval - 1; x <= parentXval + 1; x++)
 			{
-				if (x > -1 && y > -1 && x < BOARD_WIDTH && y < BOARD_HEIGHT	// If the tile is not off the map
+				if (x > -1 && y > -1 && x < BOARD_WIDTH && y < BOARD_HEIGHT				// If the tile is not off the map
 					&& whichList[x][y] != CLOSED										// and if not already on the closed list
-					&& terrain[x][y] != BLOCKEDTERRAIN									// and terrain is not impassable
+					&& terrain[x][y] != BLOCKED_TERRAIN									// and terrain is not impassable
 					&& aStarCutCorner(x, y))											// and you aren't cutting a corner
 				{
 					//	If not already on the open list, add it to the open list.			
@@ -105,7 +105,7 @@ bool Pathfinder::findPath(int sX, int sY, int tX, int tY, Map* map)
 						openX[openListID] = x;
 						openY[openListID] = y;
 						Gcost[x][y] = aStarGetGCost(x, y, parentXval, parentYval);
-						Fcost[openList[openListSize]] = Gcost[x][y] + ORTHOGONALCOST * (abs(x - targetX) + abs(y - targetY));
+						Fcost[openList[openListSize]] = Gcost[x][y] + ORTHOGONAL_COST * (abs(x - targetX) + abs(y - targetY));
 						parentX[x][y] = parentXval; parentY[x][y] = parentYval;
 						aStarBubbleNewF(openListSize);
 					}
@@ -122,7 +122,7 @@ bool Pathfinder::findPath(int sX, int sY, int tX, int tY, Map* map)
 							{
 								if (openX[openList[i]] == x && openY[openList[i]] == y)
 								{
-									Fcost[openList[i]] = Gcost[x][y] + ORTHOGONALCOST * (abs(x - targetX) + abs(y - targetY));
+									Fcost[openList[i]] = Gcost[x][y] + ORTHOGONAL_COST * (abs(x - targetX) + abs(y - targetY));
 									aStarBubbleNewF(i);
 									break;
 								}
@@ -155,11 +155,11 @@ void Pathfinder::aStarCalcPath()
 		{
 			if (pX < x)			// ...west...
 			{
-				pathToFollow.push_back(DOWNRIGHT);	// ...so we go south-east
+				pathToFollow.push_back(DOWN_RIGHT);	// ...so we go south-east
 			}
 			else if (pX > x)	// ...east
 			{
-				pathToFollow.push_back(DOWNLEFT);		// ...so we go south-west
+				pathToFollow.push_back(DOWN_LEFT);		// ...so we go south-west
 			}
 			else				// ...exactly
 			{
@@ -170,11 +170,11 @@ void Pathfinder::aStarCalcPath()
 		{
 			if (pX < x)			// ...west
 			{
-				pathToFollow.push_back(UPRIGHT);		// ...so we go north-east
+				pathToFollow.push_back(UP_RIGHT);		// ...so we go north-east
 			}
 			else if (pX > x)	// ...east
 			{
-				pathToFollow.push_back(UPLEFT);		// ...so we go north-west
+				pathToFollow.push_back(UP_LEFT);		// ...so we go north-west
 			}
 			else				// ...exactly
 			{
@@ -206,10 +206,10 @@ int Pathfinder::aStarGetGCost(int x, int y, int px, int py)
 
 	switch (terrain[x][y])
 	{
-	case CLEARTERRAIN:
+	case CLEAR_TERRAIN:
 		terrainCost = 10;
 		break;
-	case ROUGHTERRAIN: case WATERTERRAIN:
+	case ROUGH_TERRAIN: case WATER_TERRAIN:
 		terrainCost = 20;
 		break;
 	default:
@@ -218,11 +218,11 @@ int Pathfinder::aStarGetGCost(int x, int y, int px, int py)
 
 	if (abs(x - px) == 1 && abs(y - py) == 1)
 	{
-		gCost = Gcost[px][py] + (DIAGONALCOST * terrainCost);
+		gCost = Gcost[px][py] + (DIAGONAL_COST * terrainCost);
 	}
 	else
 	{
-		gCost = Gcost[px][py] + (ORTHOGONALCOST * terrainCost);
+		gCost = Gcost[px][py] + (ORTHOGONAL_COST * terrainCost);
 	}
 
 	return gCost;
@@ -287,14 +287,14 @@ bool Pathfinder::aStarCutCorner(int a, int b)
 	{
 		if (b == parentYval - 1)
 		{
-			if (terrain[parentXval - 1][parentYval] == BLOCKEDTERRAIN
-				|| terrain[parentXval][parentYval - 1] == BLOCKEDTERRAIN)
+			if (terrain[parentXval - 1][parentYval] == BLOCKED_TERRAIN
+				|| terrain[parentXval][parentYval - 1] == BLOCKED_TERRAIN)
 				corner = false;
 		}
 		else if (b == parentYval + 1)
 		{
-			if (terrain[parentXval][parentYval + 1] == BLOCKEDTERRAIN
-				|| terrain[parentXval - 1][parentYval] == BLOCKEDTERRAIN)
+			if (terrain[parentXval][parentYval + 1] == BLOCKED_TERRAIN
+				|| terrain[parentXval - 1][parentYval] == BLOCKED_TERRAIN)
 				corner = false;
 		}
 	}
@@ -302,14 +302,14 @@ bool Pathfinder::aStarCutCorner(int a, int b)
 	{
 		if (b == parentYval - 1)
 		{
-			if (terrain[parentXval][parentYval - 1] == BLOCKEDTERRAIN
-				|| terrain[parentXval + 1][parentYval] == BLOCKEDTERRAIN)
+			if (terrain[parentXval][parentYval - 1] == BLOCKED_TERRAIN
+				|| terrain[parentXval + 1][parentYval] == BLOCKED_TERRAIN)
 				corner = false;
 		}
 		else if (b == parentYval + 1)
 		{
-			if (terrain[parentXval + 1][parentYval] == BLOCKEDTERRAIN
-				|| terrain[parentXval][parentYval + 1] == BLOCKEDTERRAIN)
+			if (terrain[parentXval + 1][parentYval] == BLOCKED_TERRAIN
+				|| terrain[parentXval][parentYval + 1] == BLOCKED_TERRAIN)
 				corner = false;
 		}
 	}
@@ -323,9 +323,9 @@ void Pathfinder::aStarSetMapValues(Map* map, bool swim)
 	{
 		for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y += BLOCK_SIZE)
 		{
-			if (terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] == HASENEMY || terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] == HASTOWER)
+			if (/*map->getTerrain(x, y) == HAS_ENEMY || */map->getTerrain(x, y) == HAS_TOWER)
 			{
-				terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = BLOCKEDTERRAIN;
+				terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = BLOCKED_TERRAIN;
 			}
 			else
 			{
@@ -335,9 +335,9 @@ void Pathfinder::aStarSetMapValues(Map* map, bool swim)
 				}
 				else
 				{
-					if (map->getTerrain(x, y) == WATERTERRAIN)
+					if (map->getTerrain(x, y) == WATER_TERRAIN)
 					{
-						terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = BLOCKEDTERRAIN;
+						terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = BLOCKED_TERRAIN;
 					}
 					else
 					{

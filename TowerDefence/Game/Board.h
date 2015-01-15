@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../Engine/Engine.h"
-#include "Constants.h"
-#include "Tower.h"
-#include "Enemy.h"
+#include "../Engine/Constants.h"
+#include "TowerHandler.h"
+#include "EnemyHandler.h"
 #include "Cursor.h"
 #include <vector>
 #include <iostream>
@@ -23,52 +23,28 @@ private:
 	unsigned int eTimer;
 
 	// Per-game values				
-	int score, credit, level, nextEnemy;
+	int score, level;
 	string message;	
-	string initials;
-	bool hasEnemy[BOARD_WIDTH][BOARD_HEIGHT];
-	eStats selectedEnemyStats;
-	tStats selectedTowerStats;
 
-
-	// Gameplay methods
-	void buildTower(Cursor &cursor);
-	bool checkTowerPlacement(Cursor &cursor);
-	void deleteTower(Cursor &cursor);
-
-	void launchEnemy(Cursor &cursor);
-	void moveEnemies();
-	void moveBullets();
-	void destroyObjects();
 	void cleanup();
-
-	void checkForObject(Cursor &cursor);
+	
 
 public:	
 	Board(void);
 
-	// Initial values for game setup
 	int startHealth, currentHealth;
-	int targetX, targetY;				
-	int startX, startY;	
-	int type, enemyCount, towerCount;
 	bool debugMode; 
 
 	bool enemySelected, towerSelected, objectSelected;
-	eStats pullEnemyStats();
-	tStats pullTowerStats();
-
-	Enemy* getEnemyFromId(int id);
-	Tower* getTowerFromId(int id);
+	eStats selectedEnemyStats;
+	tStats selectedTowerStats;
 
 	Engine engine;
 	Map map;
+	TowerHandler towerHandler;
+	EnemyHandler enemyHandler;
 
-	vector<Tower*>  towers;
-	vector<Enemy*>  enemies;
-
+	void checkForObject(Cursor &cursor);
 	void setup(Engine &e);
-	int getInput(Cursor &cursor);
 	void update();
-	void draw(float interpolation);
 };

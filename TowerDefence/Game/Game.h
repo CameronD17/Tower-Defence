@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Engine/Engine.h"
-#include "Constants.h"
+#include "../Engine/Constants.h"
 #include "Board.h"
 #include "Sidebar.h"
 
@@ -12,13 +12,15 @@ class Game
 
 private:
 	
-	void setCursorPosition(int x, int y);
 	void drawBoardBackground();
 	void drawGamePieces();
 	void drawBoardForeground();
 	void drawCursor();
 	void drawDebugFeatures();
 	void drawSidebar();
+	void drawSidebarEnemyStats();
+	void drawSidebarTowerStats();
+	void drawButtons();
 
 public:	
 	Game();	
@@ -27,10 +29,10 @@ public:
 	Board board;
 	Sidebar sidebar;
 	Cursor cursor;
-	char cursorPosition;
-	
-	void newGame();
+
 	int getInput();
+	int handleBoardInput(input k);
+	int handleSidebarInput(input k);
 	void update();
 	void draw();
 	void close();

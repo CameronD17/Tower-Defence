@@ -15,7 +15,7 @@ class Tower : public Object
 public:
 	Tower() : Object(){};
 	Tower(int x, int y) : Object(){};
-	Tower(int x, int y, int t, int id);
+	Tower(int x, int y, int t, int id, Map* m);
 	~Tower();
 
 	void update(Map* m, vector<Enemy*>* enemies);

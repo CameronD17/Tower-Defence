@@ -1,16 +1,12 @@
 #include "Map.h"
 
-
 Map::Map()
-{
-	
+{	
 }
-
 
 Map::~Map()
 {
 }
-
 
 // This method is temporary, and will be extended to accept different maps based on input
 void Map::init(char map)
@@ -24,11 +20,15 @@ void Map::init(char map)
 		{
 			for (int y = 0; y < BOARD_HEIGHT; y++)
 			{
-				tiles[x][y].terrain = CLEARTERRAIN;
+				tiles[x][y].terrain = CLEAR_TERRAIN;
 				tiles[x][y].enemy = 0;
 			}
 		}
+
+		startX = 24, startY = 24, targetX = 384, targetY = 408;
 	}
+
+	startX = 24, startY = 24, targetX = 384, targetY = 408;
 }
 
 bool Map::loadMapFromFile(string filename)
@@ -59,6 +59,10 @@ bool Map::loadMapFromFile(string filename)
 		mapData.close();
 		return true;
 	}
+
+
+	// ADD TO FILE READIN
+	startX = 24, startY = 24, targetX = 384, targetY = 408;
 
 	return false;
 }
@@ -95,8 +99,10 @@ void Map::setTower(int x, int y, int id)
 
 bool Map::walkable(int x, int y, int id)
 {
-	if ((tiles[(x / BLOCK_SIZE)][(y / BLOCK_SIZE)].terrain == BLOCKEDTERRAIN 
-		|| (tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].terrain == HASENEMY)) && tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].enemy != id)
+	if ((tiles[(x / BLOCK_SIZE)][(y / BLOCK_SIZE)].terrain == BLOCKED_TERRAIN 
+		|| (tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].terrain == HAS_ENEMY) 
+		|| (tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].terrain == HAS_TOWER)) 
+		&& tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].enemy != id)
 	{
 		return false;
 	}
@@ -107,10 +113,10 @@ bool Map::buildable(int x, int y, bool waterTower)
 {
 	if (waterTower)
 	{
-		return (getTerrain(x, y) == WATERTERRAIN);
+		return (getTerrain(x, y) == WATER_TERRAIN);
 	}
 	else
 	{
-		return (getTerrain(x, y) == CLEARTERRAIN || getTerrain(x, y) == ROUGHTERRAIN);
+		return (getTerrain(x, y) == CLEAR_TERRAIN || getTerrain(x, y) == ROUGH_TERRAIN);
 	}
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "Constants.h"
+#include "../Engine/Constants.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -19,6 +19,8 @@ public:
 	Map();
 	~Map();
 
+	int startX, startY, targetX, targetY;
+	
 	void init(char map);
 	bool loadMapFromFile(string filename);
 

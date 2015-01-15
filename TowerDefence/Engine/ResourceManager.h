@@ -57,5 +57,6 @@ public:
 	SDL_Texture *getImage(string filepath);
 	Mix_Music	*getMusic();
 
+
 	void close();
 };

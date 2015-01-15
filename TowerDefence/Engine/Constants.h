@@ -1,0 +1,48 @@
+#pragma once
+
+#define WINDOW_WIDTH 1366		// 800 --> 1440
+#define WINDOW_HEIGHT 768		// 640 --> 900
+
+#define BOARD_WIDTH 40
+#define BOARD_HEIGHT 30
+#define	BLOCK_COUNT (BOARD_WIDTH * BOARD_HEIGHT)
+
+#define BLOCK_SIZE 24
+#define BULLET_SIZE 2
+#define BORDER 24
+
+#define SCREEN_FPS 30
+#define SCREEN_TICK (1000/SCREEN_FPS)
+
+#define UP 1
+#define UP_RIGHT 2
+#define RIGHT 3
+#define DOWN_RIGHT 4
+#define DOWN 5
+#define DOWN_LEFT 6
+#define LEFT 7
+#define UP_LEFT 8
+
+#define CLEAR_TERRAIN 'C'
+#define WATER_TERRAIN 'W'
+#define ROUGH_TERRAIN 'R'
+#define BLOCKED_TERRAIN 'B'
+#define HAS_TOWER 'T'
+#define HAS_ENEMY 'E'
+
+#define CURSOR_ON_BOARD 'B'
+#define CURSOR_ON_MENU 'M'
+#define CURSOR_ON_SIDEBAR 'S'
+
+#define SIDEBAR_X (BORDER * 2) + (BOARD_WIDTH * BLOCK_SIZE)
+#define SIDEBAR_WIDTH (WINDOW_WIDTH - SIDEBAR_X)
+
+#define STATS_Y (((BOARD_HEIGHT*BLOCK_SIZE) / 3) * 2)
+#define STATS_HEIGHT (WINDOW_HEIGHT - STATS_Y)
+
+#define DIAGONAL_COST 14
+#define ORTHOGONAL_COST 10
+
+#define BOUNTY_MULTIPLIER 10
+#define VALUE_MULTIPLIER 10
+#define HEALTH_MULTIPLIER 100

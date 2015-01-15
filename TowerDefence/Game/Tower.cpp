@@ -1,12 +1,16 @@
 #include "Tower.h"
 #include <iostream>
 
-Tower::Tower(int x, int y, int t, int id) 
+Tower::Tower(int x, int y, int t, int id, Map* m) 
 {
 	setX(x);
 	setY(y);
 	setID(id);
+	stats.id = id;
 	setStats(t);
+
+	(*m).setTerrain(x - BORDER, y - BORDER, HAS_TOWER);
+	(*m).setTower(x - BORDER, y - BORDER, id);
 };
 
 Tower::~Tower()
@@ -21,6 +25,7 @@ void Tower::setStats(int t)
 	stats.hits = 0;
 	stats.kills = 0;
 	stats.currentlyFired = 0;
+
 
 	switch (t)
 	{
@@ -100,7 +105,7 @@ bool Tower::checkForEnemies(Map* m, vector<Enemy*>* enemies)
 	{
 		for (int y = getY() - stats.range; (y < getY() + stats.range) && (y < BOARD_HEIGHT * BLOCK_SIZE); y += BLOCK_SIZE)
 		{
-			if ((*m).getTerrain(x, y) == HASENEMY)
+			if ((*m).getTerrain(x, y) == HAS_ENEMY)
 			{
 				for (std::vector<Enemy*>::iterator e = enemies->begin(); e != enemies->end(); ++e)
 				{
