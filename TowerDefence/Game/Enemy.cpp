@@ -51,6 +51,17 @@ void Enemy::initialise(int level, int x, int y, int tX, int tY, int t, Map* m)
 	(*m).setEnemy(x - BORDER, y - BORDER, stats.id);
 }
 
+bool Enemy::reduceHealth(int i, Map* m)
+{
+	stats.currentHealth -= i;
+	if (stats.currentHealth <= 0)
+	{
+		die(m);
+		return true;
+	}
+	return false;
+}
+
 void Enemy::updateTarget(int tX, int tY, Map* m)
 {
 	setX(getX() - getX() % BLOCK_SIZE);
@@ -297,4 +308,10 @@ bool Enemy::reachTarget(Map* map)
 		return true;
 	}
 	return false;
+}
+
+void Enemy::die(Map* map)
+{
+	setDeleted(true);
+	releaseAllMyTiles(map);
 }

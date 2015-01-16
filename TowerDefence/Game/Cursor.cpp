@@ -5,7 +5,7 @@ Cursor::Cursor()
     setX(0);
     setY(0);
     r = b = g = 0xFF;
-	changeTowerType(0);
+	setAction(0);
 }
 
 Cursor::Cursor(int x, int y) //: Object(x, y)
@@ -13,7 +13,7 @@ Cursor::Cursor(int x, int y) //: Object(x, y)
 	setX(0);
 	setY(0);
     r = b = g = 0xFF;
-	changeTowerType(0);
+	setAction(0);
 };
 
 Cursor::~Cursor()
@@ -26,7 +26,7 @@ void Cursor::init(ResourceManager &rm)
 	setResources(rm);
 }
 
-void Cursor::changeTowerType(int t)
+void Cursor::setAction(int t)
 {	
 	switch(t)
 	{
@@ -56,7 +56,7 @@ void Cursor::changeTowerType(int t)
 	}
 }
 
-int Cursor::getTowerType()const
+int Cursor::getAction()const
 {
 	return currentSelection;
 }
@@ -67,6 +67,6 @@ void Cursor::reset()
     setY(0);
 	r = b = g = 0xFF;
 	setTexture(NULL);
-	changeTowerType(0);
+	setAction(0);
 }
 

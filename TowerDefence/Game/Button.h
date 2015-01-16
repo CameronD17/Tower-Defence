@@ -9,21 +9,32 @@ class Button
 {
 
 private:
-	int x, y, width, height;
+	int x, y, width, height, fontSize, textOffset;
+	bool visible, hovered, selected;
 
 public:	
 	Button(void);
-	Button(int i, int x, int y, int w, int h, string t);		
+	Button(int i, int x, int y, int w, int h, int f, int o, string t, bool v);		
+	 
+	void init(int i, int x, int y, int w, int h, int f, int o, string t, bool v);
 	
-	void init(int i, int x, int y, int w, int h, string t);
-
-	bool visible, hovered;
-
 	int getX()const;
 	int getY()const;
 	int getW()const;
 	int getH()const;
+	int getFontSize()const;
+	int getOffset()const;
 	int id;
+
+	void hide();
+	void show();
+	bool isVisible();
+
+	bool isHovered();
+	
+	void select();
+	void deselect();
+	bool isSelected();
 
 	bool cursorOnButton(Cursor &c);
 

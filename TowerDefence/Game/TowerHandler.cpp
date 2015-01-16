@@ -4,14 +4,18 @@ TowerHandler::TowerHandler(void){}
 	
 void TowerHandler::init(Map* m)								// Setting up the TowerHandler
 {
-	credit = 100000; 
 	towerCount++;
 	Tower * t = new Tower(288, 336, 1, towerCount, m);
 	(*m).setTower(264, 312, towerCount);
 	towers.push_back(t);
 }
 
-bool TowerHandler::buildTower(Cursor &cursor, Map* m)
+int TowerHandler::numTowers()
+{
+	return towerCount;
+}
+
+bool TowerHandler::buildTower(Map* m, Cursor &cursor, Bank* b)
 {
 	int x = cursor.getX() - BORDER, y = cursor.getY() - BORDER;		// Store coordinates to make things easier to read.
 
@@ -22,7 +26,7 @@ bool TowerHandler::buildTower(Cursor &cursor, Map* m)
 		if (!(x == (*m).startX && y == (*m).startY))
 		{
 			// c) Does the player have enough credit to purchase the tower?
-			if (credit >= (10 * cursor.getTowerType()))
+			if (b->getCredit() >= (10 * cursor.getAction()))
 			{
 				char terrainReset = (*m).getTerrain(x, y);			// Store terrain type in case a reset is required
 				Pathfinder* p = new Pathfinder();					// Pathfinder to check paths
@@ -32,10 +36,10 @@ bool TowerHandler::buildTower(Cursor &cursor, Map* m)
 				if (p->findPath((*m).startX, (*m).startY, (*m).targetX, (*m).targetY, m))
 				{
 					towerCount++;
-					Tower * t = new Tower(cursor.getX(), cursor.getY(), cursor.getTowerType(), towerCount, m);
+					Tower * t = new Tower(cursor.getX(), cursor.getY(), cursor.getAction(), towerCount, m);
 					(*m).setTower(x, y, towerCount);
 					towers.push_back(t);
-					credit -= (t->getCost());
+					b->decreaseCredit(t->getCost());
 					return true;
 				}
 				else // d)
@@ -64,7 +68,7 @@ bool TowerHandler::buildTower(Cursor &cursor, Map* m)
 	return false;
 }
 
-bool TowerHandler::sellTower(Map* m, int id)
+bool TowerHandler::sellTower(Map* m, int id, Bank* b)
 {	
 	for (std::vector<Tower*>::iterator t = towers.begin(); t != towers.end(); ++t)
 	{
@@ -72,7 +76,7 @@ bool TowerHandler::sellTower(Map* m, int id)
 		{
 			(*m).setTerrain((*t)->getX() - BORDER, (*t)->getY() - BORDER, CLEAR_TERRAIN);
 			(*m).setEnemy((*t)->getX() - BORDER, (*t)->getY() - BORDER, 0);
-			credit += ((*t)->getCost() / 2);
+			b->increaseCredit((*t)->getCost() / 2);
 			(*t)->setDeleted(true);
 			//setMessage("Tower sold!");
 			return true;

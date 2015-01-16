@@ -11,14 +11,22 @@ class Sidebar
 {
 
 private:
-
 	void loadButtonsFromFile(string filepath);
+
 public:	
 	Sidebar(void);
 	Sidebar(Engine &e);	
+
+	bool buttonSelected;
+
 	Engine engine;
 
+	Button* selectedButton;
 	vector<Button*> buttons;
+
+	void selectButton(int id);
+	void deselectButton(int id);
+	void deselectAllButtons();
 
 	Button* findButtonByName(string name);
 	void setup(Engine &e);

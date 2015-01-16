@@ -8,28 +8,65 @@ void Board::setup(Engine &e)								// Setting up the Board
 	map.init(0);
 	towerHandler.init(&map);
 	enemyHandler.init(engine, &map);
+	bank.init(10000);
 	eTimer = SDL_GetTicks() + 300;
+}
+
+int Board::getScore()
+{
+	return score;
+}
+
+int Board::getLevel()
+{
+	return level;
 }
 
 void Board::update()
 {
 	if (SDL_GetTicks() > eTimer)
 	{
+		for (std::vector<Tower*>::iterator t = towerHandler.towers.begin(); t != towerHandler.towers.end(); ++t)
+		{
+			for (std::vector<Bullet*>::iterator b = (*t)->bullets.begin(); b != (*t)->bullets.end(); ++b)
+			{
+				engine.physics.nonUniformMove((*b), (*b)->getDX(), (*b)->getDY());
+				if ((*b)->expired() && (*b)->hasHit())
+				{
+					if ((*b)->enemy->reduceHealth((*t)->getStats().damage, &map)) (*t)->incrementKills();
+				}
+			}
+			(*t)->update(&map, &enemyHandler.enemies);
+
+			if (towerSelected)
+			{
+				if ((*t)->getID() == selectedTowerStats.id)
+				{
+					selectedTowerStats = (*t)->getStats();
+				}
+			}
+		}
+
 		for (std::vector<Enemy*>::iterator e = enemyHandler.enemies.begin(); e != enemyHandler.enemies.end(); ++e)
 		{
 			if ((*e)->canWalk(&map))
 			{
 				engine.physics.move((*e), (*e)->nextMove(), (*e)->getSpeed());
 			}
-		}
 
-		for (std::vector<Tower*>::iterator t = towerHandler.towers.begin(); t != towerHandler.towers.end(); ++t)
-		{
-			(*t)->update(&map, &enemyHandler.enemies);
-
-			for (std::vector<Bullet*>::iterator b = (*t)->bullets.begin(); b != (*t)->bullets.end(); ++b)
+			if (enemySelected)
 			{
-				engine.physics.nonUniformMove((*b), (*b)->dX, (*b)->dY);
+				if ((*e)->getID() == selectedEnemyStats.id)
+				{
+					if ((*e)->isDeleted())
+					{
+						deselectObject();
+					}
+					else
+					{
+						selectedEnemyStats = (*e)->getStats();
+					}
+				}
 			}
 		}
 
@@ -39,7 +76,7 @@ void Board::update()
 	cleanup();
 }
 
-void Board::checkForObject(Cursor &cursor)
+void Board::selectObject(Cursor &cursor)
 {
 	int x = cursor.getX() - BORDER, y = cursor.getY() - BORDER;
 
@@ -71,6 +108,13 @@ void Board::checkForObject(Cursor &cursor)
 			}
 		}
 	}
+}
+
+void Board::deselectObject()
+{
+	objectSelected = false;
+	towerSelected = false;
+	enemySelected = false;
 }
 
 void Board::cleanup()

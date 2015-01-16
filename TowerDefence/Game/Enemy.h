@@ -30,6 +30,7 @@ public:
 	void update(Map* m);
 	void updateTarget(int tX, int tY, Map* m); 
 	void updatePath(Map* m);
+	bool reduceHealth(int h, Map* m);
 
 	int nextMove();
 	int getSpeed()const;
@@ -55,5 +56,6 @@ private:
 	void lockNextTile(Map* m);
 
 	bool reachTarget(Map* m);
+	void die(Map* m);
 };
 

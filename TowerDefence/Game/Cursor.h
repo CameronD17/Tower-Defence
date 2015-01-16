@@ -11,8 +11,8 @@ public:
 	int r, g, b;
 	int currentSelection;
 
-	int getTowerType()const;
-	void changeTowerType(int t);
+	int getAction()const;
+	void setAction(int t);
 
 	void init(ResourceManager &rm);
 	void reset();

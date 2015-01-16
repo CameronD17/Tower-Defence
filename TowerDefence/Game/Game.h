@@ -20,15 +20,16 @@ private:
 	void drawSidebar();
 	void drawSidebarEnemyStats();
 	void drawSidebarTowerStats();
+	void drawSidebarSelectedButton();
 	void drawButtons();
 
 public:	
 	Game();	
 	~Game();
 	Engine engine;
+	Cursor cursor;
 	Board board;
 	Sidebar sidebar;
-	Cursor cursor;
 
 	int getInput();
 	int handleBoardInput(input k);

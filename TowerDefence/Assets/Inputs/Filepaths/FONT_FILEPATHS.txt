@@ -1,2 +1,3 @@
 Assets/Fonts/imagine.ttf
-Assets/Fonts/Anonymous_Pro.ttf
+Assets/Fonts/anonymous.ttf
+Assets/Fonts/bombardier.ttf

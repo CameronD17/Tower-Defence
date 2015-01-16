@@ -3,22 +3,21 @@
 #include "../Engine/Constants.h"
 #include "Tower.h"
 #include "Cursor.h"
+#include "Bank.h"
 using namespace std;
 
 class TowerHandler 
-{
-
+{		
 private:
-	// Per-game values				
-	int credit;
-		
+	int towerCount;
+
 public:	
 	TowerHandler(void);
 
-	int towerCount;
+	int numTowers();
 	
-	bool buildTower(Cursor &cursor, Map* m);
-	bool sellTower(Map* m, int id);
+	bool buildTower(Map* m, Cursor &cursor, Bank* b);
+	bool sellTower(Map* m, int id, Bank* b);
 
 	void destroyObjects();
 	

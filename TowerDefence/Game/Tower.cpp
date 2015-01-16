@@ -72,7 +72,7 @@ void Tower::update(Map* m, vector<Enemy*>* enemies)
 
 	for (std::vector<Bullet*>::iterator b = bullets.begin(); b != bullets.end(); ++b)
 	{
-		if ((*b)->hitTarget())
+		if ((*b)->expired())
 		{
 			stats.currentlyFired--;
 		}
@@ -84,7 +84,7 @@ void Tower::fire()
 	if (stats.currentlyFired <= stats.maxCapacity)
 	{
 		stats.currentlyFired++;
-		Bullet * b = new Bullet((getX() + (BLOCK_SIZE / 2)), (getY() + (BLOCK_SIZE / 2)), (enemy->getX() + (BLOCK_SIZE / 2)), (enemy->getY() + (BLOCK_SIZE / 2)), stats.range);
+		Bullet * b = new Bullet((getX() + (BLOCK_SIZE / 2)), (getY() + (BLOCK_SIZE / 2)), stats.range, enemy);
 		bullets.push_back(b);
 	}
 }
@@ -97,6 +97,11 @@ int Tower::getCost()
 tStats Tower::getStats()const
 {
 	return stats;
+}
+
+void Tower::incrementKills()
+{
+	stats.kills++;
 }
 
 bool Tower::checkForEnemies(Map* m, vector<Enemy*>* enemies)

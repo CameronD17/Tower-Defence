@@ -75,7 +75,7 @@ void Game::drawGamePieces()
 
 		for (std::vector<Bullet*>::iterator b = (*t)->bullets.begin(); b != (*t)->bullets.end(); ++b)
 		{
-			engine.graphics.drawRectangle((*b)->getX(), (*b)->getY(), 1, 1, 255, 255, 255);
+			engine.graphics.drawRectangle((*b)->getX(), (*b)->getY(), 2,2, 255, 255, 255);
 		}
 	}
 
@@ -112,15 +112,17 @@ void Game::drawBoardForeground()
 
 void Game::drawCursor()
 {	
-	// *** Draw the cursor *** //
-	if(cursor.getTowerType() == 0)	// If there is no tower selected by the cursor, draw a plain white cursor. This is the default starting cursor.
-	{	
-		engine.graphics.drawRectangleOL(cursor.getX(), cursor.getY(), BLOCK_SIZE, BLOCK_SIZE, cursor.r, cursor.g, cursor.b);
-	}
-	else
+	if (cursor.getX() > BORDER && cursor.getX() < (BORDER + (BOARD_WIDTH*BLOCK_SIZE)) && cursor.getY() > BORDER && cursor.getY() < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE)))
 	{
-		engine.graphics.drawRectangle(cursor.getX(), cursor.getY(), BLOCK_SIZE, BLOCK_SIZE, cursor.r, cursor.g, cursor.b);
-	}	
+		if (cursor.getAction() == 0)	// If there is no tower selected by the cursor, draw a plain white cursor. This is the default starting cursor.
+		{
+			engine.graphics.drawRectangleOL(cursor.getX(), cursor.getY(), BLOCK_SIZE, BLOCK_SIZE, cursor.r, cursor.g, cursor.b);
+		}
+		else
+		{
+			engine.graphics.drawRectangle(cursor.getX(), cursor.getY(), BLOCK_SIZE, BLOCK_SIZE, cursor.r, cursor.g, cursor.b);
+		}
+	}
 }
 
 void Game::drawDebugFeatures()
@@ -209,24 +211,38 @@ void Game::drawDebugFeatures()
 void Game::drawSidebar()
 {
 	// Static top area
-	engine.graphics.drawRectangleOL(SIDEBAR_X + 2, 2, SIDEBAR_WIDTH - 4, STATS_Y - 4, 255, 255, 255);
+	//engine.graphics.drawRectangleOL(SIDEBAR_X + 2, 2, SIDEBAR_WIDTH - 4, STATS_Y - 4, 255, 255, 255);
+
+	stringstream creditText;
+	creditText << "Credit: " << board.bank.getCredit();
+	engine.graphics.renderText(SIDEBAR_X + BLOCK_SIZE, BORDER/2, creditText.str(), 40, 255, 255, 255, "bombardier");
+
+	stringstream scoreText;
+	scoreText << "Score: " << board.getScore();
+	engine.graphics.renderText(SIDEBAR_X + BLOCK_SIZE, 180, scoreText.str(), 40, 255, 255, 255, "bombardier");
 
 	// Stats bottom area
-	if (board.enemySelected)
+	if (sidebar.buttonSelected)
+	{
+		sidebar.findButtonByName("Sell")->hide();
+		drawSidebarSelectedButton();
+		engine.graphics.drawRectangleOL(SIDEBAR_X + 2, STATS_Y + 2, SIDEBAR_WIDTH - 4, STATS_HEIGHT - 4, 0, 255, 0);
+	}
+	else if (board.enemySelected)
 	{
 		drawSidebarEnemyStats();
-		sidebar.findButtonByName("Sell")->visible = false;
+		sidebar.findButtonByName("Sell")->hide();
 		engine.graphics.drawRectangleOL(SIDEBAR_X + 2, STATS_Y + 2, SIDEBAR_WIDTH - 4, STATS_HEIGHT - 4, 255, 0, 0);
 	}
 	else if (board.towerSelected)
 	{
 		drawSidebarTowerStats();
-		sidebar.findButtonByName("Sell")->visible = true;
+		sidebar.findButtonByName("Sell")->show();
 		engine.graphics.drawRectangleOL(SIDEBAR_X + 2, STATS_Y + 2, SIDEBAR_WIDTH - 4, STATS_HEIGHT - 4, 255, 255, 255);
 	}
 	else
 	{
-		sidebar.findButtonByName("Sell")->visible = false;
+		sidebar.findButtonByName("Sell")->hide();
 		engine.graphics.drawRectangleOL(SIDEBAR_X + 2, STATS_Y + 2, SIDEBAR_WIDTH - 4, STATS_HEIGHT - 4, 0, 0, 255);
 	}
 }
@@ -239,13 +255,13 @@ void Game::drawSidebarEnemyStats()
 	int enemyStatsStartY = STATS_Y + BLOCK_SIZE;
 
 	IDText << "Enemy ID: " << e.id;
-	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY, IDText.str(), 20, 255, 0, 0, "Anonymous_Pro");
+	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY, IDText.str(), 20, 255, 0, 0, "anonymous");
 	healthText << "Health: " << e.currentHealth;
-	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY + BLOCK_SIZE, healthText.str(), 20, 255, 0, 0, "Anonymous_Pro");
+	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY + BLOCK_SIZE, healthText.str(), 20, 255, 0, 0, "anonymous");
 	valueText << "Value: " << e.value << " points.";
-	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY + (BLOCK_SIZE * 2), valueText.str(), 20, 255, 0, 0, "Anonymous_Pro");
+	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY + (BLOCK_SIZE * 2), valueText.str(), 20, 255, 0, 0, "anonymous");
 	bountyText << "Bounty: " << e.bounty << " credits.";
-	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY + (BLOCK_SIZE * 3), bountyText.str(), 20, 255, 0, 0, "Anonymous_Pro");
+	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY + (BLOCK_SIZE * 3), bountyText.str(), 20, 255, 0, 0, "anonymous");
 }
 
 void Game::drawSidebarTowerStats()
@@ -256,30 +272,45 @@ void Game::drawSidebarTowerStats()
 	int towerStatsStartY = STATS_Y + BLOCK_SIZE;
 
 	IDText << "Tower ID: " << t.id;
-	engine.graphics.renderText(towerStatsStartX, towerStatsStartY, IDText.str(), 20, 255, 255, 255, "Anonymous_Pro");
+	engine.graphics.renderText(towerStatsStartX, towerStatsStartY, IDText.str(), 20, 255, 255, 255, "anonymous");
 	damageText << "Damage: " << t.damage;
-	engine.graphics.renderText(towerStatsStartX, towerStatsStartY + BLOCK_SIZE, damageText.str(), 20, 255, 255, 255, "Anonymous_Pro");
+	engine.graphics.renderText(towerStatsStartX, towerStatsStartY + BLOCK_SIZE, damageText.str(), 20, 255, 255, 255, "anonymous");
 	rangeText << "Range: " << (t.range/BLOCK_SIZE) << " tiles.";
-	engine.graphics.renderText(towerStatsStartX, towerStatsStartY + (BLOCK_SIZE * 2), rangeText.str(), 20, 255, 255, 255, "Anonymous_Pro");
+	engine.graphics.renderText(towerStatsStartX, towerStatsStartY + (BLOCK_SIZE * 2), rangeText.str(), 20, 255, 255, 255, "anonymous");
 	killsText << "Total Kills: " << t.kills;
-	engine.graphics.renderText(towerStatsStartX, towerStatsStartY + (BLOCK_SIZE * 3), killsText.str(), 20, 255, 255, 255, "Anonymous_Pro");
+	engine.graphics.renderText(towerStatsStartX, towerStatsStartY + (BLOCK_SIZE * 3), killsText.str(), 20, 255, 255, 255, "anonymous");
+}
+
+void Game::drawSidebarSelectedButton()
+{
+	stringstream buttonText;
+	int enemyStatsStartX = SIDEBAR_X + BLOCK_SIZE;
+	int enemyStatsStartY = STATS_Y + BLOCK_SIZE;
+
+	buttonText << "Button Selected: " << sidebar.selectedButton->text;
+	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY, buttonText.str(), 20, 255, 0, 0, "anonymous");
 }
 
 void Game::drawButtons()
 {
 	for (std::vector<Button*>::iterator b = sidebar.buttons.begin(); b != sidebar.buttons.end(); ++b)
 	{
-		if ((*b)->visible)
+		if ((*b)->isVisible())
 		{
-			if ((*b)->hovered)
+			if ((*b)->isHovered())
 			{
 				engine.graphics.drawRectangleOL((*b)->getX(), (*b)->getY(), (*b)->getW(), (*b)->getH(), 255, 0, 255);
-				engine.graphics.renderText((*b)->getX() + 15, (*b)->getY() + 15, (*b)->text, 30, 255, 0, 255);
+				engine.graphics.renderText((*b)->getX() + (*b)->getOffset(), (*b)->getY() + (*b)->getOffset(), (*b)->text, (*b)->getFontSize(), 255, 0, 255);
+			}
+			else if ((*b)->isSelected())
+			{
+				engine.graphics.drawRectangleOL((*b)->getX(), (*b)->getY(), (*b)->getW(), (*b)->getH(), 255, 255, 0);
+				engine.graphics.renderText((*b)->getX() + (*b)->getOffset(), (*b)->getY() + (*b)->getOffset(), (*b)->text, (*b)->getFontSize(), 255, 255, 0);
 			}
 			else
 			{
 				engine.graphics.drawRectangleOL((*b)->getX(), (*b)->getY(), (*b)->getW(), (*b)->getH(), 255, 255, 255);
-				engine.graphics.renderText((*b)->getX() + 15, (*b)->getY() + 15, (*b)->text, 30);
+				engine.graphics.renderText((*b)->getX() + (*b)->getOffset(), (*b)->getY() + (*b)->getOffset(), (*b)->text, (*b)->getFontSize(), 255, 255, 255);
 			}
 		}
 	}
@@ -299,57 +330,33 @@ int Game::getInput()
 {
 	input k = engine.interfaces.getInput();
 
-	if (k.keyPress)
+	/*if (k.keyPress)
 	{
 		switch (k.key)
 		{
 		case SDLK_ESCAPE:
-			if (board.objectSelected)
+			if (board.objectSelected || sidebar.buttonSelected)
 			{
-				board.objectSelected = false;
-				board.towerSelected = false;
-				board.enemySelected = false;
+				board.deselectObject();
+				sidebar.deselectAllButtons();
+				cursor.setAction(0);
 			}
 			else
 			{
 				return -1;
 			}
 			break;
-		case SDLK_0:
-			cursor.changeTowerType(0);
-			break;
-		case SDLK_1:
-			cursor.changeTowerType(1);
-			break;
-		case SDLK_2:
-			cursor.changeTowerType(2);
-			break;
-		case SDLK_3:
-			cursor.changeTowerType(3);
-			break;
-		case SDLK_4:
-			cursor.changeTowerType(4);
-			break;
-		case SDLK_5:
-			cursor.changeTowerType(5);
-			break;
-		case SDLK_6:
-			cursor.changeTowerType(6);
-			break;
-		case SDLK_d:
-			board.debugMode ? board.debugMode = false : board.debugMode = true;
-			break;
 		default:
 			break;
 		}
 	}
-	else if (k.x > BORDER && k.x < (BORDER + (BOARD_WIDTH*BLOCK_SIZE)) && k.y > BORDER && k.y < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE)))
+	else*/ if (k.x > BORDER && k.x < (BORDER + (BOARD_WIDTH*BLOCK_SIZE)) && k.y > BORDER && k.y < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE)))
 	{
-		handleBoardInput(k);
+		return handleBoardInput(k);
 	}
 	else
 	{
-		handleSidebarInput(k);
+		return handleSidebarInput(k);
 	}
 
 	return 0;
@@ -359,25 +366,25 @@ int Game::handleBoardInput(input k)
 {
 	if (k.mouseDown)
 	{
-		if (cursor.getTowerType() == 0)
+		if (cursor.getAction() == 1)
 		{
-			board.map.targetX = cursor.getX(); board.map.targetY = cursor.getY();
-			board.enemyHandler.updateEnemyTargets(&board.map);
-		}
-		else if (cursor.getTowerType() == 1)
-		{
-			if (board.towerHandler.buildTower(cursor, &board.map))
+			if (board.towerHandler.buildTower(&board.map, cursor, &board.bank))
 			{
 				board.enemyHandler.updateEnemyPaths(cursor.getX(), cursor.getY(), &board.map);
 			}
 		}
-		else if (cursor.getTowerType() == 2)
+		else if (cursor.getAction() == 2)
 		{
 			board.enemyHandler.launchEnemy(cursor, &board.map);
 		}
+		else if (cursor.getAction() == 3)
+		{
+			board.map.targetX = cursor.getX(); board.map.targetY = cursor.getY();
+			board.enemyHandler.updateEnemyTargets(&board.map);
+		}
 		else
 		{
-			board.checkForObject(cursor);
+			board.selectObject(cursor);
 		}
 	}
 	else
@@ -393,10 +400,10 @@ int Game::handleSidebarInput(input k)
 {
 	if (k.mouseDown)
 	{
-		int button;
+		int button = 0;
 		for (std::vector<Button*>::iterator b = sidebar.buttons.begin(); b != sidebar.buttons.end(); ++b)
 		{
-			if ((*b)->hovered)
+			if ((*b)->isHovered())
 			{
 				button = (*b)->id;
 				break;
@@ -405,11 +412,51 @@ int Game::handleSidebarInput(input k)
 
 		switch (button)
 		{
-		case 1:		//SELL TOWER
-			board.objectSelected = false;
-			board.towerSelected = false;
-			board.towerHandler.sellTower(&board.map, board.selectedTowerStats.id);
+		case 1:		// SELL TOWER
+			board.deselectObject();
+			board.towerHandler.sellTower(&board.map, board.selectedTowerStats.id, &board.bank);
 			break;
+
+		case 2: case 3: case 4: case 5: case 6: case 7: case 8: case 9: case 10: case 11: // BUY TOWER
+			board.deselectObject();
+			sidebar.selectButton(button);
+			cursor.setAction(1);
+			break;
+
+		case 12: // CHANGE TARGET
+			board.deselectObject();
+			sidebar.selectButton(button);
+			cursor.setAction(3);
+			break;
+
+		case 13: // LAUNCH ENEMY
+			board.deselectObject();
+			sidebar.selectButton(button);
+			cursor.setAction(2);
+			break;
+
+		case 14: // TOGGLE DEBUG
+			if (board.debugMode)
+			{
+				sidebar.deselectButton(button);
+				board.debugMode = false;
+			}
+			else
+			{
+				sidebar.selectButton(button);
+				board.debugMode = true;
+			}
+			break;
+
+		case 15:
+			board.deselectObject();
+			sidebar.deselectAllButtons();
+			cursor.setAction(0);
+			break;
+		
+		case 16:
+			return -1;
+
 		default:
 			break;
 		}		

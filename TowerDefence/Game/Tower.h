@@ -22,6 +22,8 @@ public:
 
 	int getCost();
 	tStats getStats()const;
+	void incrementKills();
+
 	Enemy* enemy;
 	vector<Bullet*> bullets;
 

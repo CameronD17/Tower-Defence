@@ -7,14 +7,24 @@
 class Bullet: public Object 
 {
 
-public:
-
-	Bullet();
-	Bullet(int x, int y, int tX, int tY, int range);
-	~Bullet();
+private:
 
 	int startX, startY, targetX, targetY, range, speed;
 	float angle, dX, dY;
-	bool hitTarget();
-private:
+	
+
+	bool hit;
+
+public:
+
+	Bullet();
+	Bullet(int x, int y, int range, Enemy* e);
+	~Bullet();
+	Enemy* enemy;
+	float getDX();
+	float getDY();
+
+	bool hasHit();
+	
+	bool expired();
 };

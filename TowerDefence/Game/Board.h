@@ -5,6 +5,7 @@
 #include "TowerHandler.h"
 #include "EnemyHandler.h"
 #include "Cursor.h"
+#include "Bank.h"
 #include <vector>
 #include <iostream>
 #include <sstream>
@@ -39,12 +40,18 @@ public:
 	eStats selectedEnemyStats;
 	tStats selectedTowerStats;
 
+	int getLevel();
+	int getScore();
+
 	Engine engine;
 	Map map;
+	Bank bank;
 	TowerHandler towerHandler;
 	EnemyHandler enemyHandler;
 
-	void checkForObject(Cursor &cursor);
+	void selectObject(Cursor &cursor);
+	void deselectObject();
+
 	void setup(Engine &e);
 	void update();
 };

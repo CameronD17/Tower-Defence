@@ -91,6 +91,7 @@
     <ClCompile Include="Engine\Profiling.cpp" />
     <ClCompile Include="Engine\ResourceManager.cpp" />
     <ClCompile Include="Engine\Engine.cpp" />
+    <ClCompile Include="Game\Bank.cpp" />
     <ClCompile Include="Game\Board.cpp" />
     <ClCompile Include="Game\Button.cpp" />
     <ClCompile Include="Game\TowerHandler.cpp" />
@@ -115,6 +116,7 @@
     <ClInclude Include="Engine\Profiling.h" />
     <ClInclude Include="Engine\ResourceManager.h" />
     <ClInclude Include="Engine\Engine.h" />
+    <ClInclude Include="Game\Bank.h" />
     <ClInclude Include="Game\Board.h" />
     <ClInclude Include="Game\Button.h" />
     <ClInclude Include="Game\TowerHandler.h" />
