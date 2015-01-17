@@ -102,6 +102,11 @@ void TowerHandler::destroyObjects()
 
 		if ((*t)->isDeleted())
 		{
+			for (vector<Bullet*>::iterator b = (*t)->bullets.begin(); b != (*t)->bullets.end();)
+			{
+				delete *b;
+				b = (*t)->bullets.erase(b);
+			}
 			delete *t;
 			t = towers.erase(t);
 		}

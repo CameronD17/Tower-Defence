@@ -49,6 +49,40 @@ int Pathfinder::getNextY()const
 	return -1;
 }
 
+int Pathfinder::getNextMove()const
+{
+	return pathToFollow.back();
+}
+
+int Pathfinder::getPathSize()const
+{
+	return pathToFollow.size();
+}
+
+int Pathfinder::getXAt(int pos)
+{
+	if (pos <= getPathSize())
+	{
+		return xCoordinates.at(pos);
+	}
+	return 0;
+}
+
+int Pathfinder::getYAt(int pos)
+{
+	if (pos <= getPathSize())
+	{
+		return yCoordinates.at(pos);
+	}
+	return 0;
+}
+
+void Pathfinder::popBack()
+{
+	pathToFollow.pop_back();
+	xCoordinates.pop_back();
+	yCoordinates.pop_back();
+}
 
 
 // *** A-Star Pathfinding functions *** //
@@ -56,7 +90,7 @@ int Pathfinder::getNextY()const
 bool Pathfinder::findPath(int sX, int sY, int tX, int tY, Map* map)
 {
 	// Initialise values
-	aStarSetMapValues(map, canSwim);
+	setMapValues(sX - BORDER, sY - BORDER, map, canSwim);
 
 	startX = (sX - BORDER) / BLOCK_SIZE, startY = (sY - BORDER) / BLOCK_SIZE;
 	targetX = (tX - BORDER) / BLOCK_SIZE, targetY = (tY - BORDER) / BLOCK_SIZE;
@@ -84,16 +118,16 @@ bool Pathfinder::findPath(int sX, int sY, int tX, int tY, Map* map)
 		parentXval = openX[openList[1]];
 		parentYval = openY[openList[1]];
 		whichList[parentXval][parentYval] = CLOSED;
-		aStarBinaryHeap();
+		binaryHeap();
 
 		for (int y = parentYval - 1; y <= parentYval + 1; y++)
 		{
 			for (int x = parentXval - 1; x <= parentXval + 1; x++)
 			{
-				if (x > -1 && y > -1 && x < BOARD_WIDTH && y < BOARD_HEIGHT				// If the tile is not off the map
-					&& whichList[x][y] != CLOSED										// and if not already on the closed list
-					&& terrain[x][y] != BLOCKED_TERRAIN									// and terrain is not impassable
-					&& aStarCutCorner(x, y))											// and you aren't cutting a corner
+				if (x > -1 && y > -1 && x < BOARD_WIDTH && y < BOARD_HEIGHT		// If the tile is not off the map
+					&& whichList[x][y] != CLOSED								// and if not already on the closed list
+					&& terrain[x][y] != BLOCKED_TERRAIN							// and terrain is not impassable
+					&& cutCorner(x, y))											// and you aren't cutting a corner
 				{
 					//	If not already on the open list, add it to the open list.			
 					if (whichList[x][y] != OPEN)
@@ -104,26 +138,26 @@ bool Pathfinder::findPath(int sX, int sY, int tX, int tY, Map* map)
 						openList[openListSize] = openListID;
 						openX[openListID] = x;
 						openY[openListID] = y;
-						Gcost[x][y] = aStarGetGCost(x, y, parentXval, parentYval);
+						Gcost[x][y] = getGCost(x, y, parentXval, parentYval);
 						Fcost[openList[openListSize]] = Gcost[x][y] + ORTHOGONAL_COST * (abs(x - targetX) + abs(y - targetY));
 						parentX[x][y] = parentXval; parentY[x][y] = parentYval;
-						aStarBubbleNewF(openListSize);
+						bubbleNewF(openListSize);
 					}
 					// If it is on the open list, check to see if this is a better path
 					else
 					{
-						if (aStarGetGCost(x, y, parentXval, parentYval) < Gcost[x][y])
+						if (getGCost(x, y, parentXval, parentYval) < Gcost[x][y])
 						{
 							parentX[x][y] = parentXval;
 							parentY[x][y] = parentYval;
-							Gcost[x][y] = aStarGetGCost(x, y, parentXval, parentYval);
+							Gcost[x][y] = getGCost(x, y, parentXval, parentYval);
 
 							for (int i = 1; i <= openListSize; i++)
 							{
 								if (openX[openList[i]] == x && openY[openList[i]] == y)
 								{
 									Fcost[openList[i]] = Gcost[x][y] + ORTHOGONAL_COST * (abs(x - targetX) + abs(y - targetY));
-									aStarBubbleNewF(i);
+									bubbleNewF(i);
 									break;
 								}
 							}
@@ -136,11 +170,11 @@ bool Pathfinder::findPath(int sX, int sY, int tX, int tY, Map* map)
 		if (whichList[targetX][targetY] == OPEN)		pathFound = true;
 	}
 
-	if (pathFound)	aStarCalcPath();
+	if (pathFound)	calcPath();
 	return pathFound;
 }
 
-void Pathfinder::aStarCalcPath()
+void Pathfinder::calcPath()
 {
 	int x = targetX, y = targetY;
 
@@ -200,7 +234,7 @@ void Pathfinder::aStarCalcPath()
 
 }
 
-int Pathfinder::aStarGetGCost(int x, int y, int px, int py)
+int Pathfinder::getGCost(int x, int y, int px, int py)
 {
 	int gCost, terrainCost;
 
@@ -228,7 +262,7 @@ int Pathfinder::aStarGetGCost(int x, int y, int px, int py)
 	return gCost;
 }
 
-void Pathfinder::aStarBinaryHeap()
+void Pathfinder::binaryHeap()
 {
 	openList[1] = openList[openListSize];
 	openListSize--;
@@ -263,7 +297,7 @@ void Pathfinder::aStarBinaryHeap()
 	} while (1);
 }
 
-void Pathfinder::aStarBubbleNewF(int m)
+void Pathfinder::bubbleNewF(int m)
 {
 	while (m != 1) //While item hasn't bubbled to the top (m=1)	
 	{
@@ -279,7 +313,7 @@ void Pathfinder::aStarBubbleNewF(int m)
 	}
 }
 
-bool Pathfinder::aStarCutCorner(int a, int b)
+bool Pathfinder::cutCorner(int a, int b)
 {
 	//	Don't cut across corners
 	bool corner = true;
@@ -317,7 +351,7 @@ bool Pathfinder::aStarCutCorner(int a, int b)
 	return corner;
 }
 
-void Pathfinder::aStarSetMapValues(Map* map, bool swim)
+void Pathfinder::setMapValues(int sX, int sY, Map* map, bool swim)
 {
 	for (int x = 0; x < BOARD_WIDTH*BLOCK_SIZE; x += BLOCK_SIZE)
 	{
@@ -343,6 +377,22 @@ void Pathfinder::aStarSetMapValues(Map* map, bool swim)
 					{
 						terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = map->getTerrain(x, y);
 					}
+				}
+			}
+		}
+	}
+
+	int block = BLOCK_SIZE * 3;
+
+	for (int x = sX - block; x < sX + block; x += BLOCK_SIZE)
+	{
+		for (int y = sY - block; y < sY + block; y += BLOCK_SIZE)
+		{
+			if (x >= 0 && x <= BOARD_WIDTH*BLOCK_SIZE && y >= 0 && y <= BOARD_HEIGHT*BLOCK_SIZE)
+			{
+				if (map->getTerrain(x, y) == HAS_ENEMY)
+				{
+					terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = ROUGH_TERRAIN;
 				}
 			}
 		}

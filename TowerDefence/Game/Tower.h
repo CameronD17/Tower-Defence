@@ -6,7 +6,7 @@
 
 struct tStats
 {
-	int id, type, cost, damage, range, reload, maxCapacity, currentlyFired, level, hits, kills;
+	int id, type, cost, damage, range, reload, maxCapacity, level, hits, kills;
 };
 
 class Tower : public Object

@@ -28,15 +28,18 @@ void Board::update()
 	{
 		for (std::vector<Tower*>::iterator t = towerHandler.towers.begin(); t != towerHandler.towers.end(); ++t)
 		{
+			(*t)->update(&map, &enemyHandler.enemies);
+
 			for (std::vector<Bullet*>::iterator b = (*t)->bullets.begin(); b != (*t)->bullets.end(); ++b)
 			{
+				(*b)->update((*t)->enemy);
 				engine.physics.nonUniformMove((*b), (*b)->getDX(), (*b)->getDY());
-				if ((*b)->expired() && (*b)->hasHit())
+				
+				if ((*b)->hasHit())
 				{
-					if ((*b)->enemy->reduceHealth((*t)->getStats().damage, &map)) (*t)->incrementKills();
+					if ((*t)->enemy->reduceHealth((*t)->getStats().damage, &map)) (*t)->incrementKills();
 				}
 			}
-			(*t)->update(&map, &enemyHandler.enemies);
 
 			if (towerSelected)
 			{
@@ -45,13 +48,13 @@ void Board::update()
 					selectedTowerStats = (*t)->getStats();
 				}
 			}
-		}
+		}	
 
 		for (std::vector<Enemy*>::iterator e = enemyHandler.enemies.begin(); e != enemyHandler.enemies.end(); ++e)
 		{
 			if ((*e)->canWalk(&map))
 			{
-				engine.physics.move((*e), (*e)->nextMove(), (*e)->getSpeed());
+				engine.physics.move((*e), (*e)->getNextMove(), (*e)->getSpeed());
 			}
 
 			if (enemySelected)
@@ -69,7 +72,6 @@ void Board::update()
 				}
 			}
 		}
-
 		eTimer = SDL_GetTicks() + 0;
 	}
 
@@ -119,6 +121,6 @@ void Board::deselectObject()
 
 void Board::cleanup()
 {
-	enemyHandler.destroyObjects();
 	towerHandler.destroyObjects();
+	enemyHandler.destroyObjects();
 }

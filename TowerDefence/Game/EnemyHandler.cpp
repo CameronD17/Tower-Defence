@@ -22,10 +22,10 @@ void EnemyHandler::updateEnemyPaths(int x, int y, Map* m)
 {
 	for (vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
 	{
-		for (unsigned i = (*e)->astar.pathToFollow.size(); i > 0; i--)
+		for (unsigned i = (*e)->getPath().getPathSize(); i > 0; i--)
 		{
-			int pathX = ((*e)->astar.xCoordinates.at(i)*BLOCK_SIZE) + BORDER;
-			int pathY = ((*e)->astar.yCoordinates.at(i)*BLOCK_SIZE) + BORDER;
+			int pathX = ((*e)->getPath().getXAt(i)*BLOCK_SIZE) + BORDER;
+			int pathY = ((*e)->getPath().getYAt(i)*BLOCK_SIZE) + BORDER;
 
 			if (pathX == x && pathY == y)
 			{

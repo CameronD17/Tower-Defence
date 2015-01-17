@@ -25,37 +25,28 @@ public:
 	Enemy(ResourceManager &rm, int x, int y, int type, int targetX, int targetY, int level, Map* m, int i);
 	~Enemy();
 
-	Pathfinder astar;
-
-	void update(Map* m);
 	void updateTarget(int tX, int tY, Map* m); 
 	void updatePath(Map* m);
 	bool reduceHealth(int h, Map* m);
 
-	int nextMove();
+	int getNextMove()const;
 	int getSpeed()const;
-
-	bool canWalk(Map* map);
-	void moveIntoNewTile(Map* m);
-	void holdPosition(Map* m);
-	bool checkWalkabilityOfNextTile(Map* m);
 	eStats getStats()const;
+	Pathfinder getPath()const;
+
+	bool canWalk(Map* map);	
 
 private:
+
+	Pathfinder astar;
 	eStats stats;
 
 	int stepsTaken, stepsPerSquare;
-	vector<SDL_Texture*> sprites;
 
 	void initialise(int level, int x, int y, int tX, int tY, int type, Map* m);
-
-	void getSprites();
 
 	void releaseAllMyTiles(Map* m);
 	void lockThisTile(Map* m);
 	void lockNextTile(Map* m);
-
-	bool reachTarget(Map* m);
-	void die(Map* m);
 };
 

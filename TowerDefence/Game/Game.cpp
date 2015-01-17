@@ -114,14 +114,7 @@ void Game::drawCursor()
 {	
 	if (cursor.getX() > BORDER && cursor.getX() < (BORDER + (BOARD_WIDTH*BLOCK_SIZE)) && cursor.getY() > BORDER && cursor.getY() < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE)))
 	{
-		if (cursor.getAction() == 0)	// If there is no tower selected by the cursor, draw a plain white cursor. This is the default starting cursor.
-		{
-			engine.graphics.drawRectangleOL(cursor.getX(), cursor.getY(), BLOCK_SIZE, BLOCK_SIZE, cursor.r, cursor.g, cursor.b);
-		}
-		else
-		{
-			engine.graphics.drawRectangle(cursor.getX(), cursor.getY(), BLOCK_SIZE, BLOCK_SIZE, cursor.r, cursor.g, cursor.b);
-		}
+		engine.graphics.drawRectangleOL(cursor.getX(), cursor.getY(), BLOCK_SIZE, BLOCK_SIZE, cursor.r, cursor.g, cursor.b);
 	}
 }
 
@@ -184,10 +177,10 @@ void Game::drawDebugFeatures()
 				int thisX = board.map.targetX + (BLOCK_SIZE / 2);
 				int thisY = board.map.targetY + (BLOCK_SIZE / 2);
 
-				for (unsigned i = 0; i < (*e)->astar.pathToFollow.size(); i++)
+				for (int i = 0; i < (*e)->getPath().getPathSize(); i++)
 				{
-					int nextX = ((*e)->astar.xCoordinates.at(i) * BLOCK_SIZE) + (BLOCK_SIZE / 2) + BORDER;
-					int nextY = ((*e)->astar.yCoordinates.at(i) * BLOCK_SIZE) + (BLOCK_SIZE / 2) + BORDER;
+					int nextX = ((*e)->getPath().getXAt(i) * BLOCK_SIZE) + (BLOCK_SIZE / 2) + BORDER;
+					int nextY = ((*e)->getPath().getYAt(i) * BLOCK_SIZE) + (BLOCK_SIZE / 2) + BORDER;
 
 					engine.graphics.drawLine(thisX, thisY, nextX, nextY);
 
@@ -195,8 +188,7 @@ void Game::drawDebugFeatures()
 					thisY = nextY;
 				}
 			}
-		}
-		
+		}		
 
 		for (std::vector<Tower*>::iterator t = board.towerHandler.towers.begin(); t != board.towerHandler.towers.end(); ++t)
 		{

@@ -11,8 +11,6 @@ private:
 
 	int startX, startY, targetX, targetY, range, speed;
 	float angle, dX, dY;
-	
-
 	bool hit;
 
 public:
@@ -20,11 +18,10 @@ public:
 	Bullet();
 	Bullet(int x, int y, int range, Enemy* e);
 	~Bullet();
-	Enemy* enemy;
+
 	float getDX();
 	float getDY();
-
 	bool hasHit();
 	
-	bool expired();
+	bool update(Enemy* e);
 };
