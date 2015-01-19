@@ -93,6 +93,7 @@ void Board::selectObject(Cursor &cursor)
 			if ((*e)->getID() == map.getEnemy(x, y))
 			{
 				selectedEnemyStats = (*e)->getStats();
+				break;
 			}
 		}		
 	}
@@ -107,6 +108,7 @@ void Board::selectObject(Cursor &cursor)
 			if ((*t)->getID() == map.getTower(x, y))
 			{
 				selectedTowerStats = (*t)->getStats();
+				break;
 			}
 		}
 	}

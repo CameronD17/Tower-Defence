@@ -25,10 +25,10 @@ void Map::init(char map)
 			}
 		}
 
-		startX = 24, startY = 24, targetX = 384, targetY = 408;
+		startX = 24, startY = 24, targetX = 312, targetY = 408;
 	}
 
-	startX = 24, startY = 24, targetX = 384, targetY = 408;
+	startX = 24, startY = 24, targetX = 312, targetY = 408;
 }
 
 bool Map::loadMapFromFile(string filename)

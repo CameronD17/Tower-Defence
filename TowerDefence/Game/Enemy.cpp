@@ -91,7 +91,7 @@ int Enemy::getSpeed()const
 
 int Enemy::getNextMove()const
 {
-	return  (astar.getNextMove() > 0) ? astar.getNextMove() : 0;
+	return  astar.getNextMove();
 }
 
 eStats Enemy::getStats()const

@@ -60,17 +60,21 @@ void Game::drawBoardBackground()
 
 void Game::drawGamePieces()
 {
+	tStats tS = board.selectedTowerStats;
 	for (std::vector<Tower*>::iterator t = board.towerHandler.towers.begin(); t != board.towerHandler.towers.end(); ++t)
 	{
+		if (board.towerSelected && (*t)->getID() == tS.id)
+		{
+			engine.graphics.drawRectangleOL((*t)->getX() - 1, (*t)->getY() - 1, BLOCK_SIZE + 2, BLOCK_SIZE + 2, 255, 255, 255);
+		}
+
 		if ((*t)->hasEnemy)
 		{
 			engine.graphics.drawRectangle((*t)->getX(), (*t)->getY(), BLOCK_SIZE, BLOCK_SIZE, 255, 0, 255);
-			//engine.graphics.drawLine((*t)->getX() + (BLOCK_SIZE / 2), (*t)->getY() + (BLOCK_SIZE / 2), (*t)->enemy->getX() + (BLOCK_SIZE / 2), (*t)->enemy->getY() + (BLOCK_SIZE / 2));
 		}
 		else
 		{
-			engine.graphics.drawRectangle((*t)->getX(), (*t)->getY(), BLOCK_SIZE, BLOCK_SIZE, 255, 255, 255);
-			engine.graphics.drawRectangleOL((*t)->getX() - 1, (*t)->getY() - 1, (BLOCK_SIZE) + 2, (BLOCK_SIZE) + 2, 255, 255, 255);
+			engine.graphics.drawRectangle((*t)->getX(), (*t)->getY(), BLOCK_SIZE, BLOCK_SIZE, 39, 64, 139);
 		}
 
 		for (std::vector<Bullet*>::iterator b = (*t)->bullets.begin(); b != (*t)->bullets.end(); ++b)
@@ -79,9 +83,16 @@ void Game::drawGamePieces()
 		}
 	}
 
+	eStats eS = board.selectedEnemyStats;
 	for (std::vector<Enemy*>::iterator e = board.enemyHandler.enemies.begin(); e != board.enemyHandler.enemies.end(); ++e)
 	{
+		if (board.enemySelected && (*e)->getID() == eS.id)
+		{
+			engine.graphics.drawRectangleOL((*e)->getX() - 1, (*e)->getY() - 1, BLOCK_SIZE + 2, BLOCK_SIZE + 2, 255, 255, 255);
+		}
+	
 		engine.graphics.drawRectangle((*e)->getX(), (*e)->getY(), BLOCK_SIZE, BLOCK_SIZE, 255, 0, 0);
+		
 	}
 
 	engine.graphics.drawRectangleOL(board.map.targetX - 1, board.map.targetY - 1, BLOCK_SIZE + 2, BLOCK_SIZE + 2, 0, 255, 255);
@@ -321,28 +332,8 @@ void Game::update()
 int Game::getInput()
 {
 	input k = engine.interfaces.getInput();
-
-	/*if (k.keyPress)
-	{
-		switch (k.key)
-		{
-		case SDLK_ESCAPE:
-			if (board.objectSelected || sidebar.buttonSelected)
-			{
-				board.deselectObject();
-				sidebar.deselectAllButtons();
-				cursor.setAction(0);
-			}
-			else
-			{
-				return -1;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-	else*/ if (k.x > BORDER && k.x < (BORDER + (BOARD_WIDTH*BLOCK_SIZE)) && k.y > BORDER && k.y < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE)))
+	
+	if (k.x > BORDER && k.x < (BORDER + (BOARD_WIDTH*BLOCK_SIZE)) && k.y > BORDER && k.y < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE)))
 	{
 		return handleBoardInput(k);
 	}

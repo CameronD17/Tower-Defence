@@ -51,7 +51,7 @@ int Pathfinder::getNextY()const
 
 int Pathfinder::getNextMove()const
 {
-	return pathToFollow.back();
+	return  (pathToFollow.size() > 0) ? pathToFollow.back() : 0;
 }
 
 int Pathfinder::getPathSize()const
