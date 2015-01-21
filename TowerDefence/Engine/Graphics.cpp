@@ -88,22 +88,22 @@ void Graphics::renderText(int x, int y, string text, int size, int r, int g, int
 	switch(size)
 	{
 	case 10:
-		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 0), text.c_str(), textColor);
+		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 10), text.c_str(), textColor);
 		break;
 	case 15:
-		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 1), text.c_str(), textColor);
+		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 15), text.c_str(), textColor);
 		break;
 	case 20:
-		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 2), text.c_str(), textColor);
+		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 20), text.c_str(), textColor);
 		break;
 	case 30:
-		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 3), text.c_str(), textColor);
+		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 30), text.c_str(), textColor);
 		break;
 	case 40:
-		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 4), text.c_str(), textColor);
+		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 40), text.c_str(), textColor);
 		break;
 	case 50:
-		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 5), text.c_str(), textColor);
+		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 50), text.c_str(), textColor);
 		break;
 	default:
 		textSurface = TTF_RenderText_Solid(resource->loadFont(fontName, size), text.c_str(), textColor);

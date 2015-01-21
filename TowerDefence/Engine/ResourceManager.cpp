@@ -67,13 +67,37 @@ void ResourceManager::preloadFonts(string filepath)
 	{
 		while (getline(fontData, line))
 		{			
-			fonts.push_back(loadFont(line, 10));
+			/*fonts.push_back(loadFont(line, 10));
 			fonts.push_back(loadFont(line, 15));
 			fonts.push_back(loadFont(line, 20));
 			fonts.push_back(loadFont(line, 30));
 			fonts.push_back(loadFont(line, 40));
 			fonts.push_back(loadFont(line, 50));
-			fontFilePath.push_back(line);
+			fontFilePath.push_back(line);*/
+
+			stringstream linedata10;
+			linedata10 << line << "10";
+			fonts[linedata10.str()] = loadFont(line, 10);
+
+			stringstream linedata15;
+			linedata15 << line << "15";
+			fonts[linedata15.str()] = loadFont(line, 15);
+
+			stringstream linedata20;
+			linedata20 << line << "20";
+			fonts[linedata20.str()] = loadFont(line, 20);
+
+			stringstream linedata30;
+			linedata30 << line << "30";
+			fonts[linedata30.str()] = loadFont(line, 30);
+
+			stringstream linedata40;
+			linedata40 << line << "40";
+			fonts[linedata40.str()] = loadFont(line, 40);
+
+			stringstream linedata50;
+			linedata50 << line << "50";
+			fonts[linedata50.str()] = loadFont(line, 50);
 		}
 		fontData.close();
 	}		
@@ -161,20 +185,12 @@ Mix_Chunk * ResourceManager::getSound(string filepath)
 
 TTF_Font * ResourceManager::getFont(string fontname, int i)
 {
-	fontname.insert(0, "Assets/Fonts/");
-	fontname.append(".ttf");
+	stringstream compiled;
+	compiled << "Assets/Fonts/" << fontname << ".ttf" << i;
 
-	TTF_Font* font = NULL;
+	string test = compiled.str();
 
-	for (vector<string>::iterator f = fontFilePath.begin(); f != fontFilePath.end(); ++f)
-	{
-		if ((*f) == fontname)
-		{
-			font = fonts.at(i);
-			break;
-		}
-		i += defaultFontSizes;
-	}
+	TTF_Font* font = fonts[compiled.str()];
 	return font;
 }
 
@@ -211,12 +227,12 @@ void ResourceManager::close()
 	}
 
 	// Clean up fonts	
-	for (unsigned int i = 0; i < fonts.size(); i++)
+	for (auto itr = fonts.begin(); itr != fonts.end(); itr++)
 	{
-		if (fonts.at(i) != NULL) 
+		if ((*itr).second != NULL) 
 		{ 
-			TTF_CloseFont(fonts.at(i));
-			fonts.at(i) = NULL;
+			TTF_CloseFont((*itr).second);
+			(*itr).second = NULL;
 		}
 	}
 }

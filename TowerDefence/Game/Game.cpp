@@ -44,15 +44,15 @@ void Game::drawBoardBackground()
 		{
 			if (board.map.getTerrain(x, y) == BLOCKED_TERRAIN)
 			{
-				engine.graphics.drawRectangle(x + BORDER, y + BORDER, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 0);
+				engine.graphics.drawRectangle(x + BORDER_SIZE, y + BORDER_SIZE, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 0);
 			}
 			else if (board.map.getTerrain(x, y) == WATER_TERRAIN)
 			{
-				engine.graphics.drawRectangle(x + BORDER, y + BORDER, BLOCK_SIZE, BLOCK_SIZE, 0, 0, 255);
+				engine.graphics.drawRectangle(x + BORDER_SIZE, y + BORDER_SIZE, BLOCK_SIZE, BLOCK_SIZE, 0, 0, 255);
 			}
 			else if (board.map.getTerrain(x, y) == ROUGH_TERRAIN)
 			{
-				engine.graphics.drawRectangle(x + BORDER, y + BORDER, BLOCK_SIZE, BLOCK_SIZE, 0, 255, 0);
+				engine.graphics.drawRectangle(x + BORDER_SIZE, y + BORDER_SIZE, BLOCK_SIZE, BLOCK_SIZE, 0, 255, 0);
 			}
 		}
 	}
@@ -106,24 +106,24 @@ void Game::drawBoardForeground()
 	
 	// *** Draw the board sides *** // 
 	// Left
-	engine.graphics.drawRectangle(0, 0, BORDER, ((BORDER * 2) + (BOARD_HEIGHT * BLOCK_SIZE)), red, green, blue);
+	engine.graphics.drawRectangle(0, 0, BORDER_SIZE, ((BORDER_SIZE * 2) + (BOARD_HEIGHT * BLOCK_SIZE)), red, green, blue);
 	
 	// Right
-	engine.graphics.drawRectangle(BORDER + (BOARD_WIDTH * BLOCK_SIZE), 0, BORDER, ((BORDER * 2) + (BOARD_HEIGHT * BLOCK_SIZE)), red, green, blue);
+	engine.graphics.drawRectangle(BORDER_SIZE + (BOARD_WIDTH * BLOCK_SIZE), 0, BORDER_SIZE, ((BORDER_SIZE * 2) + (BOARD_HEIGHT * BLOCK_SIZE)), red, green, blue);
 
 	// Top
-    engine.graphics.drawRectangle(0, 0, BORDER + (BOARD_WIDTH * BLOCK_SIZE), BORDER, red, green, blue);
+    engine.graphics.drawRectangle(0, 0, BORDER_SIZE + (BOARD_WIDTH * BLOCK_SIZE), BORDER_SIZE, red, green, blue);
 
 	// Bottom
-    engine.graphics.drawRectangle(0, BORDER + (BOARD_HEIGHT*BLOCK_SIZE), BORDER + (BOARD_WIDTH * BLOCK_SIZE), BORDER, red, green, blue);
+    engine.graphics.drawRectangle(0, BORDER_SIZE + (BOARD_HEIGHT*BLOCK_SIZE), BORDER_SIZE + (BOARD_WIDTH * BLOCK_SIZE), BORDER_SIZE, red, green, blue);
 
 	// Outline
-	engine.graphics.drawRectangleOL(BORDER,BORDER,BOARD_WIDTH*BLOCK_SIZE,BOARD_HEIGHT*BLOCK_SIZE,0,0,0);
+	engine.graphics.drawRectangleOL(BORDER_SIZE,BORDER_SIZE,BOARD_WIDTH*BLOCK_SIZE,BOARD_HEIGHT*BLOCK_SIZE,0,0,0);
 }
 
 void Game::drawCursor()
 {	
-	if (cursor.getX() > BORDER && cursor.getX() < (BORDER + (BOARD_WIDTH*BLOCK_SIZE)) && cursor.getY() > BORDER && cursor.getY() < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE)))
+	if (cursor.getX() > BORDER_SIZE && cursor.getX() < (BORDER_SIZE + (BOARD_WIDTH*BLOCK_SIZE)) && cursor.getY() > BORDER_SIZE && cursor.getY() < (BORDER_SIZE + (BOARD_HEIGHT*BLOCK_SIZE)))
 	{
 		engine.graphics.drawRectangleOL(cursor.getX(), cursor.getY(), BLOCK_SIZE, BLOCK_SIZE, cursor.r, cursor.g, cursor.b);
 	}
@@ -159,10 +159,10 @@ void Game::drawDebugFeatures()
 			{
 				if (board.map.getTerrain(x, y) == HAS_ENEMY)
 				{
-					engine.graphics.drawRectangleOL(x + BORDER, y + BORDER, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 255);
+					engine.graphics.drawRectangleOL(x + BORDER_SIZE, y + BORDER_SIZE, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 255);
 					stringstream ID2;
 					ID2 << board.map.getEnemy(x, y);
-					engine.graphics.renderText(x + BORDER + 4, y + BORDER + 4, ID2.str(), 10, 255, 255, 0);
+					engine.graphics.renderText(x + BORDER_SIZE + 4, y + BORDER_SIZE + 4, ID2.str(), 10, 255, 255, 0);
 				}
 			}
 		}
@@ -173,10 +173,10 @@ void Game::drawDebugFeatures()
 			{
 				if (board.map.getTerrain(x, y) == HAS_ENEMY)
 				{
-					engine.graphics.drawRectangleOL(x + BORDER, y + BORDER, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 255);
+					engine.graphics.drawRectangleOL(x + BORDER_SIZE, y + BORDER_SIZE, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 255);
 					stringstream ID2;
 					ID2 << board.map.getEnemy(x, y);
-					engine.graphics.renderText(x + BORDER + 4, y + BORDER + 4, ID2.str(), 10, 255, 255, 0);
+					engine.graphics.renderText(x + BORDER_SIZE + 4, y + BORDER_SIZE + 4, ID2.str(), 10, 255, 255, 0);
 				}
 			}
 		}
@@ -190,8 +190,8 @@ void Game::drawDebugFeatures()
 
 				for (int i = 0; i < (*e)->getPath().getPathSize(); i++)
 				{
-					int nextX = ((*e)->getPath().getXAt(i) * BLOCK_SIZE) + (BLOCK_SIZE / 2) + BORDER;
-					int nextY = ((*e)->getPath().getYAt(i) * BLOCK_SIZE) + (BLOCK_SIZE / 2) + BORDER;
+					int nextX = ((*e)->getPath().getXAt(i) * BLOCK_SIZE) + (BLOCK_SIZE / 2) + BORDER_SIZE;
+					int nextY = ((*e)->getPath().getYAt(i) * BLOCK_SIZE) + (BLOCK_SIZE / 2) + BORDER_SIZE;
 
 					engine.graphics.drawLine(thisX, thisY, nextX, nextY);
 
@@ -218,7 +218,7 @@ void Game::drawSidebar()
 
 	stringstream creditText;
 	creditText << "Credit: " << board.bank.getCredit();
-	engine.graphics.renderText(SIDEBAR_X + BLOCK_SIZE, BORDER/2, creditText.str(), 40, 255, 255, 255, "bombardier");
+	engine.graphics.renderText(SIDEBAR_X + BLOCK_SIZE, BORDER_SIZE/2, creditText.str(), 40, 255, 255, 255, "bombardier");
 
 	stringstream scoreText;
 	scoreText << "Score: " << board.getScore();
@@ -333,7 +333,7 @@ int Game::getInput()
 {
 	input k = engine.interfaces.getInput();
 	
-	if (k.x > BORDER && k.x < (BORDER + (BOARD_WIDTH*BLOCK_SIZE)) && k.y > BORDER && k.y < (BORDER + (BOARD_HEIGHT*BLOCK_SIZE)))
+	if (k.x > BORDER_SIZE && k.x < (BORDER_SIZE + (BOARD_WIDTH*BLOCK_SIZE)) && k.y > BORDER_SIZE && k.y < (BORDER_SIZE + (BOARD_HEIGHT*BLOCK_SIZE)))
 	{
 		return handleBoardInput(k);
 	}

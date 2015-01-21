@@ -7,6 +7,8 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <unordered_map>
+#include <sstream>
 
 using namespace std;
 
@@ -29,8 +31,7 @@ private:
 	vector<Mix_Chunk*>		sounds;				// Vector of all sound effects used by the game
 	vector<string>			soundFilePath;		// Vector of the filepaths for the sounds
 
-	vector<TTF_Font*>		fonts;				// Vector of common fonts used by the game
-	vector<string>			fontFilePath;
+	unordered_map<string, TTF_Font*> fonts;
 			
 	void preloadImages(string filepath);		// Load all images used by the game
 	void preloadSounds(string filepath);		// Load all sounds and music used by the game
@@ -50,6 +51,7 @@ public:
 	Mix_Chunk	*loadSound(string filepath);
 	Mix_Music	*loadMusic(string filepath);
 	SDL_Surface *loadImage(string filepath);
+	
 
 	// Access data		
 	TTF_Font	*getFont(string fontname,int size);

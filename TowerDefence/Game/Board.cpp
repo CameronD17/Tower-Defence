@@ -80,7 +80,7 @@ void Board::update()
 
 void Board::selectObject(Cursor &cursor)
 {
-	int x = cursor.getX() - BORDER, y = cursor.getY() - BORDER;
+	int x = cursor.getX() - BORDER_SIZE, y = cursor.getY() - BORDER_SIZE;
 
 	if (map.getTerrain(x, y) == HAS_ENEMY)
 	{

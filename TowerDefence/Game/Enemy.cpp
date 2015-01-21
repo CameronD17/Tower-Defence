@@ -47,8 +47,8 @@ void Enemy::initialise(int level, int x, int y, int tX, int tY, int t, Map* m)
 	stepsTaken = 0;
 	stepsPerSquare = (int)(BLOCK_SIZE / stats.speed);
 
-	(*m).setTerrain(x - BORDER, y - BORDER, HAS_ENEMY);
-	(*m).setEnemy(x - BORDER, y - BORDER, stats.id);
+	(*m).setTerrain(x - BORDER_SIZE, y - BORDER_SIZE, HAS_ENEMY);
+	(*m).setEnemy(x - BORDER_SIZE, y - BORDER_SIZE, stats.id);
 }
 
 bool Enemy::reduceHealth(int i, Map* m)
@@ -173,8 +173,8 @@ void Enemy::releaseAllMyTiles(Map* map)
 
 void Enemy::lockThisTile(Map* map)
 {
-	int thisX = getX() - (getX() % BLOCK_SIZE) - BORDER;
-	int thisY = getY() - (getY() % BLOCK_SIZE) - BORDER;
+	int thisX = getX() - (getX() % BLOCK_SIZE) - BORDER_SIZE;
+	int thisY = getY() - (getY() % BLOCK_SIZE) - BORDER_SIZE;
 
 	if (map->walkable(thisX, thisY, stats.id))
 	{
@@ -185,8 +185,8 @@ void Enemy::lockThisTile(Map* map)
 
 void Enemy::lockNextTile(Map* map)
 {
-	int thisX = getX() - (getX() % BLOCK_SIZE) - BORDER;
-	int thisY = getY() - (getY() % BLOCK_SIZE) - BORDER;
+	int thisX = getX() - (getX() % BLOCK_SIZE) - BORDER_SIZE;
+	int thisY = getY() - (getY() % BLOCK_SIZE) - BORDER_SIZE;
 	int otherX = thisX;
 	int otherY = thisY;	
 	int nextMove = astar.getNextMove();

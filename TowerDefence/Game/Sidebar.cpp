@@ -68,26 +68,26 @@ void Sidebar::deselectAllButtons()
 
 void Sidebar::loadButtonsFromFile(string filepath)
 {
-	int x, y, w, h, s, o;
-	string t; bool v;
-	int id = 1;
-	ifstream buttonData("Assets/Inputs/sidebarButtons.txt", ifstream::in);
-	if (buttonData.is_open())
+	ifstream buttonData("Assets/Inputs/IN_GAME_SIDEBAR_BUTTONS.txt");
+	string buttonName;
+
+	while (!std::getline(buttonData, buttonName, '~').eof())
 	{
-		while (buttonData >> x >> y >> w >> h >> s >> o >> t >> v)
-		{
-			if (t == "NULL")
-			{
-				Button * b = new Button(id, x, y, w, h, s, o, "", v);
-				buttons.push_back(b);
-			}
-			else
-			{
-				Button * b = new Button(id, x, y, w, h, s, o, t, v);
-				buttons.push_back(b);
-			}
-			id++;
-		}
-		buttonData.close();
+		string id, x, y, width, height, fontSize, offset, buttonText, visible;
+
+		getline(buttonData, id, '~');
+		getline(buttonData, x, '~');
+		getline(buttonData, y, '~');
+		getline(buttonData, width, '~');
+		getline(buttonData, height, '~');
+		getline(buttonData, fontSize, '~');
+		getline(buttonData, offset, '~');
+		getline(buttonData, buttonText, '~');
+		getline(buttonData, visible);
+
+		Button * b = new Button(stoi(id), stoi(x), stoi(y), stoi(width), stoi(height), stoi(fontSize), stoi(offset), buttonText, stoi(visible) == 1);
+		buttons.push_back(b);
 	}
+
+	buttonData.close();
 }

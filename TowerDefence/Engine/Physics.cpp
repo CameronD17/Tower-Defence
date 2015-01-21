@@ -15,7 +15,7 @@ bool Physics::move(Object *o, int dir, int amt)
 	switch(dir)
 	{
 		case UP: 			
-			if(o->getY() >= BORDER) 
+			if(o->getY() >= BORDER_SIZE) 
 			{
 				o->setY(o->getY() - amt);	
 				return true;
@@ -23,7 +23,7 @@ bool Physics::move(Object *o, int dir, int amt)
             break;
 
         case UP_RIGHT: 
-			if((o->getY() >= BORDER) && (o->getY() <= (BOARD_WIDTH * BLOCK_SIZE) + BORDER))
+			if((o->getY() >= BORDER_SIZE) && (o->getY() <= (BOARD_WIDTH * BLOCK_SIZE) + BORDER_SIZE))
 			{
 				o->setY(o->getY() - amt);
 				o->setX(o->getX() + amt);
@@ -40,7 +40,7 @@ bool Physics::move(Object *o, int dir, int amt)
             break;
 
         case DOWN_RIGHT:
-			if((o->getY() < (BOARD_HEIGHT * BLOCK_SIZE) + BORDER) && (o->getX() <= (BOARD_WIDTH * BLOCK_SIZE) + BORDER))
+			if((o->getY() < (BOARD_HEIGHT * BLOCK_SIZE) + BORDER_SIZE) && (o->getX() <= (BOARD_WIDTH * BLOCK_SIZE) + BORDER_SIZE))
 			{
 				o->setX(o->getX() + amt);
 				o->setY(o->getY() + amt);
@@ -57,7 +57,7 @@ bool Physics::move(Object *o, int dir, int amt)
             break;
 
         case DOWN_LEFT:
-			if((o->getY() < (BOARD_HEIGHT * BLOCK_SIZE) + BORDER) && (o->getX() >= BORDER))
+			if((o->getY() < (BOARD_HEIGHT * BLOCK_SIZE) + BORDER_SIZE) && (o->getX() >= BORDER_SIZE))
 			{
 				o->setY(o->getY() + amt);
 				o->setX(o->getX() - amt);
@@ -66,7 +66,7 @@ bool Physics::move(Object *o, int dir, int amt)
             break;
 
         case LEFT:
-			if(o->getX() >= BORDER)
+			if(o->getX() >= BORDER_SIZE)
 			{
 				o->setX(o->getX() - amt);
 				return true;
@@ -74,7 +74,7 @@ bool Physics::move(Object *o, int dir, int amt)
             break;
 
         case UP_LEFT:
-			if((o->getX() >= BORDER) && (o->getY() >= BORDER))
+			if((o->getX() >= BORDER_SIZE) && (o->getY() >= BORDER_SIZE))
 			{
 				o->setX(o->getX() - amt);
 				o->setY(o->getY() - amt);

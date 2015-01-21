@@ -24,8 +24,8 @@ void EnemyHandler::updateEnemyPaths(int x, int y, Map* m)
 	{
 		for (unsigned i = (*e)->getPath().getPathSize(); i > 0; i--)
 		{
-			int pathX = ((*e)->getPath().getXAt(i)*BLOCK_SIZE) + BORDER;
-			int pathY = ((*e)->getPath().getYAt(i)*BLOCK_SIZE) + BORDER;
+			int pathX = ((*e)->getPath().getXAt(i)*BLOCK_SIZE) + BORDER_SIZE;
+			int pathY = ((*e)->getPath().getYAt(i)*BLOCK_SIZE) + BORDER_SIZE;
 
 			if (pathX == x && pathY == y)
 			{

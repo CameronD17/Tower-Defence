@@ -17,7 +17,7 @@ int TowerHandler::numTowers()
 
 bool TowerHandler::buildTower(Map* m, Cursor &cursor, Bank* b)
 {
-	int x = cursor.getX() - BORDER, y = cursor.getY() - BORDER;		// Store coordinates to make things easier to read.
+	int x = cursor.getX() - BORDER_SIZE, y = cursor.getY() - BORDER_SIZE;		// Store coordinates to make things easier to read.
 
 	// a) Can the terran be built upon (not blocked)?
 	if ((*m).buildable(x, y))
@@ -74,8 +74,8 @@ bool TowerHandler::sellTower(Map* m, int id, Bank* b)
 	{
 		if ((*t)->getID() == id)
 		{
-			(*m).setTerrain((*t)->getX() - BORDER, (*t)->getY() - BORDER, CLEAR_TERRAIN);
-			(*m).setEnemy((*t)->getX() - BORDER, (*t)->getY() - BORDER, 0);
+			(*m).setTerrain((*t)->getX() - BORDER_SIZE, (*t)->getY() - BORDER_SIZE, CLEAR_TERRAIN);
+			(*m).setEnemy((*t)->getX() - BORDER_SIZE, (*t)->getY() - BORDER_SIZE, 0);
 			b->increaseCredit((*t)->getCost() / 2);
 			(*t)->setDeleted(true);
 			//setMessage("Tower sold!");

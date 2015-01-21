@@ -4,6 +4,7 @@
 #include "../Engine/Constants.h"
 #include "Cursor.h"
 #include "Button.h"
+#include <sstream>
 
 using namespace std;
 

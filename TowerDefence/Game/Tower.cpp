@@ -9,8 +9,8 @@ Tower::Tower(int x, int y, int t, int id, Map* m)
 	stats.id = id;
 	setStats(t);
 
-	(*m).setTerrain(x - BORDER, y - BORDER, HAS_TOWER);
-	(*m).setTower(x - BORDER, y - BORDER, id);
+	(*m).setTerrain(x - BORDER_SIZE, y - BORDER_SIZE, HAS_TOWER);
+	(*m).setTower(x - BORDER_SIZE, y - BORDER_SIZE, id);
 };
 
 Tower::~Tower()

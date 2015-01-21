@@ -90,10 +90,10 @@ void Pathfinder::popBack()
 bool Pathfinder::findPath(int sX, int sY, int tX, int tY, Map* map)
 {
 	// Initialise values
-	setMapValues(sX - BORDER, sY - BORDER, map, canSwim);
+	setMapValues(sX - BORDER_SIZE, sY - BORDER_SIZE, map, canSwim);
 
-	startX = (sX - BORDER) / BLOCK_SIZE, startY = (sY - BORDER) / BLOCK_SIZE;
-	targetX = (tX - BORDER) / BLOCK_SIZE, targetY = (tY - BORDER) / BLOCK_SIZE;
+	startX = (sX - BORDER_SIZE) / BLOCK_SIZE, startY = (sY - BORDER_SIZE) / BLOCK_SIZE;
+	targetX = (tX - BORDER_SIZE) / BLOCK_SIZE, targetY = (tY - BORDER_SIZE) / BLOCK_SIZE;
 
 	int openListID = 0;
 	bool pathFound = false;

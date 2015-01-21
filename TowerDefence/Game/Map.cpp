@@ -14,7 +14,7 @@ void Map::init(char map)
 	//stringstream filename;
 	//filename >> "Game/Inputs/MapData/" >> map >> ".txt";
 
-	if (!loadMapFromFile("Assets/Inputs/MapData/testMap.txt"))
+	if (!loadMapFromFile("Assets/Inputs/MapData/TEST_MAP.txt"))
 	{
 		for (int x = 0; x < BOARD_WIDTH; x++)
 		{
