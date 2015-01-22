@@ -2,6 +2,10 @@
 
 ResourceManager::ResourceManager()
 {
+	imageFilepaths = "Assets/Inputs/Filepaths/IMAGE_FILEPATHS.txt";
+	soundFilepaths = "Assets/Inputs/Filepaths/SOUND_FILEPATHS.txt";
+	fontFilepaths = "Assets/Inputs/Filepaths/FONT_FILEPATHS.txt";
+	musicFilepaths = "Assets/Audio/background.mp3";
 }
 
 ResourceManager::~ResourceManager(void)
@@ -9,101 +13,98 @@ ResourceManager::~ResourceManager(void)
 }
 
 
-void ResourceManager::init(SDL_Renderer	*r)
+// Open and close resources
+
+void ResourceManager::open(SDL_Renderer* r)
 {
 	renderer = r;
-	preloadImages("Assets/Inputs/Filepaths/IMAGE_FILEPATHS.txt");
-	preloadSounds("Assets/Inputs/Filepaths/SOUND_FILEPATHS.txt");
-	preloadFonts("Assets/Inputs/Filepaths/FONT_FILEPATHS.txt");
 
-	music = loadMusic("Assets/Audio/background.mp3");
-
-	defaultFontSizes = 6;
-}
-
-
-
-// Initially load resources
-
-void ResourceManager::preloadImages(string filepath)
-{
 	string line;
-	ifstream imageData(filepath);
-
+	ifstream imageData(imageFilepaths);
 	if (imageData.is_open())
 	{
-		while(getline(imageData,line))
+		while (getline(imageData, line))
 		{
-			images.push_back(SDL_CreateTextureFromSurface(renderer, loadImage(line)));
-			imgFilePath.push_back(line);
+			images[line] = SDL_CreateTextureFromSurface(renderer, loadImage(line));
 		}
 		imageData.close();
 	}
-}
 
-void ResourceManager::preloadSounds(string filepath)
-{
-	string line;
-	ifstream soundData(filepath);
-
+	ifstream soundData(soundFilepaths);
 	if (soundData.is_open())
 	{
-		while(getline(soundData,line))
+		while (getline(soundData, line))
 		{
-			Mix_Chunk *c = loadSound(line);
-			sounds.push_back(c);
-			soundFilePath.push_back(line);
+			sounds[line] = loadSound(line);
 		}
 		soundData.close();
 	}
-}
 
-void ResourceManager::preloadFonts(string filepath)
-{
-	string line;
-	ifstream fontData(filepath);
-
+	ifstream fontData(fontFilepaths);
 	if (fontData.is_open())
 	{
 		while (getline(fontData, line))
-		{			
-			/*fonts.push_back(loadFont(line, 10));
-			fonts.push_back(loadFont(line, 15));
-			fonts.push_back(loadFont(line, 20));
-			fonts.push_back(loadFont(line, 30));
-			fonts.push_back(loadFont(line, 40));
-			fonts.push_back(loadFont(line, 50));
-			fontFilePath.push_back(line);*/
+		{
+			stringstream linedataEXTRA_SMALL;
+			linedataEXTRA_SMALL << line << EXTRA_SMALL;
+			fonts[linedataEXTRA_SMALL.str()] = loadFont(line, EXTRA_SMALL);
 
-			stringstream linedata10;
-			linedata10 << line << "10";
-			fonts[linedata10.str()] = loadFont(line, 10);
+			stringstream linedataSMALL;
+			linedataSMALL << line << SMALL;
+			fonts[linedataSMALL.str()] = loadFont(line, SMALL);
 
-			stringstream linedata15;
-			linedata15 << line << "15";
-			fonts[linedata15.str()] = loadFont(line, 15);
+			stringstream linedataMEDIUM;
+			linedataMEDIUM << line << MEDIUM;
+			fonts[linedataMEDIUM.str()] = loadFont(line, MEDIUM);
 
-			stringstream linedata20;
-			linedata20 << line << "20";
-			fonts[linedata20.str()] = loadFont(line, 20);
+			stringstream linedataLARGE;
+			linedataLARGE << line << LARGE;
+			fonts[linedataLARGE.str()] = loadFont(line, LARGE);
 
-			stringstream linedata30;
-			linedata30 << line << "30";
-			fonts[linedata30.str()] = loadFont(line, 30);
-
-			stringstream linedata40;
-			linedata40 << line << "40";
-			fonts[linedata40.str()] = loadFont(line, 40);
-
-			stringstream linedata50;
-			linedata50 << line << "50";
-			fonts[linedata50.str()] = loadFont(line, 50);
+			stringstream linedataEXTRA_LARGE;
+			linedataEXTRA_LARGE << line << EXTRA_LARGE;
+			fonts[linedataEXTRA_LARGE.str()] = loadFont(line, EXTRA_LARGE);
 		}
 		fontData.close();
-	}		
+	}
+
+	music = loadMusic(musicFilepaths);
 }
 
-//"Assets/Fonts/imagine.ttf"
+void ResourceManager::close()
+{
+	// Clean up images
+	for (auto itr = images.begin(); itr != images.end(); itr++)
+	{
+		if ((*itr).second != NULL)
+		{
+			SDL_DestroyTexture((*itr).second);
+			(*itr).second = NULL;
+		}
+	}
+
+	// Clean up sounds
+	// Mix_FreeMusic(music);	
+	for (auto itr = sounds.begin(); itr != sounds.end(); itr++)
+	{
+		if ((*itr).second != NULL)
+		{
+			Mix_FreeChunk((*itr).second);
+			(*itr).second = NULL;
+		}
+	}
+
+	// Clean up fonts	
+	for (auto itr = fonts.begin(); itr != fonts.end(); itr++)
+	{
+		if ((*itr).second != NULL)
+		{
+			TTF_CloseFont((*itr).second);
+			(*itr).second = NULL;
+		}
+	}
+}
+
 
 // Load resources
 
@@ -144,95 +145,33 @@ Mix_Music * ResourceManager::loadMusic(string filepath)
 }
 
 
-
 // Access resources
 
-SDL_Texture * ResourceManager::getImage(string filepath)
+SDL_Texture * ResourceManager::getImage(string imgname)
 {
-	SDL_Texture *imgTexture = SDL_CreateTextureFromSurface(renderer, loadImage("Assets/Images/broken.gif"));
-	int i = 0;
-	
-	for(vector<string>::iterator s = imgFilePath.begin(); s != imgFilePath.end(); ++s)
-	{	
-		if((*s) == filepath)
-		{
-			imgTexture = images.at(i);
-			break;
-		}	
-		i++;
-	}
+	stringstream compiled;
+	compiled << "Assets/Images/" << imgname;
 
-	return imgTexture;
+	return images[compiled.str()];
 }
 
-Mix_Chunk * ResourceManager::getSound(string filepath)
+Mix_Chunk * ResourceManager::getSound(string soundname)
 {
-	Mix_Chunk *sound = Mix_LoadWAV("sound is null");
-	int i = 0;
-	
-	for(vector<string>::iterator s = soundFilePath.begin(); s != soundFilePath.end(); ++s)
-	{	
-		if((*s) == filepath)
-		{
-			sound = sounds.at(i);
-			break;
-		}	
-		i++;
-	}
+	stringstream compiled;
+	compiled << "Assets/Sounds/" << soundname;
 
-	return sound;
+	return sounds[compiled.str()];
 }
 
 TTF_Font * ResourceManager::getFont(string fontname, int i)
 {
 	stringstream compiled;
 	compiled << "Assets/Fonts/" << fontname << ".ttf" << i;
-
-	string test = compiled.str();
-
-	TTF_Font* font = fonts[compiled.str()];
-	return font;
+	
+	return fonts[compiled.str()];
 }
 
 Mix_Music * ResourceManager::getMusic()
 {
 	return music;
-}
-
-
-
-// Free resources
-
-void ResourceManager::close()
-{
-	// Clean up images
-	for(unsigned int i = 0; i < images.size(); i++)
-	{
-		if (images.at(i) != NULL) 
-		{ 
-			SDL_DestroyTexture(images.at(i));
-			images.at(i) = NULL;
-		}
-	}
-
-	// Clean up sounds
-	// Mix_FreeMusic(music);	
-	for (unsigned int i = 0; i < sounds.size(); i++)
-	{
-		if (sounds.at(i) != NULL) 
-		{ 
-			Mix_FreeChunk(sounds.at(i));
-			sounds.at(i) = NULL;
-		}
-	}
-
-	// Clean up fonts	
-	for (auto itr = fonts.begin(); itr != fonts.end(); itr++)
-	{
-		if ((*itr).second != NULL) 
-		{ 
-			TTF_CloseFont((*itr).second);
-			(*itr).second = NULL;
-		}
-	}
 }

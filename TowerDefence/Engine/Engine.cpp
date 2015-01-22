@@ -56,7 +56,7 @@ bool Engine::init()
 	}	
 	
 	success = graphics.init(WINDOW_WIDTH, WINDOW_HEIGHT, &resources);
-	resources.init(graphics.renderer);
+	resources.open(graphics.renderer);
 	audio.init(&resources);
 
 	return success;

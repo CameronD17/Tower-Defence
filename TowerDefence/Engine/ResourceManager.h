@@ -4,47 +4,31 @@
 #include <SDL_ttf.h>
 #include <SDL_mixer.h>
 #include <string>
-#include <iostream>
 #include <fstream>
-#include <vector>
 #include <unordered_map>
 #include <sstream>
+#include "Constants.h"
 
 using namespace std;
-
-/*-------------------------------------------------------- *
- * RESOURCE MANAGER
- * This class will load all items to be used by the game,
- * store them for use, and destroy when no longer required
- *-------------------------------------------------------- */
 
 class ResourceManager
 {
 private:
-	SDL_Renderer			*renderer;			// SDL Renderer
+	SDL_Renderer							*renderer;
 
-	Mix_Music				*music;				// Background music for the game
+	string									imageFilepaths, 
+											soundFilepaths, 
+											fontFilepaths, 
+											musicFilepaths;
 
-	vector<SDL_Texture*>	images;				// Vector of all textures used by the game
-	vector<string>			imgFilePath;		// Vector of the filepaths for the images
+	Mix_Music								*music;
+	unordered_map<string, SDL_Texture*>		images;
+	unordered_map<string, Mix_Chunk*>		sounds;
+	unordered_map<string, TTF_Font*>		fonts;			
 
-	vector<Mix_Chunk*>		sounds;				// Vector of all sound effects used by the game
-	vector<string>			soundFilePath;		// Vector of the filepaths for the sounds
-
-	unordered_map<string, TTF_Font*> fonts;
-			
-	void preloadImages(string filepath);		// Load all images used by the game
-	void preloadSounds(string filepath);		// Load all sounds and music used by the game
-	void preloadFonts(string filepath);			// Load in the fonts used by the game
-
-	int defaultFontSizes;
 public:		
-
-	// Generic constructors
 	ResourceManager();
 	~ResourceManager(void);
-
-	void init(SDL_Renderer* r);	
 
 	// Load data
 	TTF_Font	*loadFont(string filepath, int size);
@@ -59,6 +43,6 @@ public:
 	SDL_Texture *getImage(string filepath);
 	Mix_Music	*getMusic();
 
-
+	void open(SDL_Renderer* r);
 	void close();
 };

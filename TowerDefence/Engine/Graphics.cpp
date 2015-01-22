@@ -36,7 +36,8 @@ bool Graphics::init(int w, int h, ResourceManager *r)
 		else 
 		{
 			SDL_Surface *surface = resource->loadImage("Assets/Images/icon.png");
-			SDL_SetWindowIcon(window, surface); 
+			SDL_SetWindowIcon(window, surface);
+			SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
 			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 		}
 	}
@@ -55,8 +56,9 @@ void Graphics::update()
     SDL_RenderPresent(renderer);					// Update the renderer
 }
 
-void Graphics::drawLine(int x1, int y1, int x2, int y2)
+void Graphics::drawLine(int x1, int y1, int x2, int y2, Uint8 r, Uint8 g, Uint8 b)
 {
+	SDL_SetRenderDrawColor(renderer, r, g, b, SDL_ALPHA_OPAQUE);
 	SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
 }
 
@@ -65,7 +67,8 @@ void Graphics::drawRectangle(int x, int y, int w, int h, Uint8 r, Uint8 g, Uint8
 	SDL_Rect rect;
     rect.x = x; rect.y = y;
     rect.w = w; rect.h = h;
-	SDL_SetRenderDrawColor(renderer, r, g, b, SDL_ALPHA_OPAQUE);
+
+	SDL_SetRenderDrawColor(renderer, r, g, b, 100);
 	SDL_RenderFillRect(renderer, &rect);
 }
 
@@ -87,23 +90,12 @@ void Graphics::renderText(int x, int y, string text, int size, int r, int g, int
 
 	switch(size)
 	{
-	case 10:
-		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 10), text.c_str(), textColor);
-		break;
-	case 15:
-		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 15), text.c_str(), textColor);
-		break;
-	case 20:
-		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 20), text.c_str(), textColor);
-		break;
-	case 30:
-		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 30), text.c_str(), textColor);
-		break;
-	case 40:
-		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 40), text.c_str(), textColor);
-		break;
-	case 50:
-		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, 50), text.c_str(), textColor);
+	case EXTRA_SMALL:
+	case SMALL:
+	case MEDIUM:
+	case LARGE:
+	case EXTRA_LARGE:
+		textSurface = TTF_RenderText_Solid(resource->getFont(fontName, size), text.c_str(), textColor);
 		break;
 	default:
 		textSurface = TTF_RenderText_Solid(resource->loadFont(fontName, size), text.c_str(), textColor);

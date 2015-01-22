@@ -28,18 +28,15 @@ public:
 	~Graphics(void);
 
 	ResourceManager *resource;
-
-	SDL_Window		*window;	// The SDL window to display
-	
-	SDL_Renderer	*renderer;	// The SDL renderer
+	SDL_Window		*window;	
+	SDL_Renderer	*renderer;
 
 	bool init(int w, int h, ResourceManager *r);
 		
-	void clear();	// Clear the screen to be redrawn on
-		
-	void update();	// Update the window with redrawn data
+	void clear();		
+	void update();
 
-	void drawLine(int x1, int y1, int x2, int y2);
+	void drawLine(int x1, int y1, int x2, int y2, Uint8 r = 255, Uint8 g = 255, Uint8 b = 255);
 
 	void drawRectangle(int x, int y, int w, int h, Uint8 r, Uint8 g, Uint8 b);
 

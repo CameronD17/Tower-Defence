@@ -2,13 +2,6 @@
 #include "ResourceManager.h"
 #include <SDL_mixer.h>
 
-
-/*-------------------------------------------------------- *
- * AUDIO
- * This class will deal with all audio and sound effect
- * within the game
- *-------------------------------------------------------- */
-
 class Audio
 {
 private:

@@ -42,8 +42,9 @@
 #define VALUE_MULTIPLIER 10
 #define HEALTH_MULTIPLIER 10
 
-// Sidebar buttons
-#define EXIT_BUTTON 16
-
-#define VAL(str) #str
-#define TOSTRING(str) VAL(str)
+// Font sizes
+#define EXTRA_SMALL 10
+#define SMALL 20
+#define MEDIUM 30
+#define LARGE 40
+#define EXTRA_LARGE 50

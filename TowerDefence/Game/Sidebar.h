@@ -3,7 +3,7 @@
 #include "../Engine/Engine.h"
 #include "../Engine/Constants.h"
 #include "Cursor.h"
-#include "Button.h"
+#include "SidebarButtonHandler.h"
 #include <sstream>
 
 using namespace std;
@@ -12,23 +12,17 @@ class Sidebar
 {
 
 private:
-	void loadButtonsFromFile(string filepath);
+	Engine engine;
+	void toggleTowerSelectionButtonVisibility(bool b);
 
 public:	
 	Sidebar(void);
 	Sidebar(Engine &e);	
-
-	bool buttonSelected;
-
-	Engine engine;
-
-	Button* selectedButton;
-	vector<Button*> buttons;
-
-	void selectButton(int id);
-	void deselectButton(int id);
-	void deselectAllButtons();
-
-	Button* findButtonByName(string name);
+	SidebarButtonHandler buttonHandler;
+	
 	void setup(Engine &e);
+	void update(bool tower);
+
+	int getHoveredButtonId();
+	void setHoveredButton(Cursor& cursor);
 };

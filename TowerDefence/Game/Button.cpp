@@ -9,7 +9,27 @@ Button::Button(int i, int x, int y, int w, int h, int f, int o, string t, bool v
 	this->y = y;
 	width = w;
 	height = h;
-	fontSize = f;
+	switch (f)
+	{
+	case 10:
+		fontSize = EXTRA_SMALL;
+		break;
+	case 20:
+		fontSize = SMALL;
+		break;
+	case 30:
+		fontSize = MEDIUM;
+		break;
+	case 40:
+		fontSize = LARGE;
+		break;
+	case 50:
+		fontSize = EXTRA_LARGE;
+		break;
+	default:
+		fontSize = f;
+		break;
+	}
 	textOffset = o;
 	text = t;
 	visible = v;

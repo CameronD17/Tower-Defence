@@ -19,25 +19,28 @@ void Game::close()
 	engine.close();
 }
 
-
 // *** DRAW METHODS *** //
 
 void Game::draw()
 {
 	engine.graphics.clear();
-	drawBoardBackground();
-	drawBoardForeground();
-	drawGamePieces();				
+
+	drawBoardMap();
+	drawBoardPieces();
+					
 	drawSidebar();
-	drawButtons();
+	drawSidebarButtons();
+
 	drawCursor();
 	drawDebugFeatures();	
+
 	engine.graphics.update();
 	engine.admin.countedFrames++;
 }
 
-void Game::drawBoardBackground()
+void Game::drawBoardMap()
 {
+	// TODO: update this method with actual imagery
 	for (int x = 0; x < BOARD_WIDTH*BLOCK_SIZE; x+=BLOCK_SIZE)
 	{
 		for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y += BLOCK_SIZE)
@@ -56,9 +59,25 @@ void Game::drawBoardBackground()
 			}
 		}
 	}
+
+	Uint8 red = 154, green = 0, blue = 0;
+	// Left
+	engine.graphics.drawRectangle(0, 0, BORDER_SIZE, ((BORDER_SIZE * 2) + (BOARD_HEIGHT * BLOCK_SIZE)), red, green, blue);
+
+	// Right
+	engine.graphics.drawRectangle(BORDER_SIZE + (BOARD_WIDTH * BLOCK_SIZE), 0, BORDER_SIZE, ((BORDER_SIZE * 2) + (BOARD_HEIGHT * BLOCK_SIZE)), red, green, blue);
+
+	// Top
+	engine.graphics.drawRectangle(0, 0, BORDER_SIZE + (BOARD_WIDTH * BLOCK_SIZE), BORDER_SIZE, red, green, blue);
+
+	// Bottom
+	engine.graphics.drawRectangle(0, BORDER_SIZE + (BOARD_HEIGHT*BLOCK_SIZE), BORDER_SIZE + (BOARD_WIDTH * BLOCK_SIZE), BORDER_SIZE, red, green, blue);
+
+	// Outline
+	engine.graphics.drawRectangleOL(BORDER_SIZE, BORDER_SIZE, BOARD_WIDTH*BLOCK_SIZE, BOARD_HEIGHT*BLOCK_SIZE, 0, 0, 0);
 }
 
-void Game::drawGamePieces()
+void Game::drawBoardPieces()
 {
 	tStats tS = board.selectedTowerStats;
 	for (std::vector<Tower*>::iterator t = board.towerHandler.towers.begin(); t != board.towerHandler.towers.end(); ++t)
@@ -98,32 +117,9 @@ void Game::drawGamePieces()
 	engine.graphics.drawRectangleOL(board.map.targetX - 1, board.map.targetY - 1, BLOCK_SIZE + 2, BLOCK_SIZE + 2, 0, 255, 255);
 }
 
-void Game::drawBoardForeground()
-{
-	Uint8 red, green, blue;
-
-	red = 154; green = 0; blue = 0; 
-	
-	// *** Draw the board sides *** // 
-	// Left
-	engine.graphics.drawRectangle(0, 0, BORDER_SIZE, ((BORDER_SIZE * 2) + (BOARD_HEIGHT * BLOCK_SIZE)), red, green, blue);
-	
-	// Right
-	engine.graphics.drawRectangle(BORDER_SIZE + (BOARD_WIDTH * BLOCK_SIZE), 0, BORDER_SIZE, ((BORDER_SIZE * 2) + (BOARD_HEIGHT * BLOCK_SIZE)), red, green, blue);
-
-	// Top
-    engine.graphics.drawRectangle(0, 0, BORDER_SIZE + (BOARD_WIDTH * BLOCK_SIZE), BORDER_SIZE, red, green, blue);
-
-	// Bottom
-    engine.graphics.drawRectangle(0, BORDER_SIZE + (BOARD_HEIGHT*BLOCK_SIZE), BORDER_SIZE + (BOARD_WIDTH * BLOCK_SIZE), BORDER_SIZE, red, green, blue);
-
-	// Outline
-	engine.graphics.drawRectangleOL(BORDER_SIZE,BORDER_SIZE,BOARD_WIDTH*BLOCK_SIZE,BOARD_HEIGHT*BLOCK_SIZE,0,0,0);
-}
-
 void Game::drawCursor()
 {	
-	if (cursor.getX() > BORDER_SIZE && cursor.getX() < (BORDER_SIZE + (BOARD_WIDTH*BLOCK_SIZE)) && cursor.getY() > BORDER_SIZE && cursor.getY() < (BORDER_SIZE + (BOARD_HEIGHT*BLOCK_SIZE)))
+	if (cursor.getX() >= BORDER_SIZE && cursor.getX() < (BORDER_SIZE + (BOARD_WIDTH*BLOCK_SIZE)) && cursor.getY() >= BORDER_SIZE && cursor.getY() < (BORDER_SIZE + (BOARD_HEIGHT*BLOCK_SIZE)))
 	{
 		engine.graphics.drawRectangleOL(cursor.getX(), cursor.getY(), BLOCK_SIZE, BLOCK_SIZE, cursor.r, cursor.g, cursor.b);
 	}
@@ -144,13 +140,13 @@ void Game::drawDebugFeatures()
 		cursorText << "Cursor: (" << cursor.getX() << "," << cursor.getY() << ")  Actual: (" << x << "," << y << ")         "
 			<< "Enemies: " << board.enemyHandler.enemies.size() << " Towers: " << board.towerHandler.towers.size() << " Bullets: " << totBullets << "   FPS: " << (int)engine.admin.avgFPS;;
 		
-		engine.graphics.renderText(10, 10, cursorText.str(), 20, 255, 255, 255);
+		engine.graphics.renderText(10, 10, cursorText.str(), SMALL, 255, 255, 255);
 
 		for (std::vector<Enemy*>::iterator e = board.enemyHandler.enemies.begin(); e != board.enemyHandler.enemies.end(); ++e)
 		{
 			stringstream idNo;
 			idNo << (*e)->getID();
-			engine.graphics.renderText((*e)->getX() + 4, (*e)->getY() + 4, idNo.str(), 20);
+			engine.graphics.renderText((*e)->getX() + 4, (*e)->getY() + 4, idNo.str(), SMALL);
 		}
 
 		for (int x = 0; x < BOARD_WIDTH*BLOCK_SIZE; x += BLOCK_SIZE)
@@ -162,7 +158,7 @@ void Game::drawDebugFeatures()
 					engine.graphics.drawRectangleOL(x + BORDER_SIZE, y + BORDER_SIZE, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 255);
 					stringstream ID2;
 					ID2 << board.map.getEnemy(x, y);
-					engine.graphics.renderText(x + BORDER_SIZE + 4, y + BORDER_SIZE + 4, ID2.str(), 10, 255, 255, 0);
+					engine.graphics.renderText(x + BORDER_SIZE + 4, y + BORDER_SIZE + 4, ID2.str(), EXTRA_SMALL, 255, 255, 0);
 				}
 			}
 		}
@@ -176,7 +172,7 @@ void Game::drawDebugFeatures()
 					engine.graphics.drawRectangleOL(x + BORDER_SIZE, y + BORDER_SIZE, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 255);
 					stringstream ID2;
 					ID2 << board.map.getEnemy(x, y);
-					engine.graphics.renderText(x + BORDER_SIZE + 4, y + BORDER_SIZE + 4, ID2.str(), 10, 255, 255, 0);
+					engine.graphics.renderText(x + BORDER_SIZE + 4, y + BORDER_SIZE + 4, ID2.str(), EXTRA_SMALL, 255, 255, 0);
 				}
 			}
 		}
@@ -213,40 +209,30 @@ void Game::drawDebugFeatures()
 
 void Game::drawSidebar()
 {
-	// Static top area
-	//engine.graphics.drawRectangleOL(SIDEBAR_X + 2, 2, SIDEBAR_WIDTH - 4, STATS_Y - 4, 255, 255, 255);
+	stringstream creditText, scoreText;
 
-	stringstream creditText;
+	// Top area
 	creditText << "Credit: " << board.bank.getCredit();
-	engine.graphics.renderText(SIDEBAR_X + BLOCK_SIZE, BORDER_SIZE/2, creditText.str(), 40, 255, 255, 255, "bombardier");
+	engine.graphics.renderText(SIDEBAR_X + BLOCK_SIZE, BORDER_SIZE/2, creditText.str(), LARGE, 255, 255, 255, "bombardier");
 
-	stringstream scoreText;
 	scoreText << "Score: " << board.getScore();
-	engine.graphics.renderText(SIDEBAR_X + BLOCK_SIZE, 180, scoreText.str(), 40, 255, 255, 255, "bombardier");
+	engine.graphics.renderText(SIDEBAR_X + BLOCK_SIZE, 180, scoreText.str(), LARGE, 255, 255, 255, "bombardier");
 
-	// Stats bottom area
-	if (sidebar.buttonSelected)
+	// Divider
+	engine.graphics.drawLine(SIDEBAR_X, STATS_Y, WINDOW_WIDTH, STATS_Y);
+
+	// Bottom area
+	if (sidebar.buttonHandler.getButtonSelected())
 	{
-		sidebar.findButtonByName("Sell")->hide();
 		drawSidebarSelectedButton();
-		engine.graphics.drawRectangleOL(SIDEBAR_X + 2, STATS_Y + 2, SIDEBAR_WIDTH - 4, STATS_HEIGHT - 4, 0, 255, 0);
 	}
 	else if (board.enemySelected)
 	{
 		drawSidebarEnemyStats();
-		sidebar.findButtonByName("Sell")->hide();
-		engine.graphics.drawRectangleOL(SIDEBAR_X + 2, STATS_Y + 2, SIDEBAR_WIDTH - 4, STATS_HEIGHT - 4, 255, 0, 0);
 	}
 	else if (board.towerSelected)
 	{
 		drawSidebarTowerStats();
-		sidebar.findButtonByName("Sell")->show();
-		engine.graphics.drawRectangleOL(SIDEBAR_X + 2, STATS_Y + 2, SIDEBAR_WIDTH - 4, STATS_HEIGHT - 4, 255, 255, 255);
-	}
-	else
-	{
-		sidebar.findButtonByName("Sell")->hide();
-		engine.graphics.drawRectangleOL(SIDEBAR_X + 2, STATS_Y + 2, SIDEBAR_WIDTH - 4, STATS_HEIGHT - 4, 0, 0, 255);
 	}
 }
 
@@ -258,13 +244,13 @@ void Game::drawSidebarEnemyStats()
 	int enemyStatsStartY = STATS_Y + BLOCK_SIZE;
 
 	IDText << "Enemy ID: " << e.id;
-	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY, IDText.str(), 20, 255, 0, 0, "anonymous");
+	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY, IDText.str(), SMALL, 255, 0, 0, "anonymous");
 	healthText << "Health: " << e.currentHealth;
-	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY + BLOCK_SIZE, healthText.str(), 20, 255, 0, 0, "anonymous");
+	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY + BLOCK_SIZE, healthText.str(), SMALL, 255, 0, 0, "anonymous");
 	valueText << "Value: " << e.value << " points.";
-	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY + (BLOCK_SIZE * 2), valueText.str(), 20, 255, 0, 0, "anonymous");
+	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY + (BLOCK_SIZE * 2), valueText.str(), SMALL, 255, 0, 0, "anonymous");
 	bountyText << "Bounty: " << e.bounty << " credits.";
-	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY + (BLOCK_SIZE * 3), bountyText.str(), 20, 255, 0, 0, "anonymous");
+	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY + (BLOCK_SIZE * 3), bountyText.str(), SMALL, 255, 0, 0, "anonymous");
 }
 
 void Game::drawSidebarTowerStats()
@@ -275,13 +261,13 @@ void Game::drawSidebarTowerStats()
 	int towerStatsStartY = STATS_Y + BLOCK_SIZE;
 
 	IDText << "Tower ID: " << t.id;
-	engine.graphics.renderText(towerStatsStartX, towerStatsStartY, IDText.str(), 20, 255, 255, 255, "anonymous");
+	engine.graphics.renderText(towerStatsStartX, towerStatsStartY, IDText.str(), SMALL, 255, 255, 255, "anonymous");
 	damageText << "Damage: " << t.damage;
-	engine.graphics.renderText(towerStatsStartX, towerStatsStartY + BLOCK_SIZE, damageText.str(), 20, 255, 255, 255, "anonymous");
+	engine.graphics.renderText(towerStatsStartX, towerStatsStartY + BLOCK_SIZE, damageText.str(), SMALL, 255, 255, 255, "anonymous");
 	rangeText << "Range: " << (t.range/BLOCK_SIZE) << " tiles.";
-	engine.graphics.renderText(towerStatsStartX, towerStatsStartY + (BLOCK_SIZE * 2), rangeText.str(), 20, 255, 255, 255, "anonymous");
+	engine.graphics.renderText(towerStatsStartX, towerStatsStartY + (BLOCK_SIZE * 2), rangeText.str(), SMALL, 255, 255, 255, "anonymous");
 	killsText << "Total Kills: " << t.kills;
-	engine.graphics.renderText(towerStatsStartX, towerStatsStartY + (BLOCK_SIZE * 3), killsText.str(), 20, 255, 255, 255, "anonymous");
+	engine.graphics.renderText(towerStatsStartX, towerStatsStartY + (BLOCK_SIZE * 3), killsText.str(), SMALL, 255, 255, 255, "anonymous");
 }
 
 void Game::drawSidebarSelectedButton()
@@ -290,30 +276,30 @@ void Game::drawSidebarSelectedButton()
 	int enemyStatsStartX = SIDEBAR_X + BLOCK_SIZE;
 	int enemyStatsStartY = STATS_Y + BLOCK_SIZE;
 
-	buttonText << "Button Selected: " << sidebar.selectedButton->text;
-	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY, buttonText.str(), 20, 255, 0, 0, "anonymous");
+	buttonText << "Button Selected: " << sidebar.buttonHandler.getSelectedButton()->text;
+	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY, buttonText.str(), SMALL, 255, 0, 0, "anonymous");
 }
 
-void Game::drawButtons()
+void Game::drawSidebarButtons()
 {
-	for (std::vector<Button*>::iterator b = sidebar.buttons.begin(); b != sidebar.buttons.end(); ++b)
+	for (std::vector<Button*>::iterator b = sidebar.buttonHandler.buttons.begin(); b != sidebar.buttonHandler.buttons.end(); ++b)
 	{
 		if ((*b)->isVisible())
 		{
 			if ((*b)->isHovered())
 			{
 				engine.graphics.drawRectangleOL((*b)->getX(), (*b)->getY(), (*b)->getW(), (*b)->getH(), 255, 0, 255);
-				engine.graphics.renderText((*b)->getX() + (*b)->getOffset(), (*b)->getY() + (*b)->getOffset(), (*b)->text, (*b)->getFontSize(), 255, 0, 255);
+				engine.graphics.renderText((*b)->getX() + (*b)->getOffset(), (*b)->getY() + (*b)->getOffset(), (*b)->text, (*b)->getFontSize(), 255, 0, 255, "anonymous");
 			}
 			else if ((*b)->isSelected())
 			{
 				engine.graphics.drawRectangleOL((*b)->getX(), (*b)->getY(), (*b)->getW(), (*b)->getH(), 255, 255, 0);
-				engine.graphics.renderText((*b)->getX() + (*b)->getOffset(), (*b)->getY() + (*b)->getOffset(), (*b)->text, (*b)->getFontSize(), 255, 255, 0);
+				engine.graphics.renderText((*b)->getX() + (*b)->getOffset(), (*b)->getY() + (*b)->getOffset(), (*b)->text, (*b)->getFontSize(), 255, 255, 0, "anonymous");
 			}
 			else
 			{
 				engine.graphics.drawRectangleOL((*b)->getX(), (*b)->getY(), (*b)->getW(), (*b)->getH(), 255, 255, 255);
-				engine.graphics.renderText((*b)->getX() + (*b)->getOffset(), (*b)->getY() + (*b)->getOffset(), (*b)->text, (*b)->getFontSize(), 255, 255, 255);
+				engine.graphics.renderText((*b)->getX() + (*b)->getOffset(), (*b)->getY() + (*b)->getOffset(), (*b)->text, (*b)->getFontSize(), 255, 255, 255, "anonymous");
 			}
 		}
 	}
@@ -327,6 +313,7 @@ void Game::update()
 {
 	engine.admin.updateFPS();
 	board.update();
+	sidebar.update(board.towerSelected);
 }
 
 int Game::getInput()
@@ -372,8 +359,7 @@ int Game::handleBoardInput(input k)
 	}
 	else
 	{
-		cursor.setX((k.x - (k.x%BLOCK_SIZE)));
-		cursor.setY((k.y - (k.y%BLOCK_SIZE)));
+		cursor.setCoordinates((k.x - (k.x % BLOCK_SIZE)), (k.y - (k.y % BLOCK_SIZE)));
 	}
 
 	return 0;
@@ -383,15 +369,7 @@ int Game::handleSidebarInput(input k)
 {
 	if (k.mouseDown)
 	{
-		int button = 0;
-		for (std::vector<Button*>::iterator b = sidebar.buttons.begin(); b != sidebar.buttons.end(); ++b)
-		{
-			if ((*b)->isHovered())
-			{
-				button = (*b)->id;
-				break;
-			}
-		}
+		int button = sidebar.getHoveredButtonId();
 
 		switch (button)
 		{
@@ -402,38 +380,38 @@ int Game::handleSidebarInput(input k)
 
 		case 2: case 3: case 4: case 5: case 6: case 7: case 8: case 9: case 10: case 11: // BUY TOWER
 			board.deselectObject();
-			sidebar.selectButton(button);
+			sidebar.buttonHandler.selectButton(button);
 			cursor.setAction(1);
 			break;
 
 		case 12: // CHANGE TARGET
 			board.deselectObject();
-			sidebar.selectButton(button);
+			sidebar.buttonHandler.selectButton(button);
 			cursor.setAction(3);
 			break;
 
 		case 13: // LAUNCH ENEMY
 			board.deselectObject();
-			sidebar.selectButton(button);
+			sidebar.buttonHandler.selectButton(button);
 			cursor.setAction(2);
 			break;
 
 		case 14: // TOGGLE DEBUG
 			if (board.debugMode)
 			{
-				sidebar.deselectButton(button);
+				sidebar.buttonHandler.deselectButton(button);
 				board.debugMode = false;
 			}
 			else
 			{
-				sidebar.selectButton(button);
+				sidebar.buttonHandler.selectButton(button);
 				board.debugMode = true;
 			}
 			break;
 
 		case 15:
 			board.deselectObject();
-			sidebar.deselectAllButtons();
+			sidebar.buttonHandler.deselectAllButtons();
 			cursor.setAction(0);
 			break;
 		
@@ -446,13 +424,8 @@ int Game::handleSidebarInput(input k)
 	}
 	else
 	{
-		cursor.setX(k.x);
-		cursor.setY(k.y);
-
-		for (std::vector<Button*>::iterator b = sidebar.buttons.begin(); b != sidebar.buttons.end(); ++b)
-		{
-			(*b)->cursorOnButton(cursor);
-		}
+		cursor.setCoordinates(k.x, k.y);
+		sidebar.setHoveredButton(cursor);
 	}
 
 	return 0;

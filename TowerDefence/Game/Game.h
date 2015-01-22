@@ -9,19 +9,17 @@ using namespace std;
 
 class Game 
 {
-
-private:
-	
-	void drawBoardBackground();
-	void drawGamePieces();
-	void drawBoardForeground();
+private:	
+	void drawBoardMap();
+	void drawBoardPieces();
 	void drawCursor();
 	void drawDebugFeatures();
+
 	void drawSidebar();
 	void drawSidebarEnemyStats();
 	void drawSidebarTowerStats();
 	void drawSidebarSelectedButton();
-	void drawButtons();
+	void drawSidebarButtons();
 
 public:	
 	Game();	
