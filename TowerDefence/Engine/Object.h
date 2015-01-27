@@ -1,18 +1,10 @@
 #pragma once
 #include "../Engine/ResourceManager.h"
 
-/*-------------------------------------------------------- *
- * OBJECT
- * Strictly speaking, this probably shouldn't be part of the
- * engine, but I needed something for the Physics class to 
- * recognise when I passed things to it
- *-------------------------------------------------------- */
-
 struct coordinates
 {
 	int xPos, yPos;
 };
-
 
 class Object
 {
@@ -33,7 +25,7 @@ public:
 	int getID()const;
 	coordinates getCoordinates()const;
 	ResourceManager getResources()const;
-	SDL_Texture* getTexture()const;
+	SDL_Texture *getTexture()const;
 
 	void setX(int x);
 	void setY(int y);
@@ -46,4 +38,3 @@ public:
 
 	bool isDeleted()const;
 };
-

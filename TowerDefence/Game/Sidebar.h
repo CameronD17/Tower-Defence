@@ -3,7 +3,7 @@
 #include "../Engine/Engine.h"
 #include "../Engine/Constants.h"
 #include "Cursor.h"
-#include "SidebarButtonHandler.h"
+#include "ButtonHandler.h"
 #include <sstream>
 
 using namespace std;
@@ -18,11 +18,8 @@ private:
 public:	
 	Sidebar(void);
 	Sidebar(Engine &e);	
-	SidebarButtonHandler buttonHandler;
+	ButtonHandler buttonHandler;
 	
 	void setup(Engine &e);
 	void update(bool tower);
-
-	int getHoveredButtonId();
-	void setHoveredButton(Cursor& cursor);
 };

@@ -2,9 +2,10 @@
 
 Pathfinder::Pathfinder()
 {
+	canSwim = true;
 }
 
-void Pathfinder::initialise(int x, int y, int tX, int tY, Map* m, int i, bool swim)
+void Pathfinder::initialise(int x, int y, int tX, int tY, Map m, int i, bool swim)
 {
 	id = i;
 	canSwim = swim;
@@ -87,10 +88,10 @@ void Pathfinder::popBack()
 
 // *** A-Star Pathfinding functions *** //
 
-bool Pathfinder::findPath(int sX, int sY, int tX, int tY, Map* map)
+bool Pathfinder::findPath(int sX, int sY, int tX, int tY, Map &map)
 {
 	// Initialise values
-	setMapValues(sX - BORDER_SIZE, sY - BORDER_SIZE, map, canSwim);
+	setMapValues(sX - BORDER_SIZE, sY - BORDER_SIZE, map, true);
 
 	startX = (sX - BORDER_SIZE) / BLOCK_SIZE, startY = (sY - BORDER_SIZE) / BLOCK_SIZE;
 	targetX = (tX - BORDER_SIZE) / BLOCK_SIZE, targetY = (tY - BORDER_SIZE) / BLOCK_SIZE;
@@ -240,7 +241,7 @@ int Pathfinder::getGCost(int x, int y, int px, int py)
 
 	switch (terrain[x][y])
 	{
-	case CLEAR_TERRAIN:
+	case CLEAR_TERRAIN: 
 		terrainCost = 10;
 		break;
 	case ROUGH_TERRAIN: case WATER_TERRAIN:
@@ -351,13 +352,13 @@ bool Pathfinder::cutCorner(int a, int b)
 	return corner;
 }
 
-void Pathfinder::setMapValues(int sX, int sY, Map* map, bool swim)
+void Pathfinder::setMapValues(int sX, int sY, Map map, bool swim)
 {
 	for (int x = 0; x < BOARD_WIDTH*BLOCK_SIZE; x += BLOCK_SIZE)
 	{
 		for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y += BLOCK_SIZE)
 		{
-			if (/*map->getTerrain(x, y) == HAS_ENEMY || */map->getTerrain(x, y) == HAS_TOWER)
+			if (map.getTerrain(x, y) == HAS_TOWER)
 			{
 				terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = BLOCKED_TERRAIN;
 			}
@@ -365,17 +366,17 @@ void Pathfinder::setMapValues(int sX, int sY, Map* map, bool swim)
 			{
 				if (swim)
 				{
-					terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = map->getTerrain(x, y);
+					terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = map.getTerrain(x, y);
 				}
 				else
 				{
-					if (map->getTerrain(x, y) == WATER_TERRAIN)
+					if (map.getTerrain(x, y) == WATER_TERRAIN)
 					{
 						terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = BLOCKED_TERRAIN;
 					}
 					else
 					{
-						terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = map->getTerrain(x, y);
+						terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = map.getTerrain(x, y);
 					}
 				}
 			}
@@ -390,7 +391,7 @@ void Pathfinder::setMapValues(int sX, int sY, Map* map, bool swim)
 		{
 			if (x >= 0 && x <= BOARD_WIDTH*BLOCK_SIZE && y >= 0 && y <= BOARD_HEIGHT*BLOCK_SIZE)
 			{
-				if (map->getTerrain(x, y) == HAS_ENEMY)
+				if (map.getTerrain(x, y) == HAS_ENEMY)
 				{
 					terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = ROUGH_TERRAIN;
 				}

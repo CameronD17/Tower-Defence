@@ -2,11 +2,7 @@
 
 Game::Game()
 {
-	engine.init();
-	cursor.init(engine.resources);
-	board.setup(engine);
-	sidebar.setup(engine);
-	engine.admin.start();
+	
 }
 
 Game::~Game()
@@ -14,9 +10,19 @@ Game::~Game()
 	close();
 }
 
+void Game::init(Engine &e, Cursor &c)
+{
+	engine = e;
+	cursor = c;
+	board.setup(engine);
+	sidebar.setup(engine);
+	pauseMenu.setup(engine, cursor);
+	engine.admin.start();
+}
+
 void Game::close()
 {
-	engine.close();
+
 }
 
 // *** DRAW METHODS *** //
@@ -33,6 +39,8 @@ void Game::draw()
 
 	drawCursor();
 	drawDebugFeatures();	
+
+	drawPauseMenu();
 
 	engine.graphics.update();
 	engine.admin.countedFrames++;
@@ -207,6 +215,38 @@ void Game::drawDebugFeatures()
 	}
 }
 
+void Game::drawPauseMenu()
+{
+	if (pauseMenu.paused)
+	{
+		engine.graphics.drawRectangle(PAUSE_MENU_X, PAUSE_MENU_Y, PAUSE_MENU_WIDTH, PAUSE_MENU_HEIGHT, 0, 0, 0);
+		engine.graphics.drawRectangleOL(PAUSE_MENU_X - 1, PAUSE_MENU_Y - 1, PAUSE_MENU_WIDTH + 2, PAUSE_MENU_HEIGHT + 2, 255, 255, 255);
+		engine.graphics.renderText(PAUSE_MENU_X + 150, PAUSE_MENU_Y+30, "Pause", LARGE, 255, 255, 255, "bombardier");
+
+		for (std::vector<Button*>::iterator b = pauseMenu.buttonHandler.buttons.begin(); b != pauseMenu.buttonHandler.buttons.end(); ++b)
+		{
+			if ((*b)->isVisible())
+			{
+				if ((*b)->isHovered())
+				{
+					engine.graphics.drawRectangleOL((*b)->getX(), (*b)->getY(), (*b)->getW(), (*b)->getH(), 255, 0, 255);
+					engine.graphics.renderText((*b)->getX() + (*b)->getOffset(), (*b)->getY() + (*b)->getOffset(), (*b)->text, (*b)->getFontSize(), 255, 0, 255, "anonymous");
+				}
+				else if ((*b)->isSelected())
+				{
+					engine.graphics.drawRectangleOL((*b)->getX(), (*b)->getY(), (*b)->getW(), (*b)->getH(), 255, 255, 0);
+					engine.graphics.renderText((*b)->getX() + (*b)->getOffset(), (*b)->getY() + (*b)->getOffset(), (*b)->text, (*b)->getFontSize(), 255, 255, 0, "anonymous");
+				}
+				else
+				{
+					engine.graphics.drawRectangleOL((*b)->getX(), (*b)->getY(), (*b)->getW(), (*b)->getH(), 255, 255, 255);
+					engine.graphics.renderText((*b)->getX() + (*b)->getOffset(), (*b)->getY() + (*b)->getOffset(), (*b)->text, (*b)->getFontSize(), 255, 255, 255, "anonymous");
+				}
+			}
+		}
+	}
+}
+
 void Game::drawSidebar()
 {
 	stringstream creditText, scoreText;
@@ -303,22 +343,52 @@ void Game::drawSidebarButtons()
 			}
 		}
 	}
-
 }
 
 
 // *** UPDATE METHODS *** //
 
-void Game::update()
-{
-	engine.admin.updateFPS();
+int Game::update()
+{	
+	int state = getInput();
+
+	while (pauseMenu.paused)
+	{
+		state = pauseMenu.getInput();
+		pauseMenu.update();
+		draw();
+	}
+
 	board.update();
 	sidebar.update(board.towerSelected);
+	engine.admin.updateFPS();
+
+	draw();
+
+	return state;
 }
 
 int Game::getInput()
 {
 	input k = engine.interfaces.getInput();
+
+	if (k.keyPress)
+	{
+		switch (k.key)
+		{
+		case SDLK_ESCAPE:
+			return EXIT_CURRENT_STATE;
+
+		case SDLK_q:
+			return EXIT_APPLICATION;
+
+		case SDLK_p:
+			pauseMenu.pause();
+
+		default:
+			break;
+		}
+	}
 	
 	if (k.x > BORDER_SIZE && k.x < (BORDER_SIZE + (BOARD_WIDTH*BLOCK_SIZE)) && k.y > BORDER_SIZE && k.y < (BORDER_SIZE + (BOARD_HEIGHT*BLOCK_SIZE)))
 	{
@@ -329,7 +399,7 @@ int Game::getInput()
 		return handleSidebarInput(k);
 	}
 
-	return 0;
+	return UNCHANGED_STATE;
 }
 
 int Game::handleBoardInput(input k)
@@ -338,19 +408,19 @@ int Game::handleBoardInput(input k)
 	{
 		if (cursor.getAction() == 1)
 		{
-			if (board.towerHandler.buildTower(&board.map, cursor, &board.bank))
+			if (board.towerHandler.buildTower(board.map, cursor, board.bank))
 			{
-				board.enemyHandler.updateEnemyPaths(cursor.getX(), cursor.getY(), &board.map);
+				board.enemyHandler.updateEnemyPaths(cursor.getX(), cursor.getY(), board.map);
 			}
 		}
 		else if (cursor.getAction() == 2)
 		{
-			board.enemyHandler.launchEnemy(cursor, &board.map);
+			board.enemyHandler.launchEnemy(cursor, board.map);
 		}
 		else if (cursor.getAction() == 3)
 		{
 			board.map.targetX = cursor.getX(); board.map.targetY = cursor.getY();
-			board.enemyHandler.updateEnemyTargets(&board.map);
+			board.enemyHandler.updateEnemyTargets(board.map);
 		}
 		else
 		{
@@ -362,20 +432,20 @@ int Game::handleBoardInput(input k)
 		cursor.setCoordinates((k.x - (k.x % BLOCK_SIZE)), (k.y - (k.y % BLOCK_SIZE)));
 	}
 
-	return 0;
+	return UNCHANGED_STATE;
 }
 
 int Game::handleSidebarInput(input k)
 {
 	if (k.mouseDown)
 	{
-		int button = sidebar.getHoveredButtonId();
+		int button = sidebar.buttonHandler.getHoveredButtonId();
 
 		switch (button)
 		{
 		case 1:		// SELL TOWER
 			board.deselectObject();
-			board.towerHandler.sellTower(&board.map, board.selectedTowerStats.id, &board.bank);
+			board.towerHandler.sellTower(board.map, board.selectedTowerStats.id, board.bank);
 			break;
 
 		case 2: case 3: case 4: case 5: case 6: case 7: case 8: case 9: case 10: case 11: // BUY TOWER
@@ -416,7 +486,11 @@ int Game::handleSidebarInput(input k)
 			break;
 		
 		case 16:
-			return -1;
+			pauseMenu.pause();
+			break;
+
+		case 17:
+			return EXIT_CURRENT_STATE;
 
 		default:
 			break;
@@ -425,8 +499,8 @@ int Game::handleSidebarInput(input k)
 	else
 	{
 		cursor.setCoordinates(k.x, k.y);
-		sidebar.setHoveredButton(cursor);
+		sidebar.buttonHandler.setHoveredButton(cursor);
 	}
 
-	return 0;
+	return UNCHANGED_STATE;
 }

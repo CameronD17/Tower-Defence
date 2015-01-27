@@ -2,11 +2,11 @@
 
 TowerHandler::TowerHandler(void){}
 	
-void TowerHandler::init(Map* m)								// Setting up the TowerHandler
+void TowerHandler::init(Map &m)								// Setting up the TowerHandler
 {
 	towerCount++;
 	Tower * t = new Tower(288, 336, 1, towerCount, m);
-	(*m).setTower(264, 312, towerCount);
+	m.setTower(264, 312, towerCount);
 	towers.push_back(t);
 }
 
@@ -15,40 +15,38 @@ int TowerHandler::numTowers()
 	return towerCount;
 }
 
-bool TowerHandler::buildTower(Map* m, Cursor &cursor, Bank* b)
+bool TowerHandler::buildTower(Map &map, Cursor &cursor, Bank &bank)
 {
 	int x = cursor.getX() - BORDER_SIZE, y = cursor.getY() - BORDER_SIZE;		// Store coordinates to make things easier to read.
 
 	// a) Can the terran be built upon (not blocked)?
-	if ((*m).buildable(x, y))
+	if (map.buildable(x, y))
 	{
 		// b) Is the player trying to build on the enemy spawn point?
-		if (!(x == (*m).startX && y == (*m).startY))
+		if (!(x == map.startX && y == map.startY))
 		{
 			// c) Does the player have enough credit to purchase the tower?
-			if (b->getCredit() >= (10 * cursor.getAction()))
+			if (bank.getCredit() >= (10 * cursor.getAction()))
 			{
-				char terrainReset = (*m).getTerrain(x, y);			// Store terrain type in case a reset is required
-				Pathfinder* p = new Pathfinder();					// Pathfinder to check paths
-				(*m).setTerrain(x, y, HAS_TOWER);					// Set the terrain to blocked in order to check the path
+				char terrainReset = map.getTerrain(x, y);			// Store terrain type in case a reset is required
+				Pathfinder p;					// Pathfinder to check paths
+				map.setTerrain(x, y, HAS_TOWER);					// Set the terrain to blocked in order to check the path
 
 				// d) Does the new tower completely block a route from enemy spawn to player base?
-				if (p->findPath((*m).startX, (*m).startY, (*m).targetX, (*m).targetY, m))
+				if (p.findPath(map.startX, map.startY, map.targetX, map.targetY, map))
 				{
 					towerCount++;
-					Tower * t = new Tower(cursor.getX(), cursor.getY(), cursor.getAction(), towerCount, m);
-					(*m).setTower(x, y, towerCount);
+					Tower * t = new Tower(cursor.getX(), cursor.getY(), cursor.getAction(), towerCount, map);
+					map.setTower(x, y, towerCount);
 					towers.push_back(t);
-					b->decreaseCredit(t->getCost());
+					bank.decreaseCredit(t->getCost());
 					return true;
 				}
 				else // d)
 				{
-					(*m).setTerrain(x, y, terrainReset);
+					map.setTerrain(x, y, terrainReset);
 					//setMessage("Invalid placement - you cannot block the route to your base.");
 				}
-
-				delete p;
 			}
 			else // c)
 			{
@@ -68,15 +66,15 @@ bool TowerHandler::buildTower(Map* m, Cursor &cursor, Bank* b)
 	return false;
 }
 
-bool TowerHandler::sellTower(Map* m, int id, Bank* b)
+bool TowerHandler::sellTower(Map &m, int id, Bank &b)
 {	
 	for (std::vector<Tower*>::iterator t = towers.begin(); t != towers.end(); ++t)
 	{
 		if ((*t)->getID() == id)
 		{
-			(*m).setTerrain((*t)->getX() - BORDER_SIZE, (*t)->getY() - BORDER_SIZE, CLEAR_TERRAIN);
-			(*m).setEnemy((*t)->getX() - BORDER_SIZE, (*t)->getY() - BORDER_SIZE, 0);
-			b->increaseCredit((*t)->getCost() / 2);
+			m.setTerrain((*t)->getX() - BORDER_SIZE, (*t)->getY() - BORDER_SIZE, CLEAR_TERRAIN);
+			m.setEnemy((*t)->getX() - BORDER_SIZE, (*t)->getY() - BORDER_SIZE, 0);
+			b.increaseCredit((*t)->getCost() / 2);
 			(*t)->setDeleted(true);
 			//setMessage("Tower sold!");
 			return true;

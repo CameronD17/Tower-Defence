@@ -6,14 +6,13 @@ class Audio
 {
 private:
 	ResourceManager *resource;
+	bool music;
 
 public:	
 	Audio(void);
 	~Audio(void);
 
-	bool music;
-
-	void init(ResourceManager *r);
+	void init(ResourceManager *r = NULL);
 
 	void playSound(string filepath);
 	void playMusic();

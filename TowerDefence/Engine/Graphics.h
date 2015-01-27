@@ -7,29 +7,21 @@
 
 using namespace std;
 
-
-/*-------------------------------------------------------- *
- * GRAPHICS
- * This class will deal with all graphics and visual 
- * representations within the game, including the game 
- * window and renderer
- *-------------------------------------------------------- */
-
-
 class Graphics
 {
 
 private:
 	int width, height;	
-	
+	SDL_Surface *makeSurfaceFromText(int x, int y, string text, int size, int r, int g, int b);
+
 public:	
 	Graphics(void);
 	Graphics(int x, int y);
 	~Graphics(void);
 
-	ResourceManager *resource;
-	SDL_Window		*window;	
-	SDL_Renderer	*renderer;
+	ResourceManager *resource = NULL;
+	SDL_Window		*window = NULL;	
+	SDL_Renderer	*renderer = NULL;
 
 	bool init(int w, int h, ResourceManager *r);
 		
@@ -47,8 +39,6 @@ public:
 	void renderImage(int x, int y, string text, SDL_Rect* clip = NULL, double angle = 0.0, SDL_Point* center = NULL, SDL_RendererFlip flip = SDL_FLIP_NONE);
 	
 	void renderTexture(int x, int y, SDL_Texture *t);
-
-	SDL_Surface * makeSurfaceFromText(int x, int y, string text, int size, int r, int g, int b);
 
 	void close();
 };

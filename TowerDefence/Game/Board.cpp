@@ -6,8 +6,8 @@ void Board::setup(Engine &e)								// Setting up the Board
 {
 	engine = e;			
 	map.init(0);
-	towerHandler.init(&map);
-	enemyHandler.init(engine, &map);
+	towerHandler.init(map);
+	enemyHandler.init(engine, map);
 	bank.init(10000);
 	eTimer = SDL_GetTicks() + 300;
 }
@@ -28,7 +28,7 @@ void Board::update()
 	{
 		for (std::vector<Tower*>::iterator t = towerHandler.towers.begin(); t != towerHandler.towers.end(); ++t)
 		{
-			(*t)->update(&map, &enemyHandler.enemies);
+			(*t)->update(map, enemyHandler.enemies);
 
 			for (std::vector<Bullet*>::iterator b = (*t)->bullets.begin(); b != (*t)->bullets.end(); ++b)
 			{
@@ -37,7 +37,7 @@ void Board::update()
 				
 				if ((*b)->hasHit())
 				{
-					if ((*t)->enemy->reduceHealth((*t)->getStats().damage, &map)) (*t)->incrementKills();
+					if ((*t)->enemy->reduceHealth((*t)->getStats().damage, map)) (*t)->incrementKills();
 				}
 			}
 
@@ -52,7 +52,7 @@ void Board::update()
 
 		for (std::vector<Enemy*>::iterator e = enemyHandler.enemies.begin(); e != enemyHandler.enemies.end(); ++e)
 		{
-			if ((*e)->canWalk(&map))
+			if ((*e)->canWalk(map))
 			{
 				engine.physics.move((*e), (*e)->getNextMove(), (*e)->getSpeed());
 			}

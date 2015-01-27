@@ -93,7 +93,13 @@
     <ClCompile Include="Game\Sidebar.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="Game\SidebarButtonHandler.cpp">
+    <ClCompile Include="Game\PauseMenu.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\ButtonHandler.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Menu.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
   </ItemGroup>
@@ -167,7 +173,13 @@
     <ClInclude Include="Game\Bank.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="Game\SidebarButtonHandler.h">
+    <ClInclude Include="Game\PauseMenu.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\ButtonHandler.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Menu.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
   </ItemGroup>

@@ -4,6 +4,7 @@
 #include "../Engine/Constants.h"
 #include "Board.h"
 #include "Sidebar.h"
+#include "PauseMenu.h"
 
 using namespace std;
 
@@ -13,6 +14,7 @@ private:
 	void drawBoardMap();
 	void drawBoardPieces();
 	void drawCursor();
+	void drawPauseMenu();
 	void drawDebugFeatures();
 
 	void drawSidebar();
@@ -21,18 +23,23 @@ private:
 	void drawSidebarSelectedButton();
 	void drawSidebarButtons();
 
-public:	
-	Game();	
-	~Game();
 	Engine engine;
 	Cursor cursor;
 	Board board;
 	Sidebar sidebar;
+	PauseMenu pauseMenu;
+
+public:	
+	Game();	
+	~Game();
 
 	int getInput();
 	int handleBoardInput(input k);
 	int handleSidebarInput(input k);
-	void update();
+
+	int update();
 	void draw();
+
+	void init(Engine &e, Cursor &c);
 	void close();
 };

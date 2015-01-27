@@ -2,23 +2,23 @@
 
 EnemyHandler::EnemyHandler(void){}
 	
-void EnemyHandler::init(Engine& e, Map* m)								// Setting up the EnemyHandler
+void EnemyHandler::init(Engine &e, Map &m)								// Setting up the EnemyHandler
 {
 	engine = e;
 	enemyCount = 1;
 
-	Enemy * enemy = new Enemy(engine.resources, (*m).startX, (*m).startY, 1, (*m).targetX, (*m).targetY, 1, m, enemyCount);
+	Enemy * enemy = new Enemy(engine.resources, m.startX, m.startY, 1, m.targetX, m.targetY, 1, m, enemyCount);
 	enemies.push_back(enemy);
 }
 
-void EnemyHandler::launchEnemy(Cursor &cursor, Map* m)
+void EnemyHandler::launchEnemy(Cursor &cursor, Map &m)
 {
 	enemyCount++;
-	Enemy * e = new Enemy(engine.resources, cursor.getX(), cursor.getY(), 0, (*m).targetX, (*m).targetY, 1, m, enemyCount);
+	Enemy * e = new Enemy(engine.resources, cursor.getX(), cursor.getY(), 0, m.targetX, m.targetY, 1, m, enemyCount);
 	enemies.push_back(e);
 }
 
-void EnemyHandler::updateEnemyPaths(int x, int y, Map* m)
+void EnemyHandler::updateEnemyPaths(int x, int y, Map &m)
 {
 	for (vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
 	{
@@ -36,11 +36,11 @@ void EnemyHandler::updateEnemyPaths(int x, int y, Map* m)
 	}
 }
 
-void EnemyHandler::updateEnemyTargets(Map* m)
+void EnemyHandler::updateEnemyTargets(Map &m)
 {
 	for (vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
 	{
-		(*e)->updateTarget((*m).targetX, (*m).targetY, m);
+		(*e)->updateTarget(m.targetX, m.targetY, m);
 	}
 }
 

@@ -1,10 +1,15 @@
 #pragma once
 
 // Window information
-#define WINDOW_WIDTH 1366											// 800 --> 1440
-#define WINDOW_HEIGHT 768											// 640 --> 900
+#define WINDOW_WIDTH 1366					//1366						// 800 --> 1440
+#define WINDOW_HEIGHT 768					//768						// 640 --> 900
 #define SCREEN_FPS 30
 #define SCREEN_TICK (1000/SCREEN_FPS)
+
+// Application state constants
+#define EXIT_APPLICATION -2
+#define EXIT_CURRENT_STATE -1
+#define UNCHANGED_STATE 0
 
 // Board constants
 #define BOARD_WIDTH 40
@@ -41,6 +46,12 @@
 #define BOUNTY_MULTIPLIER 10
 #define VALUE_MULTIPLIER 10
 #define HEALTH_MULTIPLIER 10
+
+// Pause Menu
+#define PAUSE_MENU_X 483
+#define PAUSE_MENU_Y 134
+#define PAUSE_MENU_WIDTH 400
+#define PAUSE_MENU_HEIGHT 500
 
 // Font sizes
 #define EXTRA_SMALL 10

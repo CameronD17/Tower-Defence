@@ -1,17 +1,17 @@
-#include "SidebarButtonHandler.h"
+#include "ButtonHandler.h"
 
-SidebarButtonHandler::SidebarButtonHandler()
+ButtonHandler::ButtonHandler()
 {
 
 }
 
-void SidebarButtonHandler::init(Engine& e, string filepath)
+void ButtonHandler::init(Engine& e, string filepath)
 {
 	engine = e;
 	loadButtonsFromFile(filepath);
 }
 
-Button* SidebarButtonHandler::findButtonByName(string name)
+Button* ButtonHandler::findButtonByName(string name)
 {
 	for (std::vector<Button*>::iterator b = buttons.begin(); b != buttons.end(); ++b)
 	{
@@ -23,17 +23,40 @@ Button* SidebarButtonHandler::findButtonByName(string name)
 	return NULL;
 }
 
-Button* SidebarButtonHandler::getSelectedButton()
+Button* ButtonHandler::getSelectedButton()
 {
 	return selectedButton;
 }
 
-bool SidebarButtonHandler::getButtonSelected()
+bool ButtonHandler::getButtonSelected()
 {
 	return buttonSelected;
 }
 
-void SidebarButtonHandler::selectButton(int i)
+int ButtonHandler::getHoveredButtonId()
+{
+	for (std::vector<Button*>::iterator b = buttons.begin(); b != buttons.end(); ++b)
+	{
+		if ((*b)->isHovered())
+		{
+			return (*b)->id;
+		}
+	}
+
+	return 0;
+}
+
+void ButtonHandler::setHoveredButton(Cursor& cursor)
+{
+	int i = 0;
+	for (std::vector<Button*>::iterator b = buttons.begin(); b != buttons.end(); ++b)
+	{
+		i++;
+		(*b)->cursorOnButton(cursor);
+	}
+}
+
+void ButtonHandler::selectButton(int i)
 {
 	buttonSelected = true;
 
@@ -51,7 +74,7 @@ void SidebarButtonHandler::selectButton(int i)
 	}
 }
 
-void SidebarButtonHandler::deselectButton(int i)
+void ButtonHandler::deselectButton(int i)
 {
 	buttonSelected = false;
 
@@ -64,7 +87,7 @@ void SidebarButtonHandler::deselectButton(int i)
 	}
 }
 
-void SidebarButtonHandler::deselectAllButtons()
+void ButtonHandler::deselectAllButtons()
 {
 	buttonSelected = false;
 
@@ -74,9 +97,9 @@ void SidebarButtonHandler::deselectAllButtons()
 	}
 }
 
-void SidebarButtonHandler::loadButtonsFromFile(string filepath)
+void ButtonHandler::loadButtonsFromFile(string filepath)
 {
-	ifstream buttonData("Assets/Inputs/IN_GAME_SIDEBAR_BUTTONS.txt");
+	ifstream buttonData(filepath.c_str());
 	string buttonName;
 
 	while (!std::getline(buttonData, buttonName, '~').eof())

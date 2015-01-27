@@ -5,11 +5,6 @@
 #include "Map.h"
 #include <vector>
 
-#define UNCHECKED 0
-#define OPEN 1
-#define CLOSED 2
-#define WAITING 100
-
 struct eStats
 {
 	int id, targetX, targetY, currentHealth, maxHealth, value, bounty, speed;
@@ -22,19 +17,19 @@ class Enemy : public Object
 
 public:
 	Enemy();
-	Enemy(ResourceManager &rm, int x, int y, int type, int targetX, int targetY, int level, Map* m, int i);
+	Enemy(ResourceManager &rm, int x, int y, int type, int targetX, int targetY, int level, Map &m, int i);
 	~Enemy();
 
-	void updateTarget(int tX, int tY, Map* m); 
-	void updatePath(Map* m);
-	bool reduceHealth(int h, Map* m);
+	void updateTarget(int tX, int t, Map &m); 
+	void updatePath(Map &m);
+	bool reduceHealth(int h, Map &m);
 
 	int getNextMove()const;
 	int getSpeed()const;
 	eStats getStats()const;
 	Pathfinder getPath()const;
 
-	bool canWalk(Map* map);	
+	bool canWalk(Map &m);	
 
 private:
 
@@ -43,10 +38,10 @@ private:
 
 	int stepsTaken, stepsPerSquare;
 
-	void initialise(int level, int x, int y, int tX, int tY, int type, Map* m);
+	void initialise(int level, int x, int y, int tX, int tY, int type, Map &m);
 
-	void releaseAllMyTiles(Map* m);
-	void lockThisTile(Map* m);
-	void lockNextTile(Map* m);
+	void releaseAllMyTiles(Map &m);
+	void lockThisTile(Map &m);
+	void lockNextTile(Map &m);
 };
 

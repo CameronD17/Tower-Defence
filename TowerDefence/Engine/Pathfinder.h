@@ -16,7 +16,7 @@ public:
 	Pathfinder();
 	~Pathfinder();
 
-	void initialise(int x, int y, int tX, int tY, Map* m, int i, bool swim);
+	void initialise(int x, int y, int tX, int tY, Map m, int i, bool swim = true);
 
 	int getID()const;
 	int getMapX()const;
@@ -29,7 +29,7 @@ public:
 	int getYAt(int pos);
 	void popBack();
 
-	bool findPath(int startX, int startY, int targetX, int targetY, Map* m);
+	bool findPath(int startX, int startY, int targetX, int targetY, Map &m);
 
 private:
 
@@ -40,7 +40,7 @@ private:
 	vector<int> xCoordinates;
 	vector<int> yCoordinates;
 
-	void setMapValues(int sX, int sY, Map* m, bool swim);
+	void setMapValues(int sX, int sY, Map m, bool swim);
 	int getGCost(int x, int y, int pX, int pY);
 	void binaryHeap();
 	void bubbleNewF(int m);

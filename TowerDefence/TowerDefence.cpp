@@ -1,18 +1,15 @@
-﻿#include "Game\Game.h"
+﻿#include "Game\Menu.h"
 
 int main(int argc, char* args[])
 {
-	Game game;	
+	int state = UNCHANGED_STATE;
 
-	int state = 0;
-
-	while (state != -1) 
+	Menu menu;
+	while (state != EXIT_APPLICATION)
 	{
-		state = game.getInput();
-		game.update();
-		game.draw();
+		state = menu.update();
 	}
+	menu.close();
 
-	game.close();
 	return 0;
 }

@@ -94,7 +94,9 @@
     <ClCompile Include="Game\Bank.cpp" />
     <ClCompile Include="Game\Board.cpp" />
     <ClCompile Include="Game\Button.cpp" />
-    <ClCompile Include="Game\SidebarButtonHandler.cpp" />
+    <ClCompile Include="Game\ButtonHandler.cpp" />
+    <ClCompile Include="Game\Menu.cpp" />
+    <ClCompile Include="Game\PauseMenu.cpp" />
     <ClCompile Include="Game\TowerHandler.cpp" />
     <ClCompile Include="Game\Bullet.cpp" />
     <ClCompile Include="Game\Cursor.cpp" />
@@ -120,7 +122,9 @@
     <ClInclude Include="Game\Bank.h" />
     <ClInclude Include="Game\Board.h" />
     <ClInclude Include="Game\Button.h" />
-    <ClInclude Include="Game\SidebarButtonHandler.h" />
+    <ClInclude Include="Game\ButtonHandler.h" />
+    <ClInclude Include="Game\Menu.h" />
+    <ClInclude Include="Game\PauseMenu.h" />
     <ClInclude Include="Game\TowerHandler.h" />
     <ClInclude Include="Game\Bullet.h" />
     <ClInclude Include="Game\Cursor.h" />

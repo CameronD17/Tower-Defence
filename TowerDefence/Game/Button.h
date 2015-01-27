@@ -24,6 +24,7 @@ public:
 	int getH()const;
 	int getFontSize()const;
 	int getOffset()const;
+	int getHoveredButtonId();
 	int id;
 
 	void hide();

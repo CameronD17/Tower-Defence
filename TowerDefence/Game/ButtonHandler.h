@@ -6,7 +6,7 @@
 
 using namespace std;
 
-class SidebarButtonHandler 
+class ButtonHandler 
 {
 	
 private:
@@ -17,7 +17,7 @@ private:
 
 
 public:	
-	SidebarButtonHandler();	
+	ButtonHandler();	
 	Engine engine;
 
 	void init(Engine &e, string filepath);
@@ -28,6 +28,9 @@ public:
 	//vector<Button*> getButtons();
 	Button* getSelectedButton();
 	bool getButtonSelected();
+	int getHoveredButtonId();
+
+	void setHoveredButton(Cursor &c);
 
 	void deselectButton(int id);
 	void deselectAllButtons();

@@ -18,12 +18,12 @@ public:
 	Engine engine;
 	
 	// Gameplay methods
-	void launchEnemy(Cursor &cursor, Map* m);
-	void updateEnemyPaths(int x, int y, Map* m);
-	void updateEnemyTargets(Map* m);
+	void launchEnemy(Cursor &cursor, Map &m);
+	void updateEnemyPaths(int x, int y, Map &m);
+	void updateEnemyTargets(Map &m);
 	void destroyObjects();
 
 	vector<Enemy*>  enemies;
 
-	void init(Engine& e, Map* m);
+	void init(Engine& e, Map &m);
 };

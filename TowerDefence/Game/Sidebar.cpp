@@ -10,35 +10,12 @@ Sidebar::Sidebar(Engine &e)
 void Sidebar::setup(Engine &e)	
 {
 	engine = e;
-	buttonHandler.init(engine, "filepath");
+	buttonHandler.init(engine, "Assets/Inputs/IN_GAME_SIDEBAR_BUTTONS.txt");
 }
 
 void Sidebar::update(bool tower)
 {
 	toggleTowerSelectionButtonVisibility(tower);
-}
-
-int Sidebar::getHoveredButtonId()
-{
-	for (std::vector<Button*>::iterator b = buttonHandler.buttons.begin(); b != buttonHandler.buttons.end(); ++b)
-	{
-		if ((*b)->isHovered())
-		{
-			return (*b)->id;
-		}
-	}
-
-	return 0;
-}
-
-void Sidebar::setHoveredButton(Cursor& cursor)
-{
-	int i = 0;
-	for (std::vector<Button*>::iterator b = buttonHandler.buttons.begin(); b != buttonHandler.buttons.end(); ++b)
-	{
-		i++;
-		(*b)->cursorOnButton(cursor);
-	}
 }
 
 void Sidebar::toggleTowerSelectionButtonVisibility(bool towerSelected)

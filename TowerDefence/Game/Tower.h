@@ -15,10 +15,10 @@ class Tower : public Object
 public:
 	Tower() : Object(){};
 	Tower(int x, int y) : Object(){};
-	Tower(int x, int y, int t, int id, Map* m);
+	Tower(int x, int y, int t, int id, Map &m);
 	~Tower();
 
-	void update(Map* m, vector<Enemy*>* enemies);
+	void update(Map &m, vector<Enemy*> &enemies);
 
 	int getCost();
 	tStats getStats()const;
@@ -34,6 +34,6 @@ private:
 	tStats stats;
 	void setStats(int t);
 	void fire();
-	bool checkForEnemies(Map* m, vector<Enemy*>* enemies);
+	bool checkForEnemies(Map &m, vector<Enemy*> &enemies);
 };
 

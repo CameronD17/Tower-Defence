@@ -1,7 +1,7 @@
 #include "Tower.h"
 #include <iostream>
 
-Tower::Tower(int x, int y, int t, int id, Map* m) 
+Tower::Tower(int x, int y, int t, int id, Map &m) 
 {
 	setX(x);
 	setY(y);
@@ -9,8 +9,8 @@ Tower::Tower(int x, int y, int t, int id, Map* m)
 	stats.id = id;
 	setStats(t);
 
-	(*m).setTerrain(x - BORDER_SIZE, y - BORDER_SIZE, HAS_TOWER);
-	(*m).setTower(x - BORDER_SIZE, y - BORDER_SIZE, id);
+	m.setTerrain(x - BORDER_SIZE, y - BORDER_SIZE, HAS_TOWER);
+	m.setTower(x - BORDER_SIZE, y - BORDER_SIZE, id);
 };
 
 Tower::~Tower()
@@ -60,7 +60,7 @@ void Tower::setStats(int t)
 	stats.range *= BLOCK_SIZE;
 }
 
-void Tower::update(Map* m, vector<Enemy*>* enemies)
+void Tower::update(Map &m, vector<Enemy*> &enemies)
 {
 	hasEnemy = checkForEnemies(m, enemies);
 
@@ -95,17 +95,17 @@ void Tower::incrementKills()
 	stats.kills++;
 }
 
-bool Tower::checkForEnemies(Map* m, vector<Enemy*>* enemies)
+bool Tower::checkForEnemies(Map &m, vector<Enemy*> &enemies)
 {
 	for (int x = getX() - stats.range; (x < getX() + stats.range) && (x < BOARD_WIDTH * BLOCK_SIZE); x += BLOCK_SIZE)
 	{
 		for (int y = getY() - stats.range; (y < getY() + stats.range) && (y < BOARD_HEIGHT * BLOCK_SIZE); y += BLOCK_SIZE)
 		{
-			if ((*m).getTerrain(x, y) == HAS_ENEMY)
+			if (m.getTerrain(x, y) == HAS_ENEMY)
 			{
-				for (std::vector<Enemy*>::iterator e = enemies->begin(); e != enemies->end(); ++e)
+				for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
 				{
-					if ((*e)->getID() == (*m).getEnemy(x, y))
+					if ((*e)->getID() == m.getEnemy(x, y))
 					{
 						enemy = (*e);
 						return true;
