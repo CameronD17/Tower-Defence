@@ -13,7 +13,7 @@ void ButtonHandler::init(Engine& e, string filepath)
 
 Button* ButtonHandler::findButtonByName(string name)
 {
-	for (std::vector<Button*>::iterator b = buttons.begin(); b != buttons.end(); ++b)
+	for (vector<Button*>::iterator b = buttons.begin(); b != buttons.end(); ++b)
 	{
 		if ((*b)->text == name)
 		{
@@ -35,7 +35,7 @@ bool ButtonHandler::getButtonSelected()
 
 int ButtonHandler::getHoveredButtonId()
 {
-	for (std::vector<Button*>::iterator b = buttons.begin(); b != buttons.end(); ++b)
+	for (vector<Button*>::iterator b = buttons.begin(); b != buttons.end(); ++b)
 	{
 		if ((*b)->isHovered())
 		{
@@ -49,7 +49,7 @@ int ButtonHandler::getHoveredButtonId()
 void ButtonHandler::setHoveredButton(Cursor& cursor)
 {
 	int i = 0;
-	for (std::vector<Button*>::iterator b = buttons.begin(); b != buttons.end(); ++b)
+	for (vector<Button*>::iterator b = buttons.begin(); b != buttons.end(); ++b)
 	{
 		i++;
 		(*b)->cursorOnButton(cursor);
@@ -60,7 +60,7 @@ void ButtonHandler::selectButton(int i)
 {
 	buttonSelected = true;
 
-	for (std::vector<Button*>::iterator b = buttons.begin(); b != buttons.end(); ++b)
+	for (vector<Button*>::iterator b = buttons.begin(); b != buttons.end(); ++b)
 	{
 		if ((*b)->id == i)
 		{
@@ -78,7 +78,7 @@ void ButtonHandler::deselectButton(int i)
 {
 	buttonSelected = false;
 
-	for (std::vector<Button*>::iterator b = buttons.begin(); b != buttons.end(); ++b)
+	for (vector<Button*>::iterator b = buttons.begin(); b != buttons.end(); ++b)
 	{
 		if ((*b)->id == i)
 		{
@@ -91,7 +91,7 @@ void ButtonHandler::deselectAllButtons()
 {
 	buttonSelected = false;
 
-	for (std::vector<Button*>::iterator b = buttons.begin(); b != buttons.end(); ++b)
+	for (vector<Button*>::iterator b = buttons.begin(); b != buttons.end(); ++b)
 	{
 		(*b)->deselect();
 	}
@@ -102,7 +102,7 @@ void ButtonHandler::loadButtonsFromFile(string filepath)
 	ifstream buttonData(filepath.c_str());
 	string buttonName;
 
-	while (!std::getline(buttonData, buttonName, '~').eof())
+	while (!getline(buttonData, buttonName, '~').eof())
 	{
 		string id, x, y, width, height, fontSize, offset, buttonText, visible;
 

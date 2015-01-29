@@ -36,7 +36,7 @@ void Menu::drawButtons()
 {
 	engine.graphics.renderText((WINDOW_WIDTH / 2 ) - 220, BORDER_SIZE, "Tower Defence", EXTRA_LARGE, 255, 255, 255, "imagine");
 
-	for (std::vector<Button*>::iterator b = buttonHandler.buttons.begin(); b != buttonHandler.buttons.end(); ++b)
+	for (vector<Button*>::iterator b = buttonHandler.buttons.begin(); b != buttonHandler.buttons.end(); ++b)
 	{
 		if ((*b)->isVisible())
 		{
@@ -62,7 +62,7 @@ void Menu::drawButtons()
 void Menu::setHoveredButton(Cursor& cursor)
 {
 	int i = 0;
-	for (std::vector<Button*>::iterator b = buttonHandler.buttons.begin(); b != buttonHandler.buttons.end(); ++b)
+	for (vector<Button*>::iterator b = buttonHandler.buttons.begin(); b != buttonHandler.buttons.end(); ++b)
 	{
 		i++;
 		(*b)->cursorOnButton(cursor);
@@ -103,7 +103,7 @@ int Menu::getInput()
 
 	if (k.mouseDown)
 	{
-		for (std::vector<Button*>::iterator b = buttonHandler.buttons.begin(); b != buttonHandler.buttons.end(); ++b)
+		for (vector<Button*>::iterator b = buttonHandler.buttons.begin(); b != buttonHandler.buttons.end(); ++b)
 		{
 			if ((*b)->isHovered())
 			{

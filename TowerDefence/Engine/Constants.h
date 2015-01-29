@@ -29,8 +29,8 @@
 #define WATER_TERRAIN 'W'
 #define ROUGH_TERRAIN 'R'
 #define BLOCKED_TERRAIN 'B'
-#define HAS_TOWER 'T'
-#define HAS_ENEMY 'E'
+#define NO_ENEMY 0
+#define NO_TOWER 0
 
 // Enemy constants
 #define UP 1

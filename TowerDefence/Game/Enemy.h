@@ -40,8 +40,7 @@ private:
 
 	void initialise(int level, int x, int y, int tX, int tY, int type, Map &m);
 
-	void releaseAllMyTiles(Map &m);
-	void lockThisTile(Map &m);
-	void lockNextTile(Map &m);
+	void releaseTiles(Map &m);
+	void lockTiles(Map &m);
 };
 

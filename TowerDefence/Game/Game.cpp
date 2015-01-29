@@ -88,7 +88,7 @@ void Game::drawBoardMap()
 void Game::drawBoardPieces()
 {
 	tStats tS = board.selectedTowerStats;
-	for (std::vector<Tower*>::iterator t = board.towerHandler.towers.begin(); t != board.towerHandler.towers.end(); ++t)
+	for (vector<Tower*>::iterator t = board.towerHandler.towers.begin(); t != board.towerHandler.towers.end(); ++t)
 	{
 		if (board.towerSelected && (*t)->getID() == tS.id)
 		{
@@ -104,14 +104,14 @@ void Game::drawBoardPieces()
 			engine.graphics.drawRectangle((*t)->getX(), (*t)->getY(), BLOCK_SIZE, BLOCK_SIZE, 39, 64, 139);
 		}
 
-		for (std::vector<Bullet*>::iterator b = (*t)->bullets.begin(); b != (*t)->bullets.end(); ++b)
+		for (vector<Bullet*>::iterator b = (*t)->bullets.begin(); b != (*t)->bullets.end(); ++b)
 		{
 			engine.graphics.drawRectangle((*b)->getX(), (*b)->getY(), 2,2, 255, 255, 255);
 		}
 	}
 
 	eStats eS = board.selectedEnemyStats;
-	for (std::vector<Enemy*>::iterator e = board.enemyHandler.enemies.begin(); e != board.enemyHandler.enemies.end(); ++e)
+	for (vector<Enemy*>::iterator e = board.enemyHandler.enemies.begin(); e != board.enemyHandler.enemies.end(); ++e)
 	{
 		if (board.enemySelected && (*e)->getID() == eS.id)
 		{
@@ -143,14 +143,14 @@ void Game::drawDebugFeatures()
 		SDL_GetMouseState(&x, &y);
 
 		int totBullets = 0;
-		for (std::vector<Tower*>::iterator t = board.towerHandler.towers.begin(); t != board.towerHandler.towers.end(); ++t){ totBullets += (*t)->bullets.size(); }
+		for (vector<Tower*>::iterator t = board.towerHandler.towers.begin(); t != board.towerHandler.towers.end(); ++t){ totBullets += (*t)->bullets.size(); }
 
 		cursorText << "Cursor: (" << cursor.getX() << "," << cursor.getY() << ")  Actual: (" << x << "," << y << ")         "
 			<< "Enemies: " << board.enemyHandler.enemies.size() << " Towers: " << board.towerHandler.towers.size() << " Bullets: " << totBullets << "   FPS: " << (int)engine.admin.avgFPS;;
 		
 		engine.graphics.renderText(10, 10, cursorText.str(), SMALL, 255, 255, 255);
 
-		for (std::vector<Enemy*>::iterator e = board.enemyHandler.enemies.begin(); e != board.enemyHandler.enemies.end(); ++e)
+		for (vector<Enemy*>::iterator e = board.enemyHandler.enemies.begin(); e != board.enemyHandler.enemies.end(); ++e)
 		{
 			stringstream idNo;
 			idNo << (*e)->getID();
@@ -161,7 +161,7 @@ void Game::drawDebugFeatures()
 		{
 			for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y += BLOCK_SIZE)
 			{
-				if (board.map.getTerrain(x, y) == HAS_ENEMY)
+				if (board.map.hasEnemy(x, y))
 				{
 					engine.graphics.drawRectangleOL(x + BORDER_SIZE, y + BORDER_SIZE, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 255);
 					stringstream ID2;
@@ -175,7 +175,7 @@ void Game::drawDebugFeatures()
 		{
 			for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y += BLOCK_SIZE)
 			{
-				if (board.map.getTerrain(x, y) == HAS_ENEMY)
+				if (board.map.hasEnemy(x, y))
 				{
 					engine.graphics.drawRectangleOL(x + BORDER_SIZE, y + BORDER_SIZE, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 255);
 					stringstream ID2;
@@ -187,7 +187,7 @@ void Game::drawDebugFeatures()
 
 		if (board.enemyHandler.enemies.size() > 0)
 		{
-			for (std::vector<Enemy*>::iterator e = board.enemyHandler.enemies.begin(); e != board.enemyHandler.enemies.end(); ++e)
+			for (vector<Enemy*>::iterator e = board.enemyHandler.enemies.begin(); e != board.enemyHandler.enemies.end(); ++e)
 			{
 				int thisX = board.map.targetX + (BLOCK_SIZE / 2);
 				int thisY = board.map.targetY + (BLOCK_SIZE / 2);
@@ -205,7 +205,7 @@ void Game::drawDebugFeatures()
 			}
 		}		
 
-		for (std::vector<Tower*>::iterator t = board.towerHandler.towers.begin(); t != board.towerHandler.towers.end(); ++t)
+		for (vector<Tower*>::iterator t = board.towerHandler.towers.begin(); t != board.towerHandler.towers.end(); ++t)
 		{
 			if ((*t)->hasEnemy)
 			{
@@ -223,7 +223,7 @@ void Game::drawPauseMenu()
 		engine.graphics.drawRectangleOL(PAUSE_MENU_X - 1, PAUSE_MENU_Y - 1, PAUSE_MENU_WIDTH + 2, PAUSE_MENU_HEIGHT + 2, 255, 255, 255);
 		engine.graphics.renderText(PAUSE_MENU_X + 150, PAUSE_MENU_Y+30, "Pause", LARGE, 255, 255, 255, "bombardier");
 
-		for (std::vector<Button*>::iterator b = pauseMenu.buttonHandler.buttons.begin(); b != pauseMenu.buttonHandler.buttons.end(); ++b)
+		for (vector<Button*>::iterator b = pauseMenu.buttonHandler.buttons.begin(); b != pauseMenu.buttonHandler.buttons.end(); ++b)
 		{
 			if ((*b)->isVisible())
 			{
@@ -322,7 +322,7 @@ void Game::drawSidebarSelectedButton()
 
 void Game::drawSidebarButtons()
 {
-	for (std::vector<Button*>::iterator b = sidebar.buttonHandler.buttons.begin(); b != sidebar.buttonHandler.buttons.end(); ++b)
+	for (vector<Button*>::iterator b = sidebar.buttonHandler.buttons.begin(); b != sidebar.buttonHandler.buttons.end(); ++b)
 	{
 		if ((*b)->isVisible())
 		{

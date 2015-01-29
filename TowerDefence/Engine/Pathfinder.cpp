@@ -358,7 +358,7 @@ void Pathfinder::setMapValues(int sX, int sY, Map map, bool swim)
 	{
 		for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y += BLOCK_SIZE)
 		{
-			if (map.getTerrain(x, y) == HAS_TOWER)
+			if (map.hasTower(x, y))
 			{
 				terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = BLOCKED_TERRAIN;
 			}
@@ -391,7 +391,7 @@ void Pathfinder::setMapValues(int sX, int sY, Map map, bool swim)
 		{
 			if (x >= 0 && x <= BOARD_WIDTH*BLOCK_SIZE && y >= 0 && y <= BOARD_HEIGHT*BLOCK_SIZE)
 			{
-				if (map.getTerrain(x, y) == HAS_ENEMY)
+				if (map.hasEnemy(x, y))
 				{
 					terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = ROUGH_TERRAIN;
 				}

@@ -10,6 +10,8 @@ struct Tile {
 	char terrain;
 	int enemy;
 	int tower;
+	bool isEnemy;
+	bool isTower;
 };
 
 
@@ -21,7 +23,7 @@ public:
 
 	int startX, startY, targetX, targetY;
 	
-	void init(char map);
+	void init(string map);
 	bool loadMapFromFile(string filename);
 
 	char getTerrain(int x, int y);
@@ -31,6 +33,9 @@ public:
 	void setTerrain(int x, int y, char m);
 	void setEnemy(int x, int y, int id);
 	void setTower(int x, int y, int id);
+
+	bool hasEnemy(int x, int y);
+	bool hasTower(int x, int y);
 
 	bool walkable(int x, int y, int id = 0);
 	bool buildable(int x, int y, bool waterTower = false);

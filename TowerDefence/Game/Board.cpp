@@ -5,7 +5,7 @@ Board::Board(void){}
 void Board::setup(Engine &e)								// Setting up the Board
 {
 	engine = e;			
-	map.init(0);
+	map.init("0");
 	towerHandler.init(map);
 	enemyHandler.init(engine, map);
 	bank.init(10000);
@@ -28,11 +28,11 @@ void Board::update()
 	towerHandler.destroyObjects();
 
 	// Update all remaining towers
-	for (std::vector<Tower*>::iterator t = towerHandler.towers.begin(); t != towerHandler.towers.end(); ++t)
+	for (vector<Tower*>::iterator t = towerHandler.towers.begin(); t != towerHandler.towers.end(); ++t)
 	{
 		(*t)->update(map, enemyHandler.enemies);
 
-		for (std::vector<Bullet*>::iterator b = (*t)->bullets.begin(); b != (*t)->bullets.end(); ++b)
+		for (vector<Bullet*>::iterator b = (*t)->bullets.begin(); b != (*t)->bullets.end(); ++b)
 		{
 			(*b)->update((*t)->enemy);
 			engine.physics.nonUniformMove((*b), (*b)->getDX(), (*b)->getDY());
@@ -58,7 +58,7 @@ void Board::update()
 	// Update all remaining enemies
 	if (SDL_GetTicks() > eTimer)
 	{		
-		for (std::vector<Enemy*>::iterator e = enemyHandler.enemies.begin(); e != enemyHandler.enemies.end(); ++e)
+		for (vector<Enemy*>::iterator e = enemyHandler.enemies.begin(); e != enemyHandler.enemies.end(); ++e)
 		{
 			if ((*e)->canWalk(map))
 			{
@@ -88,13 +88,13 @@ void Board::selectObject(Cursor &cursor)
 {
 	int x = cursor.getX() - BORDER_SIZE, y = cursor.getY() - BORDER_SIZE;
 
-	if (map.getTerrain(x, y) == HAS_ENEMY)
+	if (map.hasEnemy(x, y))
 	{
 		objectSelected = true;
 		enemySelected = true;
 		towerSelected = false;
 
-		for (std::vector<Enemy*>::iterator e = enemyHandler.enemies.begin(); e != enemyHandler.enemies.end(); ++e)
+		for (vector<Enemy*>::iterator e = enemyHandler.enemies.begin(); e != enemyHandler.enemies.end(); ++e)
 		{
 			if ((*e)->getID() == map.getEnemy(x, y))
 			{
@@ -103,13 +103,13 @@ void Board::selectObject(Cursor &cursor)
 			}
 		}		
 	}
-	else if (map.getTerrain(x, y) == HAS_TOWER)
+	else if (map.hasTower(x, y))
 	{
 		objectSelected = true;
 		enemySelected = false;
 		towerSelected = true;
 
-		for (std::vector<Tower*>::iterator t = towerHandler.towers.begin(); t != towerHandler.towers.end(); ++t)
+		for (vector<Tower*>::iterator t = towerHandler.towers.begin(); t != towerHandler.towers.end(); ++t)
 		{
 			if ((*t)->getID() == map.getTower(x, y))
 			{

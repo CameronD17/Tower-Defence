@@ -29,8 +29,8 @@ bool TowerHandler::buildTower(Map &map, Cursor &cursor, Bank &bank)
 			if (bank.getCredit() >= (10 * cursor.getAction()))
 			{
 				char terrainReset = map.getTerrain(x, y);			// Store terrain type in case a reset is required
-				Pathfinder p;					// Pathfinder to check paths
-				map.setTerrain(x, y, HAS_TOWER);					// Set the terrain to blocked in order to check the path
+				Pathfinder p;										// Pathfinder to check paths
+				map.setTerrain(x, y, BLOCKED_TERRAIN);				// Set the terrain to blocked in order to check the path
 
 				// d) Does the new tower completely block a route from enemy spawn to player base?
 				if (p.findPath(map.startX, map.startY, map.targetX, map.targetY, map))
@@ -68,7 +68,7 @@ bool TowerHandler::buildTower(Map &map, Cursor &cursor, Bank &bank)
 
 bool TowerHandler::sellTower(Map &m, int id, Bank &b)
 {	
-	for (std::vector<Tower*>::iterator t = towers.begin(); t != towers.end(); ++t)
+	for (vector<Tower*>::iterator t = towers.begin(); t != towers.end(); ++t)
 	{
 		if ((*t)->getID() == id)
 		{

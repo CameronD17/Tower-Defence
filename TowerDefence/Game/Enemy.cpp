@@ -47,7 +47,6 @@ void Enemy::initialise(int level, int x, int y, int tX, int tY, int t, Map &m)
 	stepsTaken = 0;
 	stepsPerSquare = (int)(BLOCK_SIZE / stats.speed);
 
-	m.setTerrain(x - BORDER_SIZE, y - BORDER_SIZE, HAS_ENEMY);
 	m.setEnemy(x - BORDER_SIZE, y - BORDER_SIZE, stats.id);
 }
 
@@ -57,7 +56,7 @@ bool Enemy::reduceHealth(int i, Map &m)
 	if (stats.currentHealth <= 0)
 	{
 		setDeleted(true);
-		releaseAllMyTiles(m);
+		releaseTiles(m);
 		return true;
 	}
 	return false;
@@ -110,7 +109,7 @@ bool Enemy::canWalk(Map &map)
 	if (stats.targetX == getX() && stats.targetY == getY())
 	{
 		setDeleted(true);
-		releaseAllMyTiles(map);
+		releaseTiles(map);
 		return false;
 	}
 
@@ -134,9 +133,8 @@ bool Enemy::canWalk(Map &map)
 		if (map.walkable(astar.getNextX(), astar.getNextY(), stats.id))
 		{
 			// GET IN! The next tile is available. Let's move!
-			releaseAllMyTiles(map);
-			lockThisTile(map);
-			lockNextTile(map);
+			releaseTiles(map);
+			lockTiles(map);
 			stepsTaken = 1;	
 			return true;
 		}
@@ -145,6 +143,7 @@ bool Enemy::canWalk(Map &map)
 		// Let's hope so. We'll update the path with the new values and try again next move.
 		else
 		{
+			releaseTiles(map);
 			updatePath(map);
 			return false;
 		}
@@ -154,42 +153,33 @@ bool Enemy::canWalk(Map &map)
 	return false;	
 }
 
-void Enemy::releaseAllMyTiles(Map &map)
+void Enemy::releaseTiles(Map &map)
 {
-	/* This is too brute-forcey, should be able to optimise this! */
-
-	for (int x = 0; x < BOARD_WIDTH*BLOCK_SIZE; x += BLOCK_SIZE)
+	for (int x = getX() - (2 * BLOCK_SIZE); (x < getX() + (2 * BLOCK_SIZE)) && (x < BOARD_WIDTH * BLOCK_SIZE); x += BLOCK_SIZE)
 	{
-		for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y += BLOCK_SIZE)
+		for (int y = getY() - (2 * BLOCK_SIZE); (y < getY() + (2 * BLOCK_SIZE)) && (y < BOARD_HEIGHT * BLOCK_SIZE); y += BLOCK_SIZE)
 		{
 			if (map.getEnemy(x, y) == stats.id)
 			{
-				map.setTerrain(x, y, CLEAR_TERRAIN);
-				map.setEnemy(x, y, 0);
+				map.setEnemy(x, y, NO_ENEMY);
 			}
 		}
 	}
 }
 
-void Enemy::lockThisTile(Map &map)
-{
-	int thisX = getX() - (getX() % BLOCK_SIZE) - BORDER_SIZE;
-	int thisY = getY() - (getY() % BLOCK_SIZE) - BORDER_SIZE;
-
-	if (map.walkable(thisX, thisY, stats.id))
-	{
-		map.setTerrain(thisX, thisY, HAS_ENEMY);
-		map.setEnemy(thisX, thisY, stats.id);
-	}
-}
-
-void Enemy::lockNextTile(Map &map)
+void Enemy::lockTiles(Map &map)
 {
 	int thisX = getX() - (getX() % BLOCK_SIZE) - BORDER_SIZE;
 	int thisY = getY() - (getY() % BLOCK_SIZE) - BORDER_SIZE;
 	int otherX = thisX;
 	int otherY = thisY;	
 	int nextMove = astar.getNextMove();
+
+	// Lock the current tile
+	if (map.walkable(thisX, thisY, stats.id))
+	{
+		map.setEnemy(thisX, thisY, stats.id);
+	}
 
 	switch (nextMove)
 	{
@@ -224,24 +214,23 @@ void Enemy::lockNextTile(Map &map)
 	default:
 		break;
 	}
-
+	
+	// Lock the next tile
 	if (map.walkable(thisX, thisY, stats.id))
 	{
-		map.setTerrain(thisX, thisY, HAS_ENEMY);
 		map.setEnemy(thisX, thisY, stats.id);
 	}
 
+	// Lock periphery tiles if required
 	if (nextMove == UP_RIGHT || nextMove == UP_LEFT || nextMove == DOWN_RIGHT || nextMove == DOWN_LEFT)
 	{
 		if (map.walkable(otherX, thisY, stats.id))
 		{
-			map.setTerrain(otherX, thisY, HAS_ENEMY);
 			map.setEnemy(otherX, thisY, stats.id);
 		}
 
 		if (map.walkable(thisX, otherY, stats.id))
 		{
-			map.setTerrain(thisX, otherY, HAS_ENEMY);
 			map.setEnemy(thisX, otherY, stats.id);
 		}
 	}

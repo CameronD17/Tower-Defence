@@ -9,7 +9,7 @@ Map::~Map()
 }
 
 // This method is temporary, and will be extended to accept different maps based on input
-void Map::init(char map)
+void Map::init(string map)
 {
 	//stringstream filename;
 	//filename >> "Game/Inputs/MapData/" >> map >> ".txt";
@@ -21,7 +21,8 @@ void Map::init(char map)
 			for (int y = 0; y < BOARD_HEIGHT; y++)
 			{
 				tiles[x][y].terrain = CLEAR_TERRAIN;
-				tiles[x][y].enemy = 0;
+				tiles[x][y].enemy = NO_ENEMY;
+				tiles[x][y].tower = NO_TOWER;
 			}
 		}
 
@@ -33,10 +34,9 @@ void Map::init(char map)
 
 bool Map::loadMapFromFile(string filename)
 {
-	// Read in the map data 
 	ifstream mapData;
 	
-	mapData.open(filename, ios::in);
+	mapData.open(filename);
 
 	if (mapData.good())
 	{
@@ -48,6 +48,8 @@ bool Map::loadMapFromFile(string filename)
 			if (x < BOARD_WIDTH)
 			{
 				tiles[x][y].terrain = nextCheck;
+				tiles[x][y].enemy = NO_ENEMY;
+				tiles[x][y].tower = NO_TOWER;
 				x++;
 			}
 			else
@@ -90,18 +92,30 @@ void Map::setTerrain(int x, int y, char m)
 void Map::setEnemy(int x, int y, int id)
 {
 	tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].enemy = id;
+	tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].isEnemy = (id != NO_ENEMY) ? true : false;
 }
 
 void Map::setTower(int x, int y, int id)
 {
 	tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].tower = id;
+	tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].isTower = (id != NO_TOWER) ? true : false;
+}
+
+bool Map::hasEnemy(int x, int y)
+{
+	return tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].isEnemy;
+}
+
+bool Map::hasTower(int x, int y)
+{
+	return tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].isTower;
 }
 
 bool Map::walkable(int x, int y, int id)
 {
 	if ((tiles[(x / BLOCK_SIZE)][(y / BLOCK_SIZE)].terrain == BLOCKED_TERRAIN 
-		|| (tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].terrain == HAS_ENEMY) 
-		|| (tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].terrain == HAS_TOWER)) 
+		|| (tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].isEnemy) 
+		|| (tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].isTower)) 
 		&& tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].enemy != id)
 	{
 		return false;
