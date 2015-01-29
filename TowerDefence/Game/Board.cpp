@@ -24,32 +24,40 @@ int Board::getLevel()
 
 void Board::update()
 {
-	if (SDL_GetTicks() > eTimer)
+	// No point in updating towers that have been sold
+	towerHandler.destroyObjects();
+
+	// Update all remaining towers
+	for (std::vector<Tower*>::iterator t = towerHandler.towers.begin(); t != towerHandler.towers.end(); ++t)
 	{
-		for (std::vector<Tower*>::iterator t = towerHandler.towers.begin(); t != towerHandler.towers.end(); ++t)
+		(*t)->update(map, enemyHandler.enemies);
+
+		for (std::vector<Bullet*>::iterator b = (*t)->bullets.begin(); b != (*t)->bullets.end(); ++b)
 		{
-			(*t)->update(map, enemyHandler.enemies);
+			(*b)->update((*t)->enemy);
+			engine.physics.nonUniformMove((*b), (*b)->getDX(), (*b)->getDY());
 
-			for (std::vector<Bullet*>::iterator b = (*t)->bullets.begin(); b != (*t)->bullets.end(); ++b)
+			if ((*b)->hasHit())
 			{
-				(*b)->update((*t)->enemy);
-				engine.physics.nonUniformMove((*b), (*b)->getDX(), (*b)->getDY());
-				
-				if ((*b)->hasHit())
-				{
-					if ((*t)->enemy->reduceHealth((*t)->getStats().damage, map)) (*t)->incrementKills();
-				}
+				if ((*t)->enemy->reduceHealth((*t)->getStats().damage, map)) (*t)->incrementKills();
 			}
+		}
 
-			if (towerSelected)
+		if (towerSelected)
+		{
+			if ((*t)->getID() == selectedTowerStats.id)
 			{
-				if ((*t)->getID() == selectedTowerStats.id)
-				{
-					selectedTowerStats = (*t)->getStats();
-				}
+				selectedTowerStats = (*t)->getStats();
 			}
-		}	
+		}
+	}
 
+	// Destroy any enemies that have been killed
+	enemyHandler.destroyObjects();
+
+	// Update all remaining enemies
+	if (SDL_GetTicks() > eTimer)
+	{		
 		for (std::vector<Enemy*>::iterator e = enemyHandler.enemies.begin(); e != enemyHandler.enemies.end(); ++e)
 		{
 			if ((*e)->canWalk(map))
@@ -74,8 +82,6 @@ void Board::update()
 		}
 		eTimer = SDL_GetTicks() + 0;
 	}
-
-	cleanup();
 }
 
 void Board::selectObject(Cursor &cursor)
@@ -119,10 +125,4 @@ void Board::deselectObject()
 	objectSelected = false;
 	towerSelected = false;
 	enemySelected = false;
-}
-
-void Board::cleanup()
-{
-	towerHandler.destroyObjects();
-	enemyHandler.destroyObjects();
 }
