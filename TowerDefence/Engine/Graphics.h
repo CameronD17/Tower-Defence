@@ -27,6 +27,7 @@ public:
 		
 	void clear();		
 	void update();
+	void screenshot();
 
 	void drawLine(int x1, int y1, int x2, int y2, Uint8 r = 255, Uint8 g = 255, Uint8 b = 255);
 

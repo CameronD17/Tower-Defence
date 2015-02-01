@@ -2,14 +2,14 @@
 
 Board::Board(void){}
 	
-void Board::setup(Engine &e)								// Setting up the Board
+void Board::setup(Engine &e)
 {
 	engine = e;			
-	map.init("0");
+	map.init("TEST_MAP");
 	towerHandler.init(map);
 	enemyHandler.init(engine, map);
 	bank.init(10000);
-	eTimer = SDL_GetTicks() + 300;
+	eTimer = SDL_GetTicks();
 }
 
 int Board::getScore()

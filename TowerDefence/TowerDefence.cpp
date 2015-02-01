@@ -1,10 +1,13 @@
-﻿#include "Game\Menu.h"
+﻿#include "Game\MainMenuScreen.h"
 
 int main(int argc, char* args[])
 {
 	int state = UNCHANGED_STATE;
+	Engine engine;
+	engine.init();
 
-	Menu menu;
+	MainMenuScreen menu(engine);	
+
 	while (state != EXIT_APPLICATION)
 	{
 		state = menu.update();

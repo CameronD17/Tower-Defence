@@ -15,15 +15,13 @@ void PauseMenu::setup(Engine &e, Cursor &c)
 	engine = e;
 	cursor = c;
 	paused = false;
-	buttonHandler.init(engine, "Assets/Inputs/PAUSE_MENU_BUTTONS.txt");
+	buttonHandler.init(engine, "Assets/Inputs/Buttons/IN_GAME_PAUSE_MENU_BUTTONS.txt");
 }
 
 void PauseMenu::close()
 {
 
 }
-
-// *** UPDATE METHODS *** //
 
 int PauseMenu::update()
 {	

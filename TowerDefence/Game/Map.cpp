@@ -11,10 +11,10 @@ Map::~Map()
 // This method is temporary, and will be extended to accept different maps based on input
 void Map::init(string map)
 {
-	//stringstream filename;
-	//filename >> "Game/Inputs/MapData/" >> map >> ".txt";
+	stringstream filename;
+	filename << "Assets/Inputs/MapData/" << map << ".txt";
 
-	if (!loadMapFromFile("Assets/Inputs/MapData/TEST_MAP.txt"))
+	if (!loadMapFromFile(filename.str()))
 	{
 		for (int x = 0; x < BOARD_WIDTH; x++)
 		{

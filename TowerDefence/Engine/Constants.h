@@ -48,10 +48,16 @@
 #define HEALTH_MULTIPLIER 10
 
 // Pause Menu
-#define PAUSE_MENU_X 483
-#define PAUSE_MENU_Y 134
-#define PAUSE_MENU_WIDTH 400
-#define PAUSE_MENU_HEIGHT 500
+#define PAUSE_Menu_X 483
+#define PAUSE_Menu_Y 134
+#define PAUSE_Menu_WIDTH 400
+#define PAUSE_Menu_HEIGHT 500
+
+// Transition Panel
+#define TRANSITION_SCREEN_MIDPOINT (WINDOW_WIDTH / 2)						// 683
+#define TRANSITION_PANEL_WIDTH  (WINDOW_WIDTH / 2)						// 683
+#define TRANSITION_PANEL_HEIGHT WINDOW_HEIGHT
+#define TRANSITION_PANEL_SPEED	20
 
 // Font sizes
 #define EXTRA_SMALL 10

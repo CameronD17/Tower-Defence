@@ -1,3 +1,0 @@
-Resu~1~583~250~200~75~20~20~Resume~1
-Exit~2~583~350~200~75~20~20~Return to Menu~1
-Exit~3~583~450~200~75~20~20~Exit Application~1

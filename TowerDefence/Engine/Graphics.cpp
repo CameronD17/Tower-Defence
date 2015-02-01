@@ -147,6 +147,11 @@ void Graphics::renderTexture(int x, int y, SDL_Texture *t)
     SDL_RenderCopy(renderer, t, 0, &pos);
 }
 
+void Graphics::screenshot()
+{
+
+}
+
 void Graphics::close()
 {	
 	SDL_DestroyRenderer(renderer);

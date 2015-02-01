@@ -1,21 +1,23 @@
-#include "Menu.h"
+#include "MainMenuScreen.h"
 
-Menu::Menu()
+MainMenuScreen::MainMenuScreen(Engine& e)
 {
-	engine.init();
+	engine = e;
 	cursor.init(engine.resources);
-	game.init(engine, cursor);
-	buttonHandler.init(engine, "Assets/Inputs/MAIN_MENU_BUTTONS.txt");
+	buttonHandler.init(engine, "Assets/Inputs/Buttons/MAIN_MENU_BUTTONS.txt");
 	engine.admin.start();
+	transition.init(engine);
+	game.init(engine, cursor);
 	gamePlaying = false;
+	openTransition();
 }
 
-Menu::~Menu()
+MainMenuScreen::~MainMenuScreen()
 {
 	close();
 }
 
-void Menu::close()
+void MainMenuScreen::close()
 {
 	game.close();
 	engine.close();
@@ -23,16 +25,16 @@ void Menu::close()
 
 // *** DRAW METHODS *** //
 
-void Menu::draw()
+void MainMenuScreen::draw()
 {
 	engine.graphics.clear();
 
 	drawButtons();
-
+	
 	engine.graphics.update();
 }
 
-void Menu::drawButtons()
+void MainMenuScreen::drawButtons()
 {
 	engine.graphics.renderText((WINDOW_WIDTH / 2 ) - 220, BORDER_SIZE, "Tower Defence", EXTRA_LARGE, 255, 255, 255, "imagine");
 
@@ -59,7 +61,7 @@ void Menu::drawButtons()
 	}
 }
 
-void Menu::setHoveredButton(Cursor& cursor)
+void MainMenuScreen::setHoveredButton(Cursor& cursor)
 {
 	int i = 0;
 	for (vector<Button*>::iterator b = buttonHandler.buttons.begin(); b != buttonHandler.buttons.end(); ++b)
@@ -72,7 +74,7 @@ void Menu::setHoveredButton(Cursor& cursor)
 
 // *** UPDATE METHODS *** //
 
-int Menu::update()
+int MainMenuScreen::update()
 {
 	int state = UNCHANGED_STATE;
 
@@ -84,6 +86,7 @@ int Menu::update()
 		if (state == EXIT_CURRENT_STATE)
 		{
 			gamePlaying = false;
+			openTransition();
 		}
 		else if (state == EXIT_APPLICATION)
 		{
@@ -96,7 +99,7 @@ int Menu::update()
 	return state;
 }
 
-int Menu::getInput()
+int MainMenuScreen::getInput()
 {
 	input k = engine.interfaces.getInput();
 	int button = 0;
@@ -118,6 +121,7 @@ int Menu::getInput()
 
 		case 2:		// Skirmish PLACEHOLDER
 			gamePlaying = true;
+			closeTransition();
 			break;
 
 		case 3:		// Achievements PLACEHOLDER
@@ -150,4 +154,32 @@ int Menu::getInput()
 	}
 
 	return UNCHANGED_STATE;
+}
+
+void MainMenuScreen::closeTransition()
+{
+	transition.closing = true;
+	while (transition.closing)
+	{
+		transition.close();
+
+		engine.graphics.clear();
+		drawButtons();
+		transition.draw();
+		engine.graphics.update();
+	}
+}
+
+void MainMenuScreen::openTransition()
+{
+	transition.opening = true;
+	while (transition.opening)
+	{
+		transition.open();
+		
+		engine.graphics.clear();
+		drawButtons();
+		transition.draw();
+		engine.graphics.update();
+	}
 }

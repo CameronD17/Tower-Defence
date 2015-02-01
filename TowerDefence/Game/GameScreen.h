@@ -2,13 +2,14 @@
 
 #include "../Engine/Engine.h"
 #include "../Engine/Constants.h"
+#include "Screen.h"
 #include "Board.h"
 #include "Sidebar.h"
 #include "PauseMenu.h"
 
 using namespace std;
 
-class Game 
+class GameScreen : public Screen
 {
 private:	
 	void drawBoardMap();
@@ -29,13 +30,18 @@ private:
 	Sidebar sidebar;
 	PauseMenu pauseMenu;
 
-public:	
-	Game();	
-	~Game();
-
-	int getInput();
 	int handleBoardInput(input k);
 	int handleSidebarInput(input k);
+	
+
+public:	
+	GameScreen();	
+	~GameScreen();
+
+	int getInput();
+	
+	void closeTransition();
+	void openTransition();
 
 	int update();
 	void draw();

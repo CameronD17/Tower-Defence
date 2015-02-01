@@ -2,12 +2,13 @@
 
 #include "../Engine/Engine.h"
 #include "../Engine/Constants.h"
-#include "Game.h"
+#include "Screen.h"
+#include "GameScreen.h"
 #include "ButtonHandler.h"
 
 using namespace std;
 
-class Menu 
+class MainMenuScreen : public Screen
 {
 private:	
 	void drawButtons();
@@ -20,11 +21,14 @@ private:
 
 	Engine engine;
 	Cursor cursor;
-	Game game;
+	GameScreen game;
+
+	void closeTransition();
+	void openTransition();
 
 public:	
-	Menu();	
-	~Menu();
+	MainMenuScreen(Engine& e);
+	~MainMenuScreen();
 
 	int update();
 	void close();

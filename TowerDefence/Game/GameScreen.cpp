@@ -1,16 +1,16 @@
-#include "Game.h"
+#include "GameScreen.h"
 
-Game::Game()
+GameScreen::GameScreen()
 {
 	
 }
 
-Game::~Game()
+GameScreen::~GameScreen()
 {
 	close();
 }
 
-void Game::init(Engine &e, Cursor &c)
+void GameScreen::init(Engine &e, Cursor &c)
 {
 	engine = e;
 	cursor = c;
@@ -18,16 +18,15 @@ void Game::init(Engine &e, Cursor &c)
 	sidebar.setup(engine);
 	pauseMenu.setup(engine, cursor);
 	engine.admin.start();
+	transition.init(engine);
 }
 
-void Game::close()
+void GameScreen::close()
 {
 
 }
 
-// *** DRAW METHODS *** //
-
-void Game::draw()
+void GameScreen::draw()
 {
 	engine.graphics.clear();
 
@@ -46,7 +45,7 @@ void Game::draw()
 	engine.admin.countedFrames++;
 }
 
-void Game::drawBoardMap()
+void GameScreen::drawBoardMap()
 {
 	// TODO: update this method with actual imagery
 	for (int x = 0; x < BOARD_WIDTH*BLOCK_SIZE; x+=BLOCK_SIZE)
@@ -85,7 +84,7 @@ void Game::drawBoardMap()
 	engine.graphics.drawRectangleOL(BORDER_SIZE, BORDER_SIZE, BOARD_WIDTH*BLOCK_SIZE, BOARD_HEIGHT*BLOCK_SIZE, 0, 0, 0);
 }
 
-void Game::drawBoardPieces()
+void GameScreen::drawBoardPieces()
 {
 	tStats tS = board.selectedTowerStats;
 	for (vector<Tower*>::iterator t = board.towerHandler.towers.begin(); t != board.towerHandler.towers.end(); ++t)
@@ -125,7 +124,7 @@ void Game::drawBoardPieces()
 	engine.graphics.drawRectangleOL(board.map.targetX - 1, board.map.targetY - 1, BLOCK_SIZE + 2, BLOCK_SIZE + 2, 0, 255, 255);
 }
 
-void Game::drawCursor()
+void GameScreen::drawCursor()
 {	
 	if (cursor.getX() >= BORDER_SIZE && cursor.getX() < (BORDER_SIZE + (BOARD_WIDTH*BLOCK_SIZE)) && cursor.getY() >= BORDER_SIZE && cursor.getY() < (BORDER_SIZE + (BOARD_HEIGHT*BLOCK_SIZE)))
 	{
@@ -133,7 +132,7 @@ void Game::drawCursor()
 	}
 }
 
-void Game::drawDebugFeatures()
+void GameScreen::drawDebugFeatures()
 {
 	if (board.debugMode)
 	{
@@ -215,13 +214,13 @@ void Game::drawDebugFeatures()
 	}
 }
 
-void Game::drawPauseMenu()
+void GameScreen::drawPauseMenu()
 {
 	if (pauseMenu.paused)
 	{
-		engine.graphics.drawRectangle(PAUSE_MENU_X, PAUSE_MENU_Y, PAUSE_MENU_WIDTH, PAUSE_MENU_HEIGHT, 0, 0, 0);
-		engine.graphics.drawRectangleOL(PAUSE_MENU_X - 1, PAUSE_MENU_Y - 1, PAUSE_MENU_WIDTH + 2, PAUSE_MENU_HEIGHT + 2, 255, 255, 255);
-		engine.graphics.renderText(PAUSE_MENU_X + 150, PAUSE_MENU_Y+30, "Pause", LARGE, 255, 255, 255, "bombardier");
+		engine.graphics.drawRectangle(PAUSE_Menu_X, PAUSE_Menu_Y, PAUSE_Menu_WIDTH, PAUSE_Menu_HEIGHT, 0, 0, 0);
+		engine.graphics.drawRectangleOL(PAUSE_Menu_X - 1, PAUSE_Menu_Y - 1, PAUSE_Menu_WIDTH + 2, PAUSE_Menu_HEIGHT + 2, 255, 255, 255);
+		engine.graphics.renderText(PAUSE_Menu_X + 150, PAUSE_Menu_Y+30, "Pause", LARGE, 255, 255, 255, "bombardier");
 
 		for (vector<Button*>::iterator b = pauseMenu.buttonHandler.buttons.begin(); b != pauseMenu.buttonHandler.buttons.end(); ++b)
 		{
@@ -247,7 +246,7 @@ void Game::drawPauseMenu()
 	}
 }
 
-void Game::drawSidebar()
+void GameScreen::drawSidebar()
 {
 	stringstream creditText, scoreText;
 
@@ -276,7 +275,7 @@ void Game::drawSidebar()
 	}
 }
 
-void Game::drawSidebarEnemyStats()
+void GameScreen::drawSidebarEnemyStats()
 {
 	stringstream IDText, healthText, valueText, bountyText;
 	eStats e = board.selectedEnemyStats;
@@ -293,7 +292,7 @@ void Game::drawSidebarEnemyStats()
 	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY + (BLOCK_SIZE * 3), bountyText.str(), SMALL, 255, 0, 0, "anonymous");
 }
 
-void Game::drawSidebarTowerStats()
+void GameScreen::drawSidebarTowerStats()
 {
 	stringstream IDText, damageText, rangeText, killsText;
 	tStats t = board.selectedTowerStats;
@@ -310,7 +309,7 @@ void Game::drawSidebarTowerStats()
 	engine.graphics.renderText(towerStatsStartX, towerStatsStartY + (BLOCK_SIZE * 3), killsText.str(), SMALL, 255, 255, 255, "anonymous");
 }
 
-void Game::drawSidebarSelectedButton()
+void GameScreen::drawSidebarSelectedButton()
 {
 	stringstream buttonText;
 	int enemyStatsStartX = SIDEBAR_X + BLOCK_SIZE;
@@ -320,7 +319,7 @@ void Game::drawSidebarSelectedButton()
 	engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY, buttonText.str(), SMALL, 255, 0, 0, "anonymous");
 }
 
-void Game::drawSidebarButtons()
+void GameScreen::drawSidebarButtons()
 {
 	for (vector<Button*>::iterator b = sidebar.buttonHandler.buttons.begin(); b != sidebar.buttonHandler.buttons.end(); ++b)
 	{
@@ -348,10 +347,14 @@ void Game::drawSidebarButtons()
 
 // *** UPDATE METHODS *** //
 
-int Game::update()
-{	
-	int state = getInput();
+int GameScreen::update()
+{
+	if(transition.isClosed) openTransition();
 
+	int state = UNCHANGED_STATE;
+
+	state = getInput();
+	
 	while (pauseMenu.paused)
 	{
 		state = pauseMenu.getInput();
@@ -361,14 +364,16 @@ int Game::update()
 
 	board.update();
 	sidebar.update(board.towerSelected);
+	draw();
+
 	engine.admin.updateFPS();
 
-	draw();
+	if (state == EXIT_CURRENT_STATE) closeTransition();
 
 	return state;
 }
 
-int Game::getInput()
+int GameScreen::getInput()
 {
 	input k = engine.interfaces.getInput();
 
@@ -402,7 +407,7 @@ int Game::getInput()
 	return UNCHANGED_STATE;
 }
 
-int Game::handleBoardInput(input k)
+int GameScreen::handleBoardInput(input k)
 {
 	if (k.mouseDown)
 	{
@@ -435,7 +440,7 @@ int Game::handleBoardInput(input k)
 	return UNCHANGED_STATE;
 }
 
-int Game::handleSidebarInput(input k)
+int GameScreen::handleSidebarInput(input k)
 {
 	if (k.mouseDown)
 	{
@@ -503,4 +508,44 @@ int Game::handleSidebarInput(input k)
 	}
 
 	return UNCHANGED_STATE;
+}
+
+void GameScreen::closeTransition()
+{
+	transition.closing = true;
+	while (transition.closing)
+	{
+		transition.close();
+
+		engine.graphics.clear();
+		drawBoardMap();
+		drawBoardPieces();
+		drawSidebar();
+		drawSidebarButtons();
+		drawCursor();
+		drawDebugFeatures();
+		drawPauseMenu();		
+		transition.draw();
+		engine.graphics.update();
+	}
+}
+
+void GameScreen::openTransition()
+{
+	transition.opening = true;
+	while (transition.opening)
+	{
+		transition.open();
+
+		engine.graphics.clear();
+		drawBoardMap();
+		drawBoardPieces();
+		drawSidebar();
+		drawSidebarButtons();
+		drawCursor();
+		drawDebugFeatures();
+		drawPauseMenu();
+		transition.draw();
+		engine.graphics.update();
+	}
 }

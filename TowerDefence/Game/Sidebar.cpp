@@ -10,7 +10,7 @@ Sidebar::Sidebar(Engine &e)
 void Sidebar::setup(Engine &e)	
 {
 	engine = e;
-	buttonHandler.init(engine, "Assets/Inputs/IN_GAME_SIDEBAR_BUTTONS.txt");
+	buttonHandler.init(engine, "Assets/Inputs/Buttons/IN_GAME_SIDEBAR_BUTTONS.txt");
 }
 
 void Sidebar::update(bool tower)

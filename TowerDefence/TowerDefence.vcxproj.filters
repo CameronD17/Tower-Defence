@@ -57,9 +57,6 @@
     <ClCompile Include="Engine\Pathfinder.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Game.cpp">
-      <Filter>Source Files\Game</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Cursor.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
@@ -99,7 +96,16 @@
     <ClCompile Include="Game\ButtonHandler.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Menu.cpp">
+    <ClCompile Include="Game\MainMenuScreen.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\ScreenTransition.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\GameScreen.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Screen.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
   </ItemGroup>
@@ -167,9 +173,6 @@
     <ClInclude Include="Game\Cursor.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Game.h">
-      <Filter>Header Files\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Bank.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
@@ -179,7 +182,16 @@
     <ClInclude Include="Game\ButtonHandler.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Menu.h">
+    <ClInclude Include="Game\GameScreen.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\MainMenuScreen.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\ScreenTransition.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Screen.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
   </ItemGroup>
