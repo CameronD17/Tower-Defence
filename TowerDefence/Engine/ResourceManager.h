@@ -9,35 +9,33 @@
 #include <sstream>
 #include "Constants.h"
 
-using namespace std;
-
 class ResourceManager
 {
 private:
 	SDL_Renderer *renderer = NULL;
 
-	string imageFilepaths, soundFilepaths, fontFilepaths, musicFilepaths;
+	std::string imageFilepaths, soundFilepaths, fontFilepaths, musicFilepaths;
 
 	Mix_Music *music = NULL;
-	unordered_map<string, SDL_Texture*>	images;
-	unordered_map<string, Mix_Chunk*> sounds;
-	unordered_map<string, TTF_Font*> fonts;			
+	std::unordered_map<std::string, SDL_Texture*>	images;
+	std::unordered_map<std::string, Mix_Chunk*>		sounds;
+	std::unordered_map<std::string, TTF_Font*>		fonts;
 
 public:		
 	ResourceManager();
 	~ResourceManager(void);
 
 	// Load data
-	TTF_Font	*loadFont(string filepath, int size);
-	Mix_Chunk	*loadSound(string filepath);
-	Mix_Music	*loadMusic(string filepath);
-	SDL_Surface *loadImage(string filepath);
+	TTF_Font	*loadFont(std::string filepath, int size);
+	Mix_Chunk	*loadSound(std::string filepath);
+	Mix_Music	*loadMusic(std::string filepath);
+	SDL_Surface *loadImage(std::string filepath);
 	
 
 	// Access data		
-	TTF_Font	*getFont(string fontname, int size);
-	Mix_Chunk	*getSound(string filepath);		
-	SDL_Texture *getImage(string filepath);
+	TTF_Font	*getFont(std::string fontname, int size);
+	Mix_Chunk	*getSound(std::string filepath);
+	SDL_Texture *getImage(std::string filepath);
 	Mix_Music	*getMusic();
 
 	void open(SDL_Renderer *r = NULL);

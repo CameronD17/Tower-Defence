@@ -8,11 +8,13 @@ Map::~Map()
 {
 }
 
-// This method is temporary, and will be extended to accept different maps based on input
-void Map::init(string map)
+void Map::init(Engine& e, std::string map)
 {
-	stringstream filename;
-	filename << "Assets/Inputs/MapData/" << map << ".txt";
+	engine = e;
+
+	std::stringstream filename;
+	filename << map << "map.txt";
+
 
 	if (!loadMapFromFile(filename.str()))
 	{
@@ -32,9 +34,41 @@ void Map::init(string map)
 	startX = 24, startY = 24, targetX = 312, targetY = 408;
 }
 
-bool Map::loadMapFromFile(string filename)
+void Map::draw()
 {
-	ifstream mapData;
+	// TODO: update this method with actual imagery
+	for (int x = 0; x < BOARD_WIDTH*BLOCK_SIZE; x += BLOCK_SIZE)
+	{
+		for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y += BLOCK_SIZE)
+		{
+			if (getTerrain(x, y) == BLOCKED_TERRAIN)
+			{
+				engine.graphics.drawRectangle(x + BORDER_SIZE, y + BORDER_SIZE, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 0);
+			}
+			else if (getTerrain(x, y) == WATER_TERRAIN)
+			{
+				engine.graphics.drawRectangle(x + BORDER_SIZE, y + BORDER_SIZE, BLOCK_SIZE, BLOCK_SIZE, 0, 0, 255);
+			}
+			else if (getTerrain(x, y) == ROUGH_TERRAIN)
+			{
+				engine.graphics.drawRectangle(x + BORDER_SIZE, y + BORDER_SIZE, BLOCK_SIZE, BLOCK_SIZE, 0, 255, 0);
+			}
+		}
+	}
+
+	Uint8 red = 154, green = 0, blue = 0;
+	engine.graphics.drawRectangle(0, 0, BORDER_SIZE, ((BORDER_SIZE * 2) + (BOARD_HEIGHT * BLOCK_SIZE)), red, green, blue); // Left
+	engine.graphics.drawRectangle(BORDER_SIZE + (BOARD_WIDTH * BLOCK_SIZE), 0, BORDER_SIZE, ((BORDER_SIZE * 2) + (BOARD_HEIGHT * BLOCK_SIZE)), red, green, blue); //Right
+	engine.graphics.drawRectangle(0, 0, BORDER_SIZE + (BOARD_WIDTH * BLOCK_SIZE), BORDER_SIZE, red, green, blue); // Top
+	engine.graphics.drawRectangle(0, BORDER_SIZE + (BOARD_HEIGHT*BLOCK_SIZE), BORDER_SIZE + (BOARD_WIDTH * BLOCK_SIZE), BORDER_SIZE, red, green, blue);	// Bottom
+	
+	//Target
+	engine.graphics.drawRectangleOL(targetX - 1, targetY - 1, BLOCK_SIZE + 2, BLOCK_SIZE + 2, 0, 255, 255);
+}
+
+bool Map::loadMapFromFile(std::string filename)
+{
+	std::ifstream mapData;
 	
 	mapData.open(filename);
 

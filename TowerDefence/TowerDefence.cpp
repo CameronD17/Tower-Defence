@@ -12,7 +12,6 @@ int main(int argc, char* args[])
 	{
 		state = menu.update();
 	}
-	menu.close();
 
 	return 0;
 }

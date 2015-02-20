@@ -1,25 +1,23 @@
 #pragma once
-
 #include "../Engine/Engine.h"
 #include "../Engine/Constants.h"
+#include "Board.h"
 #include "Cursor.h"
 #include "ButtonHandler.h"
-#include <sstream>
-
-using namespace std;
+#include "Notification.h"
 
 class Sidebar 
 {
-
 private:
 	Engine engine;
+	ButtonHandler buttonHandler;
 	void toggleTowerSelectionButtonVisibility(bool b);
-
+	
 public:	
 	Sidebar(void);
-	Sidebar(Engine &e);	
-	ButtonHandler buttonHandler;
 	
 	void setup(Engine &e);
-	void update(bool tower);
+	int getInput(input k, Cursor &c, Board &b, Notification &n);
+	void update(bool t);
+	void draw();
 };

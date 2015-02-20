@@ -1,40 +1,37 @@
 #pragma once
-
 #include "../Engine/Engine.h"
 #include "../Engine/Constants.h"
 #include "Button.h"
 
-using namespace std;
-
 class ButtonHandler 
 {
-	
 private:
-	void loadButtonsFromFile(string filepath);
-
+	void loadButtonsFromFile(std::string filepath);
 	bool buttonSelected;
 	Button* selectedButton;
-
 
 public:	
 	ButtonHandler();	
 	Engine engine;
 
-	void init(Engine &e, string filepath);
+	void init(Engine &e, std::string filepath);
 
-	vector<Button*> buttons;
+	std::vector<Button*> buttons;
 	void selectButton(int id);
-
-	//vector<Button*> getButtons();
+	void selectButton(std::string name);
+	void deselectButton(int id);
+	void deselectButton(std::string name);
+	void deselectAllButtons();
+	
 	Button* getSelectedButton();
+	int getSelectedButtonId();
 	bool getButtonSelected();
+
 	int getHoveredButtonId();
+	std::string getHoveredButtonName();
 
 	void setHoveredButton(Cursor &c);
 
-	void deselectButton(int id);
-	void deselectAllButtons();
-
-	Button* findButtonByName(string name);
-	
+	Button* findButtonByName(std::string name);
+	Button* findButtonById(int i);	
 };

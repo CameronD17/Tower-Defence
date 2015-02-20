@@ -14,7 +14,7 @@ public:
 
 	void init(ResourceManager *r = NULL);
 
-	void playSound(string filepath);
+	void playSound(std::string filepath);
 	void playMusic();
 	bool pauseMusic();
 

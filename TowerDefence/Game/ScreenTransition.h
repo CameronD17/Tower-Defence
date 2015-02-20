@@ -1,9 +1,6 @@
 #pragma once
-
 #include "../Engine/Engine.h"
 #include "../Engine/Constants.h"
-
-using namespace std;
 
 struct ScreenTransitionPanel
 {
@@ -15,9 +12,7 @@ struct ScreenTransitionPanel
 class ScreenTransition 
 {
 private:	
-
 	Engine engine;
-
 	ScreenTransitionPanel leftPanel;
 	ScreenTransitionPanel rightPanel;
 

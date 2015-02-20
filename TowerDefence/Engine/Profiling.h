@@ -1,12 +1,6 @@
 #pragma once
 #include <SDL.h>
 
-/*-------------------------------------------------------- *
- * PROFILING
- * This class will hold all admin functions that are used
- * for testing and debugging purposes, and aren't in-game
- *-------------------------------------------------------- */
-
 class Profiling
 {
 

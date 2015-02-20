@@ -97,6 +97,8 @@
     <ClCompile Include="Game\ButtonHandler.cpp" />
     <ClCompile Include="Game\GameScreen.cpp" />
     <ClCompile Include="Game\MainMenuScreen.cpp" />
+    <ClCompile Include="Game\MainMenuSkirmishSubMenu.cpp" />
+    <ClCompile Include="Game\Notification.cpp" />
     <ClCompile Include="Game\PauseMenu.cpp" />
     <ClCompile Include="Game\Screen.cpp" />
     <ClCompile Include="Game\ScreenTransition.cpp" />
@@ -127,6 +129,8 @@
     <ClInclude Include="Game\ButtonHandler.h" />
     <ClInclude Include="Game\GameScreen.h" />
     <ClInclude Include="Game\MainMenuScreen.h" />
+    <ClInclude Include="Game\MainMenuSkirmishSubMenu.h" />
+    <ClInclude Include="Game\Notification.h" />
     <ClInclude Include="Game\PauseMenu.h" />
     <ClInclude Include="Game\Screen.h" />
     <ClInclude Include="Game\ScreenTransition.h" />

@@ -1,27 +1,30 @@
 #pragma once
-
 #include "../Engine/Constants.h"
+#include "../Engine/Engine.h"
 #include "Tower.h"
 #include "Cursor.h"
 #include "Bank.h"
-using namespace std;
+#include "Notification.h"
 
 class TowerHandler 
 {		
 private:
-	int towerCount;
+	int counter;
+	Engine engine;
+	char terrain[BOARD_WIDTH][BOARD_HEIGHT];
 
 public:	
 	TowerHandler(void);
-
-	int numTowers();
+		
+	bool build(Map &m, Cursor &cursor, Bank &b, Notification &n);
+	void sell(Map &m, int id, Bank &b, Notification &n);
+	void upgrade(int id, Bank &b, Notification &n);
+	void destroy();
 	
-	bool buildTower(Map &m, Cursor &cursor, Bank &b);
-	bool sellTower(Map &m, int id, Bank &b);
+	std::vector<Tower*>  towers;
+	bool selected;
+	tStats selectedStats;
 
-	void destroyObjects();
-	
-	vector<Tower*>  towers;
-
-	void init(Map &map);
+	void init(Engine &e, Map &map);
+	void draw();
 };

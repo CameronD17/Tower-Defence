@@ -1,16 +1,16 @@
 #pragma once
-
 #include "../Engine/Constants.h"
+#include "../Engine/Engine.h"
 #include "Tower.h"
 #include "Cursor.h"
-using namespace std;
-
+ 
 class Bank 
 {
-
 private:		
 	int credit;
-		
+	int score;
+	Engine engine;
+
 public:	
 	Bank(void);
 		
@@ -19,5 +19,9 @@ public:
 	void decreaseCredit(int c);
 	void setCredit(int c);
 
-	void init(int c);
+	int getScore();
+	void increaseScore(int s);
+
+	void init(Engine &e, int c);
+	void draw();
 };

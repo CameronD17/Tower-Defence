@@ -6,34 +6,28 @@
 
 struct tStats
 {
-	int id, type, cost, damage, range, reload, maxCapacity, level, hits, kills;
+	int id, type, cost, damage, range, reload, maxCapacity, level, maxLevel, hits, kills;
 };
 
 class Tower : public Object
 {
+private:
+	tStats stats;
 
 public:
 	Tower() : Object(){};
 	Tower(int x, int y) : Object(){};
-	Tower(int x, int y, int t, int id, Map &m);
+	Tower(int x, int y, tStats t, int id, Map &m);
 	~Tower();
 
-	void update(Map &m, vector<Enemy*> &enemies);
+	void update(Map &m, std::vector<Enemy*> &enemies);
 
-	int getCost();
 	tStats getStats()const;
 	void incrementKills();
+	void upgrade();
 
 	Enemy* enemy;
-	vector<Bullet*> bullets;
-
-	bool hasEnemy;	
-
-private:
-
-	tStats stats;
-	void setStats(int t);
-	void fire();
-	bool checkForEnemies(Map &m, vector<Enemy*> &enemies);
+	bool hasEnemy;
+	std::vector<Bullet*> bullets;
 };
 

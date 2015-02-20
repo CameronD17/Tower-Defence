@@ -1,12 +1,9 @@
 #pragma once
 #include "../Engine/Constants.h"
-#include <fstream>
-#include <iostream>
-#include <sstream>
+#include "../Engine/Engine.h"
 
-using namespace std;
-
-struct Tile {
+struct Tile 
+{
 	char terrain;
 	int enemy;
 	int tower;
@@ -14,17 +11,21 @@ struct Tile {
 	bool isTower;
 };
 
-
 class Map
 {
+private:
+	Engine engine;
+	Tile tiles[BOARD_WIDTH][BOARD_HEIGHT];
+	bool loadMapFromFile(std::string filename);
+
 public:
 	Map();
 	~Map();
 
 	int startX, startY, targetX, targetY;
 	
-	void init(string map);
-	bool loadMapFromFile(string filename);
+	void init(Engine &e, std::string map);
+	void draw();
 
 	char getTerrain(int x, int y);
 	int getEnemy(int x, int y);
@@ -39,9 +40,5 @@ public:
 
 	bool walkable(int x, int y, int id = 0);
 	bool buildable(int x, int y, bool waterTower = false);
-
-private:
-
-	Tile tiles[BOARD_WIDTH][BOARD_HEIGHT];
 };
 

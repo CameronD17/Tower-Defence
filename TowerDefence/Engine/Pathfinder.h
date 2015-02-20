@@ -36,9 +36,9 @@ private:
 	int id;
 	bool canSwim;
 
-	vector<int> pathToFollow;
-	vector<int> xCoordinates;
-	vector<int> yCoordinates;
+	std::vector<int> pathToFollow;
+	std::vector<int> xCoordinates;
+	std::vector<int> yCoordinates;
 
 	void setMapValues(int sX, int sY, Map m, bool swim);
 	int getGCost(int x, int y, int pX, int pY);

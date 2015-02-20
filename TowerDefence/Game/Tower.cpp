@@ -1,13 +1,13 @@
 #include "Tower.h"
 #include <iostream>
 
-Tower::Tower(int x, int y, int t, int id, Map &m) 
+Tower::Tower(int x, int y, tStats t, int id, Map &m)
 {
+	stats = t;
 	setX(x);
 	setY(y);
 	setID(id);
 	stats.id = id;
-	setStats(t);
 
 	m.setTower(x - BORDER_SIZE, y - BORDER_SIZE, id);
 };
@@ -17,71 +17,46 @@ Tower::~Tower()
 
 }
 
-void Tower::setStats(int t)
+void Tower::upgrade()
 {
-	stats.type = t;
-	stats.level = 0;
-	stats.hits = 0;
-	stats.kills = 0;
-
-
-	switch (t)
-	{
-
-	// Machine Gun
-	case 1:
-		stats.cost = 50;
-		stats.damage = 4;
-		stats.range = 4;
-		stats.reload = 20;
-		stats.maxCapacity = 1;
-		break;
-
-	// Light Cannon
-	case 2:
-		stats.cost = 75;
-		stats.damage = 10;
-		stats.range = 3;
-		stats.reload = 100;
-		stats.maxCapacity = 1;
-		break;
-
-	// Default
-	case 0: default:
-		stats.cost = 0;
-		stats.damage = 0;
-		stats.range = 0;
-		stats.reload = 0;
-		stats.maxCapacity = 1;
-		break;
-	}
-
-	stats.range *= BLOCK_SIZE;
+	stats.level++;
+	stats.damage *= 2;
 }
 
-void Tower::update(Map &m, vector<Enemy*> &enemies)
+void Tower::update(Map &m, std::vector<Enemy*> &enemies)
 {
-	hasEnemy = checkForEnemies(m, enemies);
-
+	for (int x = getX() - stats.range; (x < getX() + stats.range) && (x < BOARD_WIDTH * BLOCK_SIZE); x += BLOCK_SIZE)
+	{
+		for (int y = getY() - stats.range; (y < getY() + stats.range) && (y < BOARD_HEIGHT * BLOCK_SIZE); y += BLOCK_SIZE)
+		{
+			if (m.hasEnemy(x, y))
+			{
+				for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
+				{
+					if ((*e)->getID() == m.getEnemy(x, y))
+					{
+						enemy = (*e);
+						hasEnemy = true;
+						break;
+					}
+				}
+				break;
+			}
+		}
+	}
+	
 	if (hasEnemy)
 	{
-		fire();
+		if ((signed)bullets.size() <= stats.maxCapacity)
+		{
+			Bullet * b = new Bullet((getX() + (BLOCK_SIZE / 2)), (getY() + (BLOCK_SIZE / 2)), stats.range, enemy);
+			bullets.push_back(b);
+		}
 	}
-}
-
-void Tower::fire()
-{
-	int fired = bullets.size();
-	if (fired <= stats.maxCapacity)
+	else
 	{
-		Bullet * b = new Bullet((getX() + (BLOCK_SIZE / 2)), (getY() + (BLOCK_SIZE / 2)), stats.range, enemy);
-		bullets.push_back(b);
+		enemy = NULL;
 	}
-}
-
-int Tower::getCost()
-{
-	return stats.cost;
 }
 
 tStats Tower::getStats()const
@@ -92,28 +67,4 @@ tStats Tower::getStats()const
 void Tower::incrementKills()
 {
 	stats.kills++;
-}
-
-bool Tower::checkForEnemies(Map &m, vector<Enemy*> &enemies)
-{
-	for (int x = getX() - stats.range; (x < getX() + stats.range) && (x < BOARD_WIDTH * BLOCK_SIZE); x += BLOCK_SIZE)
-	{
-		for (int y = getY() - stats.range; (y < getY() + stats.range) && (y < BOARD_HEIGHT * BLOCK_SIZE); y += BLOCK_SIZE)
-		{
-			if (m.hasEnemy(x, y))
-			{
-				for (vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
-				{
-					if ((*e)->getID() == m.getEnemy(x, y))
-					{
-						enemy = (*e);
-						return true;
-					}
-				}
-			}
-		}
-	}
-
-	enemy = NULL;
-	return false;
 }

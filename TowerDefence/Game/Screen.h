@@ -1,10 +1,7 @@
 #pragma once
-
 #include "../Engine/Engine.h"
 #include "../Engine/Constants.h"
 #include "ScreenTransition.h"
-
-using namespace std;
 
 class Screen
 {
@@ -17,6 +14,4 @@ public:
 	~Screen();
 
 	ScreenTransition transition;
-
-	int update();
 };

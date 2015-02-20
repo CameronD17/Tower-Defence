@@ -1,22 +1,17 @@
 #pragma once
-
 #include "Cursor.h"
-#include <string>
-
-using namespace std;
 
 class Button 
 {
-
 private:
 	int x, y, width, height, fontSize, textOffset;
 	bool visible, hovered, selected;
 
 public:	
 	Button(void);
-	Button(int i, int x, int y, int w, int h, int f, int o, string t, bool v);		
+	Button(int i, int x, int y, int w, int h, int f, int o, std::string t, bool v);
 	 
-	void init(int i, int x, int y, int w, int h, int f, int o, string t, bool v);
+	void init(int i, int x, int y, int w, int h, int f, int o, std::string t, bool v);
 	
 	int getX()const;
 	int getY()const;
@@ -29,15 +24,15 @@ public:
 
 	void hide();
 	void show();
-	bool isVisible();
 
-	bool isHovered();
-	
 	void select();
 	void deselect();
+
+	bool isVisible();
+	bool isHovered();
 	bool isSelected();
 
 	bool cursorOnButton(Cursor &c);
 
-	string text;
+	std::string text;
 };

@@ -3,101 +3,18 @@
 MainMenuScreen::MainMenuScreen(Engine& e)
 {
 	engine = e;
-	cursor.init(engine.resources);
-	buttonHandler.init(engine, "Assets/Inputs/Buttons/MAIN_MENU_BUTTONS.txt");
 	engine.admin.start();
+	cursor.init(engine);
+	buttonHandler.init(engine, "Assets/Inputs/Buttons/MAIN_MENU_BUTTONS.txt");
 	transition.init(engine);
 	game.init(engine, cursor);
+	skirmish.setup(engine, cursor);
 	gamePlaying = false;
+	focused = true;
 	openTransition();
 }
 
-MainMenuScreen::~MainMenuScreen()
-{
-	close();
-}
-
-void MainMenuScreen::close()
-{
-	game.close();
-	engine.close();
-}
-
-// *** DRAW METHODS *** //
-
-void MainMenuScreen::draw()
-{
-	engine.graphics.clear();
-
-	drawButtons();
-	
-	engine.graphics.update();
-}
-
-void MainMenuScreen::drawButtons()
-{
-	engine.graphics.renderText((WINDOW_WIDTH / 2 ) - 220, BORDER_SIZE, "Tower Defence", EXTRA_LARGE, 255, 255, 255, "imagine");
-
-	for (vector<Button*>::iterator b = buttonHandler.buttons.begin(); b != buttonHandler.buttons.end(); ++b)
-	{
-		if ((*b)->isVisible())
-		{
-			if ((*b)->isHovered())
-			{
-				engine.graphics.drawRectangleOL((*b)->getX(), (*b)->getY(), (*b)->getW(), (*b)->getH(), 255, 0, 255);
-				engine.graphics.renderText((*b)->getX() + (*b)->getOffset(), (*b)->getY() + (*b)->getOffset(), (*b)->text, (*b)->getFontSize(), 255, 0, 255, "anonymous");
-			}
-			else if ((*b)->isSelected())
-			{
-				engine.graphics.drawRectangleOL((*b)->getX(), (*b)->getY(), (*b)->getW(), (*b)->getH(), 255, 255, 0);
-				engine.graphics.renderText((*b)->getX() + (*b)->getOffset(), (*b)->getY() + (*b)->getOffset(), (*b)->text, (*b)->getFontSize(), 255, 255, 0, "anonymous");
-			}
-			else
-			{
-				engine.graphics.drawRectangleOL((*b)->getX(), (*b)->getY(), (*b)->getW(), (*b)->getH(), 255, 255, 255);
-				engine.graphics.renderText((*b)->getX() + (*b)->getOffset(), (*b)->getY() + (*b)->getOffset(), (*b)->text, (*b)->getFontSize(), 255, 255, 255, "anonymous");
-			}
-		}
-	}
-}
-
-void MainMenuScreen::setHoveredButton(Cursor& cursor)
-{
-	int i = 0;
-	for (vector<Button*>::iterator b = buttonHandler.buttons.begin(); b != buttonHandler.buttons.end(); ++b)
-	{
-		i++;
-		(*b)->cursorOnButton(cursor);
-	}
-}
-
-
-// *** UPDATE METHODS *** //
-
-int MainMenuScreen::update()
-{
-	int state = UNCHANGED_STATE;
-
-	state = getInput();
-
-	while (gamePlaying)
-	{
-		state = game.update();
-		if (state == EXIT_CURRENT_STATE)
-		{
-			gamePlaying = false;
-			openTransition();
-		}
-		else if (state == EXIT_APPLICATION)
-		{
-			return EXIT_APPLICATION;
-		}
-	}
-
-	draw();
-
-	return state;
-}
+MainMenuScreen::~MainMenuScreen(){}
 
 int MainMenuScreen::getInput()
 {
@@ -106,13 +23,13 @@ int MainMenuScreen::getInput()
 
 	if (k.mouseDown)
 	{
-		for (vector<Button*>::iterator b = buttonHandler.buttons.begin(); b != buttonHandler.buttons.end(); ++b)
+		for (std::vector<Button*>::iterator b = buttonHandler.buttons.begin(); b != buttonHandler.buttons.end(); ++b)
 		{
 			if ((*b)->isHovered())
 			{
-				button =  (*b)->id;
+				button = (*b)->id;
 			}
-		}		
+		}
 
 		switch (button)
 		{
@@ -120,8 +37,7 @@ int MainMenuScreen::getInput()
 			break;
 
 		case 2:		// Skirmish PLACEHOLDER
-			gamePlaying = true;
-			closeTransition();
+			skirmish.select();
 			break;
 
 		case 3:		// Achievements PLACEHOLDER
@@ -143,17 +59,121 @@ int MainMenuScreen::getInput()
 			break;
 		}
 	}
-	else if (k.key == SDLK_ESCAPE)
+	else if (k.key == SDLK_ESCAPE || k.key == SDLK_q)
 	{
 		return EXIT_APPLICATION;
+	}
+	else if (k.key == SDLK_n)
+	{
+		gamePlaying = true;
+		game.loadGame("Assets/Save_Games/Skirmish/Map_1/");
+		closeTransition();
 	}
 	else
 	{
 		cursor.setCoordinates(k.x, k.y);
-		setHoveredButton(cursor);
+		buttonHandler.setHoveredButton(cursor);
 	}
 
 	return UNCHANGED_STATE;
+}
+
+void MainMenuScreen::draw()
+{
+	engine.graphics.clear();
+
+	drawButtons();
+	skirmish.draw();
+
+	engine.graphics.update();
+}
+
+void MainMenuScreen::drawButtons()
+{
+	engine.graphics.renderText((WINDOW_WIDTH / 2 ) - 220, BORDER_SIZE, "Tower Defence", EXTRA_LARGE, 255, 255, 255, "imagine");
+
+	if (focused)
+	{
+		for (std::vector<Button*>::iterator b = buttonHandler.buttons.begin(); b != buttonHandler.buttons.end(); ++b)
+		{
+			if ((*b)->isVisible())
+			{
+				if ((*b)->isHovered())
+				{
+					engine.graphics.drawRectangleOL((*b)->getX(), (*b)->getY(), (*b)->getW(), (*b)->getH(), 255, 0, 255);
+					engine.graphics.renderText((*b)->getX() + (*b)->getOffset(), (*b)->getY() + (*b)->getOffset(), (*b)->text, (*b)->getFontSize(), 255, 0, 255, "anonymous");
+				}
+				else if ((*b)->isSelected())
+				{
+					engine.graphics.drawRectangleOL((*b)->getX(), (*b)->getY(), (*b)->getW(), (*b)->getH(), 255, 255, 0);
+					engine.graphics.renderText((*b)->getX() + (*b)->getOffset(), (*b)->getY() + (*b)->getOffset(), (*b)->text, (*b)->getFontSize(), 255, 255, 0, "anonymous");
+				}
+				else
+				{
+					engine.graphics.drawRectangleOL((*b)->getX(), (*b)->getY(), (*b)->getW(), (*b)->getH(), 255, 255, 255);
+					engine.graphics.renderText((*b)->getX() + (*b)->getOffset(), (*b)->getY() + (*b)->getOffset(), (*b)->text, (*b)->getFontSize(), 255, 255, 255, "anonymous");
+				}
+			}
+		}
+	}
+	else
+	{
+		for (std::vector<Button*>::iterator b = buttonHandler.buttons.begin(); b != buttonHandler.buttons.end(); ++b)
+		{
+			if ((*b)->isVisible())
+			{
+				engine.graphics.drawRectangleOL((*b)->getX(), (*b)->getY(), (*b)->getW(), (*b)->getH(), 96, 96, 96);
+				engine.graphics.renderText((*b)->getX() + (*b)->getOffset(), (*b)->getY() + (*b)->getOffset(), (*b)->text, (*b)->getFontSize(), 96, 96, 96, "anonymous");
+			}
+		}
+	}
+}
+
+int MainMenuScreen::update()
+{
+	focused = true;
+	int state = getInput();
+
+	while (skirmish.selected)
+	{	
+		focused = false;
+		draw();
+		state = skirmish.update();
+		if (state == EXIT_CURRENT_STATE)
+		{
+			skirmish.resetValues();
+		}
+		else if (state == EXIT_APPLICATION)
+		{
+			closeTransition();
+			return EXIT_APPLICATION;
+		}
+		else if (state > 1)
+		{
+			gamePlaying = true;
+			game.loadGame(skirmish.getSelectedButtonString());
+			closeTransition();
+			skirmish.resetValues();
+		}
+	}
+
+	while (gamePlaying)
+	{
+		state = game.update();
+		if (state == EXIT_CURRENT_STATE)
+		{
+			gamePlaying = false;
+			openTransition();
+		}
+		else if (state == EXIT_APPLICATION)
+		{
+			return EXIT_APPLICATION;
+		}
+	}
+	
+	draw();
+
+	return state;
 }
 
 void MainMenuScreen::closeTransition()

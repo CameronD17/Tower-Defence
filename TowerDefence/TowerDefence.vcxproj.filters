@@ -108,6 +108,12 @@
     <ClCompile Include="Game\Screen.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
+    <ClCompile Include="Game\MainMenuSkirmishSubMenu.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Notification.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Audio.h">
@@ -192,6 +198,12 @@
       <Filter>Header Files\Game</Filter>
     </ClInclude>
     <ClInclude Include="Game\Screen.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\MainMenuSkirmishSubMenu.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Notification.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
   </ItemGroup>

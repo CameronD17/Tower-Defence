@@ -14,7 +14,7 @@ void Audio::init(ResourceManager *r)
 	music = true;
 }
 
-void Audio::playSound(string filepath)
+void Audio::playSound(std::string filepath)
 {
     Mix_PlayChannel(-1, resource->getSound(filepath), 0);
 }

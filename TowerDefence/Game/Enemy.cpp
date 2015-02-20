@@ -24,10 +24,7 @@ Enemy::Enemy(ResourceManager &rm, int x, int y, int t, int tX, int tY, int l, Ma
 	astar.initialise(x, y, tX, tY, m, i, false);
 }
 
-Enemy::~Enemy()
-{
-
-}
+Enemy::~Enemy(){}
 
 void Enemy::initialise(int level, int x, int y, int tX, int tY, int t, Map &m)
 {
@@ -38,7 +35,7 @@ void Enemy::initialise(int level, int x, int y, int tX, int tY, int t, Map &m)
 	stats.targetY = tY;
 
 	stats.leftBase = false;
-	stats.currentHealth = stats.maxHealth = level * HEALTH_MULTIPLIER;
+	stats.currentHealth = stats.maxHealth = (float)(level * HEALTH_MULTIPLIER * 10);
 	stats.value = level * VALUE_MULTIPLIER;
 	stats.bounty = level * BOUNTY_MULTIPLIER;
 	stats.canSwim = true;						// Change to check type

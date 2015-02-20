@@ -1,29 +1,28 @@
 #pragma once
-
 #include "../Engine/Constants.h"
 #include "../Engine/Engine.h"
 #include "Enemy.h"
 #include "Cursor.h"
 
-using namespace std;
-
 class EnemyHandler 
 {
+private:
+	Engine engine;
+	int enemyCount;
 
 public:	
 	EnemyHandler(void);
 
-	int enemyCount;
-
-	Engine engine;
+	eStats selectedStats;
 	
-	// Gameplay methods
-	void launchEnemy(Cursor &cursor, Map &m);
-	void updateEnemyPaths(int x, int y, Map &m);
-	void updateEnemyTargets(Map &m);
-	void destroyObjects();
+	void launch(Cursor &cursor, Map &m);
+	void updatePaths(int x, int y, Map &m);
+	void updateTargets(Map &m);
+	void destroy();
 
-	vector<Enemy*>  enemies;
+	std::vector<Enemy*>  enemies;
+	bool selected;
 
-	void init(Engine& e, Map &m);
+	void init(Engine &e, Map &m);
+	void draw();
 };

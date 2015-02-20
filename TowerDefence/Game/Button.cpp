@@ -2,7 +2,7 @@
 
 Button::Button(void){}
 
-Button::Button(int i, int x, int y, int w, int h, int f, int o, string t, bool v)
+Button::Button(int i, int x, int y, int w, int h, int f, int o, std::string t, bool v)
 {
 	id = i;
 	this->x = x;
@@ -37,7 +37,7 @@ Button::Button(int i, int x, int y, int w, int h, int f, int o, string t, bool v
 	selected = false;
 }
 
-void Button::init(int i, int x, int y, int w, int h, int f, int o, string t, bool v)
+void Button::init(int i, int x, int y, int w, int h, int f, int o, std::string t, bool v)
 {
 	id = i;
 	this->x = x;

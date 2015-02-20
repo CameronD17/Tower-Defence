@@ -81,7 +81,7 @@ void Graphics::drawRectangleOL(int x, int y, int w, int h, Uint8 r, Uint8 g, Uin
 	SDL_RenderDrawRect(renderer, &rect);
 }
 
-void Graphics::renderText(int x, int y, string text, int size, int r, int g, int b, string fontName, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
+void Graphics::renderText(int x, int y, std::string text, int size, int r, int g, int b, std::string fontName, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {	
 	// The colour to render the text. Default is white (255, 255, 255)
 	SDL_Color textColor = {r, g, b};
@@ -130,7 +130,7 @@ void Graphics::renderText(int x, int y, string text, int size, int r, int g, int
 	}
 }
 
-void Graphics::renderImage(int x, int y, string filepath, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
+void Graphics::renderImage(int x, int y, std::string filepath, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {
 	SDL_Texture *imgTexture = resource->getImage(filepath);
 	SDL_Rect pos;

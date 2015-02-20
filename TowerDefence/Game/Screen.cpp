@@ -14,14 +14,3 @@ Screen::Screen(Engine& e)
 Screen::~Screen()
 {
 }
-
-
-// *** DRAW METHODS *** //
-
-int Screen::update()
-{
-	int state = UNCHANGED_STATE;
-
-
-	return state;
-}

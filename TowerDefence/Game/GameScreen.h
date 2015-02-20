@@ -1,51 +1,33 @@
 #pragma once
-
 #include "../Engine/Engine.h"
 #include "../Engine/Constants.h"
 #include "Screen.h"
 #include "Board.h"
 #include "Sidebar.h"
 #include "PauseMenu.h"
-
-using namespace std;
+#include "Notification.h"
 
 class GameScreen : public Screen
 {
 private:	
-	void drawBoardMap();
-	void drawBoardPieces();
-	void drawCursor();
-	void drawPauseMenu();
-	void drawDebugFeatures();
-
-	void drawSidebar();
-	void drawSidebarEnemyStats();
-	void drawSidebarTowerStats();
-	void drawSidebarSelectedButton();
-	void drawSidebarButtons();
-
 	Engine engine;
 	Cursor cursor;
 	Board board;
 	Sidebar sidebar;
 	PauseMenu pauseMenu;
+	Notification notification;
 
-	int handleBoardInput(input k);
-	int handleSidebarInput(input k);
-	
+	void closeTransition();
+	void openTransition();
 
 public:	
 	GameScreen();	
 	~GameScreen();
 
+	void init(Engine &e, Cursor &c);
 	int getInput();
-	
-	void closeTransition();
-	void openTransition();
-
 	int update();
 	void draw();
 
-	void init(Engine &e, Cursor &c);
-	void close();
+	void loadGame(std::string game);
 };

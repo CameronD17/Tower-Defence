@@ -1,27 +1,28 @@
 #pragma once
-
 #include "../Engine/Engine.h"
 #include "../Engine/Constants.h"
 #include "Screen.h"
+#include "MainMenuSkirmishSubMenu.h"
 #include "GameScreen.h"
 #include "ButtonHandler.h"
-
-using namespace std;
 
 class MainMenuScreen : public Screen
 {
 private:	
-	void drawButtons();
 	bool gamePlaying;
 	ButtonHandler buttonHandler;
-	void setHoveredButton(Cursor& cursor);
 
 	int getInput();
 	void draw();
+	void drawButtons();
+
+	bool focused;
 
 	Engine engine;
 	Cursor cursor;
 	GameScreen game;
+
+	MainMenuSkirmishSubMenu skirmish;
 
 	void closeTransition();
 	void openTransition();
@@ -31,5 +32,4 @@ public:
 	~MainMenuScreen();
 
 	int update();
-	void close();
 };

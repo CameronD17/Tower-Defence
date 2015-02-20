@@ -3,17 +3,24 @@
 #include "../Engine/Object.h"
 #include "../Engine/Pathfinder.h"
 #include "Map.h"
-#include <vector>
 
 struct eStats
 {
-	int id, targetX, targetY, currentHealth, maxHealth, value, bounty, speed;
+	int id, targetX, targetY, value, bounty, speed;
+	float currentHealth, maxHealth;
 	bool leftBase, isBoss, canSwim, isWaiting;
-	string category;
+	std::string category;
 };
 
 class Enemy : public Object
 {
+private:
+	Pathfinder astar;
+	eStats stats;
+	int stepsTaken, stepsPerSquare;
+	void initialise(int level, int x, int y, int tX, int tY, int type, Map &m);
+	void releaseTiles(Map &m);
+	void lockTiles(Map &m);
 
 public:
 	Enemy();
@@ -30,17 +37,5 @@ public:
 	Pathfinder getPath()const;
 
 	bool canWalk(Map &m);	
-
-private:
-
-	Pathfinder astar;
-	eStats stats;
-
-	int stepsTaken, stepsPerSquare;
-
-	void initialise(int level, int x, int y, int tX, int tY, int type, Map &m);
-
-	void releaseTiles(Map &m);
-	void lockTiles(Map &m);
 };
 

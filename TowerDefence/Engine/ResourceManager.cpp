@@ -19,8 +19,8 @@ void ResourceManager::open(SDL_Renderer* r)
 {
 	renderer = r;
 
-	string line;
-	ifstream imageData(imageFilepaths);
+	std::string line;
+	std::ifstream imageData(imageFilepaths);
 	if (imageData.is_open())
 	{
 		while (getline(imageData, line))
@@ -30,7 +30,7 @@ void ResourceManager::open(SDL_Renderer* r)
 		imageData.close();
 	}
 
-	ifstream soundData(soundFilepaths);
+	std::ifstream soundData(soundFilepaths);
 	if (soundData.is_open())
 	{
 		while (getline(soundData, line))
@@ -40,28 +40,28 @@ void ResourceManager::open(SDL_Renderer* r)
 		soundData.close();
 	}
 
-	ifstream fontData(fontFilepaths);
+	std::ifstream fontData(fontFilepaths);
 	if (fontData.is_open())
 	{
 		while (getline(fontData, line))
 		{
-			stringstream linedataEXTRA_SMALL;
+			std::stringstream linedataEXTRA_SMALL;
 			linedataEXTRA_SMALL << line << EXTRA_SMALL;
 			fonts[linedataEXTRA_SMALL.str()] = loadFont(line, EXTRA_SMALL);
 
-			stringstream linedataSMALL;
+			std::stringstream linedataSMALL;
 			linedataSMALL << line << SMALL;
 			fonts[linedataSMALL.str()] = loadFont(line, SMALL);
 
-			stringstream linedataMEDIUM;
+			std::stringstream linedataMEDIUM;
 			linedataMEDIUM << line << MEDIUM;
 			fonts[linedataMEDIUM.str()] = loadFont(line, MEDIUM);
 
-			stringstream linedataLARGE;
+			std::stringstream linedataLARGE;
 			linedataLARGE << line << LARGE;
 			fonts[linedataLARGE.str()] = loadFont(line, LARGE);
 
-			stringstream linedataEXTRA_LARGE;
+			std::stringstream linedataEXTRA_LARGE;
 			linedataEXTRA_LARGE << line << EXTRA_LARGE;
 			fonts[linedataEXTRA_LARGE.str()] = loadFont(line, EXTRA_LARGE);
 		}
@@ -108,7 +108,7 @@ void ResourceManager::close()
 
 // Load resources
 
-TTF_Font *ResourceManager::loadFont(string filepath, int size)
+TTF_Font *ResourceManager::loadFont(std::string filepath, int size)
 {
 	TTF_Font *font = TTF_OpenFont(filepath.c_str(), size);
 
@@ -117,7 +117,7 @@ TTF_Font *ResourceManager::loadFont(string filepath, int size)
 	return font;
 }
 
-SDL_Surface *ResourceManager::loadImage(string filepath)
+SDL_Surface *ResourceManager::loadImage(std::string filepath)
 {	    
 	SDL_Surface *image = IMG_Load(filepath.c_str());
     
@@ -126,7 +126,7 @@ SDL_Surface *ResourceManager::loadImage(string filepath)
 	return image;
 }
 
-Mix_Chunk *ResourceManager::loadSound(string filepath)
+Mix_Chunk *ResourceManager::loadSound(std::string filepath)
 {
 	Mix_Chunk *sound = Mix_LoadWAV(filepath.c_str());
 
@@ -135,7 +135,7 @@ Mix_Chunk *ResourceManager::loadSound(string filepath)
 	return sound;
 }
 
-Mix_Music * ResourceManager::loadMusic(string filepath)
+Mix_Music * ResourceManager::loadMusic(std::string filepath)
 {
 	Mix_Music *music = Mix_LoadMUS(filepath.c_str());
 
@@ -147,25 +147,25 @@ Mix_Music * ResourceManager::loadMusic(string filepath)
 
 // Access resources
 
-SDL_Texture * ResourceManager::getImage(string imgname)
+SDL_Texture * ResourceManager::getImage(std::string imgname)
 {
-	stringstream compiled;
+	std::stringstream compiled;
 	compiled << "Assets/Images/" << imgname;
 
 	return images[compiled.str()];
 }
 
-Mix_Chunk * ResourceManager::getSound(string soundname)
+Mix_Chunk * ResourceManager::getSound(std::string soundname)
 {
-	stringstream compiled;
+	std::stringstream compiled;
 	compiled << "Assets/Sounds/" << soundname;
 
 	return sounds[compiled.str()];
 }
 
-TTF_Font * ResourceManager::getFont(string fontname, int i)
+TTF_Font * ResourceManager::getFont(std::string fontname, int i)
 {
-	stringstream compiled;
+	std::stringstream compiled;
 	compiled << "Assets/Fonts/" << fontname << ".ttf" << i;
 	
 	return fonts[compiled.str()];
