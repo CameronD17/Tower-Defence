@@ -25,6 +25,7 @@ void Tower::upgrade()
 
 void Tower::update(Map &m, std::vector<Enemy*> &enemies)
 {
+	hasEnemy = false;
 	for (int x = getX() - stats.range; (x < getX() + stats.range) && (x < BOARD_WIDTH * BLOCK_SIZE); x += BLOCK_SIZE)
 	{
 		for (int y = getY() - stats.range; (y < getY() + stats.range) && (y < BOARD_HEIGHT * BLOCK_SIZE); y += BLOCK_SIZE)
@@ -37,15 +38,14 @@ void Tower::update(Map &m, std::vector<Enemy*> &enemies)
 					{
 						enemy = (*e);
 						hasEnemy = true;
-						break;
+						goto FIRE;
 					}
 				}
-				break;
 			}
 		}
 	}
 	
-	if (hasEnemy)
+	FIRE:if (hasEnemy)
 	{
 		if ((signed)bullets.size() <= stats.maxCapacity)
 		{

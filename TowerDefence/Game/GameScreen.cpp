@@ -21,8 +21,8 @@ void GameScreen::loadGame(std::string game)
 	board.setup(engine, game);
 	sidebar.setup(engine);
 	pauseMenu.setup(engine, cursor);
-	engine.admin.start();
 	transition.init(engine);
+	engine.admin.start();
 }
 
 void GameScreen::draw()
@@ -35,8 +35,12 @@ void GameScreen::draw()
 	cursor.draw();
 	pauseMenu.draw();
 
-	engine.graphics.update();
 	engine.admin.countedFrames++;
+	std::stringstream fps;
+	fps << "FPS: " << (int)engine.admin.avgFPS;
+	engine.graphics.renderText(24, 5, fps.str(), SMALL, 255, 255, 255);
+
+	engine.graphics.update();
 }
 
 int GameScreen::getInput()
@@ -91,10 +95,11 @@ int GameScreen::update()
 	}
 
 	board.update();
-	sidebar.update(board.towerHandler.selected);
+	sidebar.update(board);
 	notification.update();
 
 	draw();
+
 	engine.admin.updateFPS();
 
 	if (state == EXIT_CURRENT_STATE || state == EXIT_APPLICATION) closeTransition();

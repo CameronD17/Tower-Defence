@@ -68,6 +68,15 @@ int Sidebar::getInput(input k, Cursor &cursor, Board &board, Notification &notif
 		{
 			return EXIT_CURRENT_STATE;
 		}
+		else if (button == "Auto Launch?")
+		{
+			board.enemyHandler.autoLaunch(board.map); 
+			buttonHandler.selectButton(button);
+		}
+		else if (button == "Next Wave")
+		{
+			board.enemyHandler.waves.pop_back();
+		}
 		else
 		{
 			board.deselectObject();
@@ -84,9 +93,10 @@ int Sidebar::getInput(input k, Cursor &cursor, Board &board, Notification &notif
 	return UNCHANGED_STATE;
 }
 
-void Sidebar::update(bool tower)
+void Sidebar::update(Board &b)
 {
-	toggleTowerSelectionButtonVisibility(tower);
+	toggleTowerSelectionButtonVisibility(b.towerHandler.selected);
+	toggleAutoLaunchButtons(b.enemyHandler.autolaunch);
 }
 
 void Sidebar::draw()
@@ -138,5 +148,17 @@ void Sidebar::toggleTowerSelectionButtonVisibility(bool towerSelected)
 	{
 		buttonHandler.findButtonByName("Sell")->hide();
 		buttonHandler.findButtonByName("Upgrade")->hide();
+	}
+}
+
+void Sidebar::toggleAutoLaunchButtons(bool autoLaunch)
+{
+	if (autoLaunch)
+	{
+		buttonHandler.findButtonByName("Next Wave")->hide();
+	}
+	else
+	{
+		buttonHandler.findButtonByName("Next Wave")->show();
 	}
 }

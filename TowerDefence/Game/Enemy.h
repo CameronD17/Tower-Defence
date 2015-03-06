@@ -8,7 +8,7 @@ struct eStats
 {
 	int id, targetX, targetY, value, bounty, speed;
 	float currentHealth, maxHealth;
-	bool leftBase, isBoss, canSwim, isWaiting;
+	bool isBoss, canSwim;
 	std::string category;
 };
 
@@ -31,11 +31,13 @@ public:
 	void updatePath(Map &m);
 	bool reduceHealth(int h, Map &m);
 
+	bool leftBase;
+
 	int getNextMove()const;
 	int getSpeed()const;
 	eStats getStats()const;
 	Pathfinder getPath()const;
 
-	bool canWalk(Map &m);	
+	bool canWalk(Map &m);
 };
 

@@ -7,7 +7,7 @@ void Board::setup(Engine &e, std::string game)
 	engine = e;		
 	map.init(engine, game);
 	towerHandler.init(engine, map);
-	enemyHandler.init(engine, map);
+	enemyHandler.init(engine, map, game);
 	bank.init(engine, 10000);
 	eTimer = SDL_GetTicks();
 	debugMode = false;
@@ -112,10 +112,17 @@ void Board::update()
 	// Destroy any enemies that have been killed
 	enemyHandler.destroy();
 
-	// Update all remaining enemies
+	// Launch new enemies
 	if (SDL_GetTicks() > eTimer)
+	{		
+		enemyHandler.launch(map);
+		eTimer = SDL_GetTicks() + 1000;
+	}
+
+	// Update all remaining enemies
+	for (std::vector<Enemy*>::iterator e = enemyHandler.enemies.begin(); e != enemyHandler.enemies.end(); ++e)
 	{
-		for (std::vector<Enemy*>::iterator e = enemyHandler.enemies.begin(); e != enemyHandler.enemies.end(); ++e)
+		if ((*e)->leftBase)
 		{
 			if ((*e)->canWalk(map))
 			{
@@ -137,7 +144,6 @@ void Board::update()
 				}
 			}
 		}
-		eTimer = SDL_GetTicks() + 0;
 	}
 }
 
@@ -148,25 +154,19 @@ void Board::draw()
 	enemyHandler.draw();
 	bank.draw();
 
+	Uint8 red = 154, green = 0, blue = 0;
+	engine.graphics.drawRectangle(0, 0, BORDER_SIZE, ((BORDER_SIZE * 2) + (BOARD_HEIGHT * BLOCK_SIZE)), red, green, blue); // Left
+	engine.graphics.drawRectangle(BORDER_SIZE + (BOARD_WIDTH * BLOCK_SIZE), 0, BORDER_SIZE, ((BORDER_SIZE * 2) + (BOARD_HEIGHT * BLOCK_SIZE)), red, green, blue); //Right
+	engine.graphics.drawRectangle(0, 0, BORDER_SIZE + (BOARD_WIDTH * BLOCK_SIZE), BORDER_SIZE, red, green, blue); // Top
+	engine.graphics.drawRectangle(0, BORDER_SIZE + (BOARD_HEIGHT*BLOCK_SIZE), BORDER_SIZE + (BOARD_WIDTH * BLOCK_SIZE), BORDER_SIZE, red, green, blue);	// Bottom
+
 	if (debugMode)
 	{
-		// Cursor Position
-		std::stringstream cursorText;
-		int x, y;
-		SDL_GetMouseState(&x, &y);
-
-		int totBullets = 0;
-		for (std::vector<Tower*>::iterator t = towerHandler.towers.begin(); t != towerHandler.towers.end(); ++t){ totBullets += (*t)->bullets.size(); }
-
-		cursorText << "Enemies: " << enemyHandler.enemies.size() << " Towers: " << towerHandler.towers.size() << " Bullets: " << totBullets << "   FPS: " << (int)engine.admin.avgFPS;;
-
-		engine.graphics.renderText(10, 10, cursorText.str(), SMALL, 255, 255, 255);
-
 		for (std::vector<Enemy*>::iterator e = enemyHandler.enemies.begin(); e != enemyHandler.enemies.end(); ++e)
 		{
 			std::stringstream idNo;
 			idNo << (*e)->getID();
-			engine.graphics.renderText((*e)->getX() + 4, (*e)->getY() + 4, idNo.str(), SMALL);
+			engine.graphics.renderText((*e)->getX() + 20, (*e)->getY() + 20, idNo.str(), EXTRA_SMALL);
 		}
 
 		for (int x = 0; x < BOARD_WIDTH*BLOCK_SIZE; x += BLOCK_SIZE)
@@ -182,22 +182,8 @@ void Board::draw()
 				}
 			}
 		}
-
-		for (int x = 0; x < BOARD_WIDTH*BLOCK_SIZE; x += BLOCK_SIZE)
-		{
-			for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y += BLOCK_SIZE)
-			{
-				if (map.hasEnemy(x, y))
-				{
-					engine.graphics.drawRectangleOL(x + BORDER_SIZE, y + BORDER_SIZE, BLOCK_SIZE, BLOCK_SIZE, 255, 255, 255);
-					std::stringstream ID2;
-					ID2 << map.getEnemy(x, y);
-					engine.graphics.renderText(x + BORDER_SIZE + 4, y + BORDER_SIZE + 4, ID2.str(), EXTRA_SMALL, 255, 255, 0);
-				}
-			}
-		}
-
-		if (enemyHandler.enemies.size() > 0)
+		
+		/*if (enemyHandler.enemies.size() > 0)
 		{
 			for (std::vector<Enemy*>::iterator e = enemyHandler.enemies.begin(); e != enemyHandler.enemies.end(); ++e)
 			{
@@ -215,7 +201,7 @@ void Board::draw()
 					thisY = nextY;
 				}
 			}
-		}
+		}*/
 
 		for (std::vector<Tower*>::iterator t = towerHandler.towers.begin(); t != towerHandler.towers.end(); ++t)
 		{
@@ -225,11 +211,6 @@ void Board::draw()
 			}
 		}
 	}
-}
-
-int Board::getLevel()
-{
-	return level;
 }
 
 void Board::deselectObject()

@@ -34,7 +34,7 @@ void Enemy::initialise(int level, int x, int y, int tX, int tY, int t, Map &m)
 	stats.targetX = tX;
 	stats.targetY = tY;
 
-	stats.leftBase = false;
+	leftBase = false;
 	stats.currentHealth = stats.maxHealth = (float)(level * HEALTH_MULTIPLIER * 10);
 	stats.value = level * VALUE_MULTIPLIER;
 	stats.bounty = level * BOUNTY_MULTIPLIER;
@@ -127,7 +127,7 @@ bool Enemy::canWalk(Map &map)
 		}
 
 		// Let's make sure that the next square isn't occupied.
-		if (map.walkable(astar.getNextX(), astar.getNextY(), stats.id))
+		if (map.walkable(astar.getNextX(), astar.getNextY(), stats.id, astar.getNextMove()))
 		{
 			// GET IN! The next tile is available. Let's move!
 			releaseTiles(map);

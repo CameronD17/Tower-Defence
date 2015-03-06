@@ -6,7 +6,6 @@ class Profiling
 
 public:	
 	Profiling(void);
-	Profiling(int x, int y);
 	~Profiling(void);
 
 	int countedFrames;

@@ -12,13 +12,12 @@ class Board
 private:
 	unsigned int eTimer;			
 	int level;
-	
+
 public:	
 	Board(void);
 
 	int startHealth, currentHealth;
 	bool debugMode; 
-	int getLevel();
 
 	Engine engine;
 	Map map;

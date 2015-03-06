@@ -33,9 +33,7 @@ void Notification::draw()
 
 void Notification::update()
 {
-	unsigned int t = timer;
-	unsigned int s = SDL_GetTicks();
-	visible = t > s;
+	visible = timer > SDL_GetTicks();
 }
 
 void Notification::set(std::string m, int t)

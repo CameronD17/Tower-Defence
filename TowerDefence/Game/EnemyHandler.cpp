@@ -2,13 +2,48 @@
 
 EnemyHandler::EnemyHandler(void){}
 	
-void EnemyHandler::init(Engine &e, Map &m)								// Setting up the EnemyHandler
+void EnemyHandler::init(Engine &e, Map &m, std::string game)
 {
 	engine = e;
-	enemyCount = 1;
+	enemyCount = 0;
+	waveCount = 0;
+	launched = 0;
+	timer = SDL_GetTicks() + 10000;
+	autolaunch = false;
 	enemies.clear();
-	Enemy * enemy = new Enemy(engine.resources, m.startX, m.startY, 1, m.targetX, m.targetY, 1, m, enemyCount);
-	enemies.push_back(enemy);
+
+	std::stringstream filename;
+	filename << game << "enemies.txt";
+
+	loadEnemiesFromFile(m, filename.str());
+}
+
+bool EnemyHandler::loadEnemiesFromFile(Map &m, std::string filename)
+{
+	std::ifstream data;
+	data.open(filename);
+
+	int size, type, level; bool isBoss;
+
+	if (data.good())
+	{
+		while (data >> size >> type >> level >> isBoss)
+		{
+			for (int i = 0; i < size; i++)
+			{
+				enemyCount++;
+				Enemy * enemy = new Enemy(engine.resources, m.startX - BLOCK_SIZE, m.startY - BLOCK_SIZE, type, m.targetX, m.targetY, level, m, enemyCount);
+				enemies.push_back(enemy);
+			}
+			waves.push_back({ size, type, level, isBoss });
+			waveCount++;
+		}
+
+		data.close();
+		return true;
+	}	
+
+	return false;
 }
 
 void EnemyHandler::draw()
@@ -41,13 +76,53 @@ void EnemyHandler::draw()
 		bountyText << "Bounty: " << selectedStats.bounty << " credits.";
 		engine.graphics.renderText(statsStartX, statsStartY + (BLOCK_SIZE * 4), bountyText.str(), SMALL, 255, 0, 0, "anonymous");
 	}
+
+	std::stringstream wave;
+	wave << (waveCount - waves.size() + 1) << " / " << waveCount;
+	engine.graphics.renderText(SIDEBAR_X + BLOCK_SIZE, STATS_Y - BLOCK_SIZE, wave.str(), SMALL, 255, 255, 255);
+}
+
+void EnemyHandler::launch(Map &m)
+{
+	if (autolaunch && timer > SDL_GetTicks()) return;
+
+	if (waves.back().numberOfEnemies > launched)
+	{
+		for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
+		{
+			if (!(*e)->leftBase)
+			{
+				(*e)->leftBase = true;
+				launched++;
+				timer = SDL_GetTicks() + 10000;
+				break;
+			}
+		}
+	}
 }
 
 void EnemyHandler::launch(Cursor &cursor, Map &m)
 {
 	enemyCount++;
 	Enemy * e = new Enemy(engine.resources, cursor.getX(), cursor.getY(), 0, m.targetX, m.targetY, 1, m, enemyCount);
+	e->leftBase = true;
 	enemies.push_back(e);
+}
+
+void EnemyHandler::autoLaunch(Map &m)
+{
+	if (autolaunch)
+	{
+		autolaunch = false;
+	}
+	else
+	{
+		autolaunch = true;
+		if (timer < SDL_GetTicks())
+		{
+			launch(m);
+		}
+	}
 }
 
 void EnemyHandler::updatePaths(int x, int y, Map &m)

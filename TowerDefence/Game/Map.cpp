@@ -56,12 +56,6 @@ void Map::draw()
 		}
 	}
 
-	Uint8 red = 154, green = 0, blue = 0;
-	engine.graphics.drawRectangle(0, 0, BORDER_SIZE, ((BORDER_SIZE * 2) + (BOARD_HEIGHT * BLOCK_SIZE)), red, green, blue); // Left
-	engine.graphics.drawRectangle(BORDER_SIZE + (BOARD_WIDTH * BLOCK_SIZE), 0, BORDER_SIZE, ((BORDER_SIZE * 2) + (BOARD_HEIGHT * BLOCK_SIZE)), red, green, blue); //Right
-	engine.graphics.drawRectangle(0, 0, BORDER_SIZE + (BOARD_WIDTH * BLOCK_SIZE), BORDER_SIZE, red, green, blue); // Top
-	engine.graphics.drawRectangle(0, BORDER_SIZE + (BOARD_HEIGHT*BLOCK_SIZE), BORDER_SIZE + (BOARD_WIDTH * BLOCK_SIZE), BORDER_SIZE, red, green, blue);	// Bottom
-	
 	//Target
 	engine.graphics.drawRectangleOL(targetX - 1, targetY - 1, BLOCK_SIZE + 2, BLOCK_SIZE + 2, 0, 255, 255);
 }
@@ -145,7 +139,7 @@ bool Map::hasTower(int x, int y)
 	return tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].isTower;
 }
 
-bool Map::walkable(int x, int y, int id)
+bool Map::walkable(int x, int y, int id, int next)
 {
 	if ((tiles[(x / BLOCK_SIZE)][(y / BLOCK_SIZE)].terrain == BLOCKED_TERRAIN 
 		|| (tiles[x / BLOCK_SIZE][y / BLOCK_SIZE].isEnemy) 
@@ -155,6 +149,54 @@ bool Map::walkable(int x, int y, int id)
 		return false;
 	}
 	return true;
+
+	/*bool walkable = true;
+
+	x /= BLOCK_SIZE; y /= BLOCK_SIZE;
+		
+	switch (next)
+	{
+	case UP: case LEFT: case RIGHT: case DOWN:
+		if ((tiles[x][y].terrain == BLOCKED_TERRAIN || tiles[x][y].isEnemy || tiles[x][y].isTower) && tiles[x][y].enemy != id)
+		{
+			walkable = false;
+		}
+		break;
+	case UP_LEFT:
+		if (((tiles[x][y].terrain == BLOCKED_TERRAIN || tiles[x][y].isEnemy || tiles[x][y].isTower) && tiles[x][y].enemy != id)
+			&& ((tiles[x - BLOCK_SIZE][y].terrain == BLOCKED_TERRAIN || tiles[x - BLOCK_SIZE][y].isEnemy || tiles[x - BLOCK_SIZE][y].isTower) && tiles[x - BLOCK_SIZE][y].enemy != id)
+			&& ((tiles[x][y + BLOCK_SIZE].terrain == BLOCKED_TERRAIN || tiles[x][y + BLOCK_SIZE].isEnemy || tiles[x][y + BLOCK_SIZE].isTower) && tiles[x][y + BLOCK_SIZE].enemy != id))
+		{
+			walkable = false;
+		}
+		break;
+	case UP_RIGHT:
+		if (((tiles[x][y].terrain == BLOCKED_TERRAIN || tiles[x][y].isEnemy || tiles[x][y].isTower) && tiles[x][y].enemy != id)
+			&& ((tiles[x + BLOCK_SIZE][y].terrain == BLOCKED_TERRAIN || tiles[x + BLOCK_SIZE][y].isEnemy || tiles[x + BLOCK_SIZE][y].isTower) && tiles[x + BLOCK_SIZE][y].enemy != id)
+			&& ((tiles[x][y + BLOCK_SIZE].terrain == BLOCKED_TERRAIN || tiles[x][y + BLOCK_SIZE].isEnemy || tiles[x][y + BLOCK_SIZE].isTower) && tiles[x][y + BLOCK_SIZE].enemy != id))
+		{
+			walkable = false;
+		}
+		break;
+	case DOWN_LEFT:
+		if (((tiles[x][y].terrain == BLOCKED_TERRAIN || tiles[x][y].isEnemy || tiles[x][y].isTower) && tiles[x][y].enemy != id)
+			&& ((tiles[x + BLOCK_SIZE][y].terrain == BLOCKED_TERRAIN || tiles[x + BLOCK_SIZE][y].isEnemy || tiles[x + BLOCK_SIZE][y].isTower) && tiles[x + BLOCK_SIZE][y].enemy != id)
+			&& ((tiles[x][y - BLOCK_SIZE].terrain == BLOCKED_TERRAIN || tiles[x][y - BLOCK_SIZE].isEnemy || tiles[x][y - BLOCK_SIZE].isTower) && tiles[x][y - BLOCK_SIZE].enemy != id))
+		{
+			walkable = false;
+		}
+		break;
+	case DOWN_RIGHT:
+		if (((tiles[x][y].terrain == BLOCKED_TERRAIN || tiles[x][y].isEnemy || tiles[x][y].isTower) && tiles[x][y].enemy != id)
+			&& ((tiles[x - BLOCK_SIZE][y].terrain == BLOCKED_TERRAIN || tiles[x - BLOCK_SIZE][y].isEnemy || tiles[x - BLOCK_SIZE][y].isTower) && tiles[x - BLOCK_SIZE][y].enemy != id)
+			&& ((tiles[x][y - BLOCK_SIZE].terrain == BLOCKED_TERRAIN || tiles[x][y - BLOCK_SIZE].isEnemy || tiles[x][y - BLOCK_SIZE].isTower) && tiles[x][y - BLOCK_SIZE].enemy != id))
+		{
+			walkable = false;
+		}
+		break;
+	}
+
+	return walkable;*/
 }
 
 bool Map::buildable(int x, int y, bool waterTower)

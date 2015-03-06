@@ -38,7 +38,7 @@ public:
 	bool hasEnemy(int x, int y);
 	bool hasTower(int x, int y);
 
-	bool walkable(int x, int y, int id = 0);
+	bool walkable(int x, int y, int id, int next = UP);
 	bool buildable(int x, int y, bool waterTower = false);
 };
 
