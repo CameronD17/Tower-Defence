@@ -1,12 +1,13 @@
 #pragma once
 #include "../Engine/Constants.h"
+#include "../Engine/Engine.h"
 #include "../Engine/Object.h"
 #include "../Engine/Pathfinder.h"
 #include "Map.h"
 
 struct eStats
 {
-	int id, targetX, targetY, value, bounty, speed;
+	int id, targetX, targetY, value, bounty, speed, type;
 	float currentHealth, maxHealth;
 	bool isBoss, canSwim;
 	std::string category;
@@ -15,6 +16,7 @@ struct eStats
 class Enemy : public Object
 {
 private:
+	Engine engine;
 	Pathfinder astar;
 	eStats stats;
 	int stepsTaken, stepsPerSquare;
@@ -24,14 +26,13 @@ private:
 
 public:
 	Enemy();
-	Enemy(ResourceManager &rm, int x, int y, int type, int targetX, int targetY, int level, Map &m, int i);
+	Enemy(Engine &e, int x, int y, int type, int targetX, int targetY, int level, Map &m, int i);
 	~Enemy();
 
+	void draw();
 	void updateTarget(int tX, int t, Map &m); 
 	void updatePath(Map &m);
 	bool reduceHealth(int h, Map &m);
-
-	bool leftBase;
 
 	int getNextMove()const;
 	int getSpeed()const;

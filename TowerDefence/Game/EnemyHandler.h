@@ -3,6 +3,7 @@
 #include "../Engine/Engine.h"
 #include "Enemy.h"
 #include "Cursor.h"
+#include <iomanip>
 
 struct Wave
 {
@@ -19,7 +20,9 @@ private:
 	int enemyCount;
 	bool loadEnemiesFromFile(Map &m, std::string filename);
 	int launched;
-	unsigned int timer;
+	bool nextWaveWaiting;
+	unsigned int timer, waveTimer;
+	std::vector<Enemy*> awaitinglaunch;
 
 public:	
 	EnemyHandler(void);
@@ -30,6 +33,7 @@ public:
 	void launch(Map &m);
 	void launch(Cursor &cursor, Map &m);
 	void autoLaunch(Map &m);
+	void nextWave();
 	void updatePaths(int x, int y, Map &m);
 	void updateTargets(Map &m);
 	void destroy();

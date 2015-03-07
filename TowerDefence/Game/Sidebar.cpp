@@ -75,7 +75,7 @@ int Sidebar::getInput(input k, Cursor &cursor, Board &board, Notification &notif
 		}
 		else if (button == "Next Wave")
 		{
-			board.enemyHandler.waves.pop_back();
+			board.enemyHandler.nextWave();
 		}
 		else
 		{

@@ -15,9 +15,10 @@ Enemy::Enemy()
 	stepsTaken = 0;
 }
 
-Enemy::Enemy(ResourceManager &rm, int x, int y, int t, int tX, int tY, int l, Map &m, int i)
+Enemy::Enemy(Engine &e, int x, int y, int t, int tX, int tY, int l, Map &m, int i)
 {
-	setResources(rm);
+	engine = e;
+	setResources(engine.resources);
 	setID(i);
 	stats.id = getID();
 	initialise(l, x, y, tX, tY, t, m);	
@@ -34,17 +35,78 @@ void Enemy::initialise(int level, int x, int y, int tX, int tY, int t, Map &m)
 	stats.targetX = tX;
 	stats.targetY = tY;
 
-	leftBase = false;
 	stats.currentHealth = stats.maxHealth = (float)(level * HEALTH_MULTIPLIER * 10);
 	stats.value = level * VALUE_MULTIPLIER;
 	stats.bounty = level * BOUNTY_MULTIPLIER;
-	stats.canSwim = true;						// Change to check type
-	stats.speed = (rand() % 4) + 1;				// Change to check type
+	stats.type = t;
+	
+	switch (t)
+	{
+	case BASIC_SOLDIER: 
+	case SUPER_SOLDIER: 
+	case GHOST_SOLDIER:
+		stats.canSwim = true;
+		break;
+	default:
+		stats.canSwim = false;
+		break;
+	}
+
+	switch (t)
+	{
+	case GHOST_SOLDIER:
+	case SUPER_TANK:
+		stats.speed = 1;
+	case SUPER_SOLDIER:
+	default:
+		stats.speed = 2;
+		break;
+	case BASIC_SOLDIER:
+	case BASIC_TANK:
+		stats.speed = 3;
+		break;
+	case JEEP:
+		stats.speed = 4;
+		break;
+	case MOTORBIKE:
+		stats.speed = 6;
+		break;
+	}
 
 	stepsTaken = 0;
 	stepsPerSquare = (int)(BLOCK_SIZE / stats.speed);
 
 	m.setEnemy(x - BORDER_SIZE, y - BORDER_SIZE, stats.id);
+}
+
+void Enemy::draw()
+{
+	switch (stats.type)
+	{
+	case BASIC_SOLDIER:
+		engine.graphics.drawRectangle(getX() + 4, getY() + 4, BLOCK_SIZE - 8, BLOCK_SIZE - 8, 237, 28, 36);
+		break; 
+	case MOTORBIKE:
+		engine.graphics.drawRectangle(getX(), getY(), BLOCK_SIZE, BLOCK_SIZE, 255, 0, 0);
+		break;
+	case JEEP:
+		engine.graphics.drawRectangle(getX(), getY(), BLOCK_SIZE, BLOCK_SIZE, 255, 165, 0);
+		break;
+	case BASIC_TANK:
+		engine.graphics.drawRectangle(getX(), getY(), BLOCK_SIZE, BLOCK_SIZE, 124, 252, 0);
+		break;
+	case SUPER_SOLDIER:
+		engine.graphics.drawRectangle(getX() + 4, getY() + 4, BLOCK_SIZE - 8, BLOCK_SIZE - 8, 128, 0, 128);
+		break;
+	case SUPER_TANK:
+		engine.graphics.drawRectangle(getX(), getY(), BLOCK_SIZE, BLOCK_SIZE, 0, 100, 0);
+		break;
+	case GHOST_SOLDIER:
+		engine.graphics.drawRectangle(getX() + 4, getY() + 4, BLOCK_SIZE - 8, BLOCK_SIZE - 8, 139, 137, 137);
+		break;
+	}
+
+	engine.graphics.drawRectangle(getX(), getY(), (int)((stats.currentHealth / stats.maxHealth) * BLOCK_SIZE), 2, 0, 255, 0);
 }
 
 bool Enemy::reduceHealth(int i, Map &m)
@@ -209,7 +271,7 @@ void Enemy::lockTiles(Map &map)
 		thisY += BLOCK_SIZE;
 		break;
 	default:
-		break;
+		break; 
 	}
 	
 	// Lock the next tile

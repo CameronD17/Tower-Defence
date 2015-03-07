@@ -65,6 +65,16 @@
 #define BOUNTY_MULTIPLIER 10
 #define VALUE_MULTIPLIER 10
 #define HEALTH_MULTIPLIER 10
+#define ENEMY_TIMER 1000
+#define ENEMY_WAVE_TIMER 5000
+
+#define BASIC_SOLDIER 1
+#define MOTORBIKE 2
+#define JEEP 3
+#define BASIC_TANK 4
+#define SUPER_SOLDIER 5
+#define SUPER_TANK 6
+#define GHOST_SOLDIER 7
 
 // Cursor values
 #define TOWER_1 1

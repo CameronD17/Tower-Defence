@@ -116,14 +116,14 @@ void Board::update()
 	if (SDL_GetTicks() > eTimer)
 	{		
 		enemyHandler.launch(map);
-		eTimer = SDL_GetTicks() + 1000;
+		eTimer = SDL_GetTicks() + ENEMY_TIMER;
 	}
 
 	// Update all remaining enemies
 	for (std::vector<Enemy*>::iterator e = enemyHandler.enemies.begin(); e != enemyHandler.enemies.end(); ++e)
 	{
-		if ((*e)->leftBase)
-		{
+		//if ((*e)->leftBase)
+		//{
 			if ((*e)->canWalk(map))
 			{
 				engine.physics.move((*e), (*e)->getNextMove(), (*e)->getSpeed());
@@ -143,7 +143,7 @@ void Board::update()
 					}
 				}
 			}
-		}
+		//}
 	}
 }
 
