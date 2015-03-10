@@ -2,9 +2,7 @@
 
 Notification::Notification()
 {
-	r = 255;
-	g = 255;
-	b = 255;
+	r = g = b = 0;
 	messageLines.push_back("Default Message String");
 }
 
@@ -21,11 +19,10 @@ void Notification::draw()
 	{
 		engine.graphics.drawRectangleOL(NOTIFICATION_X, NOTIFICATION_Y, NOTIFICATION_WIDTH, NOTIFICATION_HEIGHT, r, g, b);
 
-		int textX = NOTIFICATION_X + 10;
 		int textY = NOTIFICATION_Y + 10;
 		for (std::vector<std::string>::iterator m = messageLines.begin(); m != messageLines.end(); ++m)
 		{
-			engine.graphics.renderText(textX, textY, (*m).c_str(), 20, r, g, b, "anonymous");
+			engine.graphics.renderText(NOTIFICATION_X + 10, textY, (*m).c_str(), 20, r, g, b, "anonymous");
 			textY += LINE_HEIGHT;
 		}
 	}
@@ -38,33 +35,21 @@ void Notification::update()
 
 void Notification::set(std::string m, int t)
 {
+	messageLines.clear();
 	timer = SDL_GetTicks() + NOTIFICATION_TIMER;
 
 	switch (t)
 	{
 	case ERROR:
-		r = 255;
-		g = 0;
-		b = 0;
+		r = 255; g = 0; b = 0;
 		break;
-	case WARNING:
-		r = 255;
-		g = 255;
-		b = 0;
+	case WARNING: default:
+		r = 255; g = 255; b = 0;
 		break;
 	case SUCCESS:
-		r = 0;
-		g = 255;
-		b = 0;
-		break;
-	default:
-		r = 255;
-		g = 255;
-		b = 255;
+		r = 0; g = 255; b = 0;
 		break;
 	}
-	
-	messageLines.clear();
 
 	if (m.length() > MAX_LINE_LENGTH)
 	{
@@ -77,14 +62,15 @@ void Notification::set(std::string m, int t)
 		std::stringstream line;
 		while (!words.empty())
 		{
-			line << words.back() << " ";
-			words.pop_back();
-
-			if (line.str().length() > MAX_LINE_LENGTH)
+			if (line.str().length() + words.back().length() < MAX_LINE_LENGTH)
+			{
+				line << words.back() << " ";
+				words.pop_back();
+			}
+			else
 			{
 				messageLines.push_back(line.str());
 				line.str(std::string());
-				line.clear();
 			}
 		}
 		messageLines.push_back(line.str());

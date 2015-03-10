@@ -12,7 +12,9 @@ void EnemyHandler::init(Engine &e, Map &m, std::string game)
 	waveTimer = SDL_GetTicks();
 	autolaunch = false;
 	nextWaveWaiting = false;
+	awaitinglaunch.clear();
 	enemies.clear();
+	waves.clear();
 
 	std::stringstream filename;
 	filename << game << "enemies.txt";
@@ -52,15 +54,15 @@ void EnemyHandler::draw()
 {
 	for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
 	{
-		if (selected && (*e)->getID() == selectedStats.id)
+		/*if (selected && (*e)->getID() == selectedStats.id)
 		{
 			engine.graphics.drawRectangleOL((*e)->getX() - 1, (*e)->getY() - 1, BLOCK_SIZE + 2, BLOCK_SIZE + 2, 255, 255, 255);
-		}
+		}*/
 
 		(*e)->draw();
 	}
 
-	if (selected)
+	/*if (selected)
 	{
 		std::stringstream IDText, healthText, mHealthText, valueText, bountyText;
 		int statsStartX = SIDEBAR_X + BLOCK_SIZE;
@@ -76,7 +78,7 @@ void EnemyHandler::draw()
 		engine.graphics.renderText(statsStartX, statsStartY + (BLOCK_SIZE * 3), valueText.str(), SMALL, 255, 0, 0, "anonymous");
 		bountyText << "Bounty: " << selectedStats.bounty << " credits.";
 		engine.graphics.renderText(statsStartX, statsStartY + (BLOCK_SIZE * 4), bountyText.str(), SMALL, 255, 0, 0, "anonymous");
-	}
+	}*/
 
 	std::stringstream wave;
 	wave << (waveCount - waves.size() + 1) << " / " << waveCount;
@@ -84,7 +86,6 @@ void EnemyHandler::draw()
 
 	if (autolaunch)
 	{
-		double remaining = (double)(waveTimer - SDL_GetTicks()) / 1000;
 		if (waveTimer < SDL_GetTicks())
 		{
 			engine.graphics.renderText(1212, 350, "QUEUED", MEDIUM);
@@ -92,7 +93,7 @@ void EnemyHandler::draw()
 		else
 		{
 			std::stringstream time;
-			time << std::setprecision(2) << remaining;
+			time << std::fixed << std::setprecision(1) << (double)(waveTimer - SDL_GetTicks()) / 1000;
 			engine.graphics.renderText(1212, 350, time.str(), MEDIUM);
 		}
 	}

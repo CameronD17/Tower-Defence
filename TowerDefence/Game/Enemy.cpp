@@ -83,7 +83,7 @@ void Enemy::draw()
 {
 	switch (stats.type)
 	{
-	case BASIC_SOLDIER:
+	case BASIC_SOLDIER: default:
 		engine.graphics.drawRectangle(getX() + 4, getY() + 4, BLOCK_SIZE - 8, BLOCK_SIZE - 8, 237, 28, 36);
 		break; 
 	case MOTORBIKE:

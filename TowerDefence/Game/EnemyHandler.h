@@ -3,6 +3,7 @@
 #include "../Engine/Engine.h"
 #include "Enemy.h"
 #include "Cursor.h"
+#include <iostream>
 #include <iomanip>
 
 struct Wave
@@ -27,7 +28,7 @@ private:
 public:	
 	EnemyHandler(void);
 
-	eStats selectedStats;
+	//eStats selectedStats;
 	bool autolaunch;
 	
 	void launch(Map &m);
@@ -40,7 +41,7 @@ public:
 
 	std::vector<Enemy*>  enemies;
 	std::vector<Wave>    waves;
-	bool selected;
+	//bool selected;
 	int waveCount;
 
 	void init(Engine &e, Map &m, std::string g);

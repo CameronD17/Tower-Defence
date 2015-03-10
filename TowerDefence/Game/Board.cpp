@@ -37,7 +37,7 @@ int Board::getInput(input k, Cursor &cursor, Notification& notification)
 		{
 			int x = cursor.getX() - BORDER_SIZE, y = cursor.getY() - BORDER_SIZE;
 
-			if (map.hasEnemy(x, y))
+			/*if (map.hasEnemy(x, y))
 			{
 				enemyHandler.selected = true;
 				towerHandler.selected = false;
@@ -51,9 +51,9 @@ int Board::getInput(input k, Cursor &cursor, Notification& notification)
 					}
 				}
 			}
-			else if (map.hasTower(x, y))
+			else */if (map.hasTower(x, y))
 			{
-				enemyHandler.selected = false;
+				//enemyHandler.selected = false;
 				towerHandler.selected = true;
 
 				for (std::vector<Tower*>::iterator t = towerHandler.towers.begin(); t != towerHandler.towers.end(); ++t)
@@ -129,7 +129,7 @@ void Board::update()
 				engine.physics.move((*e), (*e)->getNextMove(), (*e)->getSpeed());
 			}
 
-			if (enemyHandler.selected)
+			/*if (enemyHandler.selected)
 			{
 				if ((*e)->getID() == enemyHandler.selectedStats.id)
 				{
@@ -142,7 +142,7 @@ void Board::update()
 						enemyHandler.selectedStats = (*e)->getStats();
 					}
 				}
-			}
+			}*/
 		//}
 	}
 }
@@ -216,5 +216,5 @@ void Board::draw()
 void Board::deselectObject()
 {
 	towerHandler.selected = false;
-	enemyHandler.selected = false;
+	//enemyHandler.selected = false;
 }

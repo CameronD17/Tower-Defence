@@ -41,7 +41,7 @@
 #define WARNING 0
 #define SUCCESS 1
 #define LINE_HEIGHT 20
-#define MAX_LINE_LENGTH 20
+#define MAX_LINE_LENGTH 25
 
 // Map values
 #define CLEAR_TERRAIN 'C'
