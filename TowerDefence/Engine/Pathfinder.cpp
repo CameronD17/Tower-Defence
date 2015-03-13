@@ -27,11 +27,11 @@ int Pathfinder::getNextX()const
 	switch (pathToFollow.back())
 	{
 	case UP: case DOWN:
-		return (xCoordinates.back() * BLOCK_SIZE);
+		return (xCoordinates.back() * TILE_SIZE);
 	case UP_RIGHT: case RIGHT: case DOWN_RIGHT:
-		return ((xCoordinates.back() + 1) * BLOCK_SIZE);
+		return ((xCoordinates.back() + 1) * TILE_SIZE);
 	case UP_LEFT: case LEFT: case DOWN_LEFT:
-		return ((xCoordinates.back() - 1) * BLOCK_SIZE);
+		return ((xCoordinates.back() - 1) * TILE_SIZE);
 	}
 	return -1;
 }
@@ -41,11 +41,11 @@ int Pathfinder::getNextY()const
 	switch (pathToFollow.back())
 	{
 	case LEFT: case RIGHT:
-		return (yCoordinates.back() * BLOCK_SIZE);
+		return (yCoordinates.back() * TILE_SIZE);
 	case DOWN_LEFT: case DOWN: case DOWN_RIGHT:
-		return ((yCoordinates.back() + 1) * BLOCK_SIZE);
+		return ((yCoordinates.back() + 1) * TILE_SIZE);
 	case UP_LEFT: case UP: case UP_RIGHT:
-		return ((yCoordinates.back() - 1) * BLOCK_SIZE);
+		return ((yCoordinates.back() - 1) * TILE_SIZE);
 	}
 	return -1;
 }
@@ -93,8 +93,8 @@ bool Pathfinder::findPath(int sX, int sY, int tX, int tY, Map &map)
 	// Initialise values
 	setMapValues(sX - BORDER_SIZE, sY - BORDER_SIZE, map, true);
 
-	startX = (sX - BORDER_SIZE) / BLOCK_SIZE, startY = (sY - BORDER_SIZE) / BLOCK_SIZE;
-	targetX = (tX - BORDER_SIZE) / BLOCK_SIZE, targetY = (tY - BORDER_SIZE) / BLOCK_SIZE;
+	startX = (sX - BORDER_SIZE) / TILE_SIZE, startY = (sY - BORDER_SIZE) / TILE_SIZE;
+	targetX = (tX - BORDER_SIZE) / TILE_SIZE, targetY = (tY - BORDER_SIZE) / TILE_SIZE;
 
 	int openListID = 0;
 	bool pathFound = false;
@@ -102,9 +102,9 @@ bool Pathfinder::findPath(int sX, int sY, int tX, int tY, Map &map)
 	xCoordinates.clear();
 	yCoordinates.clear();
 
-	for (int x = 0; x < BOARD_WIDTH; x++)
+	for (int x = 0; x < BOARD_TILE_W; x++)
 	{
-		for (int y = 0; y < BOARD_HEIGHT; y++)
+		for (int y = 0; y < BOARD_TILE_H; y++)
 			whichList[x][y] = UNCHECKED;
 	}
 	Gcost[startX][startY] = 0;
@@ -125,7 +125,7 @@ bool Pathfinder::findPath(int sX, int sY, int tX, int tY, Map &map)
 		{
 			for (int x = parentXval - 1; x <= parentXval + 1; x++)
 			{
-				if (x > -1 && y > -1 && x < BOARD_WIDTH && y < BOARD_HEIGHT		// If the tile is not off the map
+				if (x > -1 && y > -1 && x < BOARD_TILE_W && y < BOARD_TILE_H		// If the tile is not off the map
 					&& whichList[x][y] != CLOSED								// and if not already on the closed list
 					&& terrain[x][y] != BLOCKED_TERRAIN							// and terrain is not impassable
 					&& cutCorner(x, y))											// and you aren't cutting a corner
@@ -354,46 +354,46 @@ bool Pathfinder::cutCorner(int a, int b)
 
 void Pathfinder::setMapValues(int sX, int sY, Map map, bool swim)
 {
-	for (int x = 0; x < BOARD_WIDTH*BLOCK_SIZE; x += BLOCK_SIZE)
+	for (int x = 0; x < BOARD_WIDTH; x += TILE_SIZE)
 	{
-		for (int y = 0; y < BOARD_HEIGHT*BLOCK_SIZE; y += BLOCK_SIZE)
+		for (int y = 0; y < BOARD_HEIGHT; y += TILE_SIZE)
 		{
 			if (map.hasTower(x, y))
 			{
-				terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = BLOCKED_TERRAIN;
+				terrain[x / TILE_SIZE][y / TILE_SIZE] = BLOCKED_TERRAIN;
 			}
 			else
 			{
 				if (swim)
 				{
-					terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = map.getTerrain(x, y);
+					terrain[x / TILE_SIZE][y / TILE_SIZE] = map.getTerrain(x, y);
 				}
 				else
 				{
 					if (map.getTerrain(x, y) == WATER_TERRAIN)
 					{
-						terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = BLOCKED_TERRAIN;
+						terrain[x / TILE_SIZE][y / TILE_SIZE] = BLOCKED_TERRAIN;
 					}
 					else
 					{
-						terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = map.getTerrain(x, y);
+						terrain[x / TILE_SIZE][y / TILE_SIZE] = map.getTerrain(x, y);
 					}
 				}
 			}
 		}
 	}
 
-	int block = BLOCK_SIZE * 3;
+	int block = TILE_SIZE * 3;
 
-	for (int x = sX - block; x < sX + block; x += BLOCK_SIZE)
+	for (int x = sX - block; x < sX + block; x += TILE_SIZE)
 	{
-		for (int y = sY - block; y < sY + block; y += BLOCK_SIZE)
+		for (int y = sY - block; y < sY + block; y += TILE_SIZE)
 		{
-			if (x >= 0 && x <= BOARD_WIDTH*BLOCK_SIZE && y >= 0 && y <= BOARD_HEIGHT*BLOCK_SIZE)
+			if (x >= 0 && x <= BOARD_WIDTH && y >= 0 && y <= BOARD_HEIGHT)
 			{
 				if (map.hasEnemy(x, y))
 				{
-					terrain[x / BLOCK_SIZE][y / BLOCK_SIZE] = ROUGH_TERRAIN;
+					terrain[x / TILE_SIZE][y / TILE_SIZE] = ROUGH_TERRAIN;
 				}
 			}
 		}

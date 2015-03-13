@@ -34,7 +34,7 @@ public:
 	void setResources(ResourceManager r);
 	void setTexture(SDL_Texture *t);
 
-	void setDeleted(bool deleted);
+	void destroy();
 
 	bool isDeleted()const;
 };

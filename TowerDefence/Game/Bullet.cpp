@@ -21,8 +21,8 @@ Bullet::Bullet(int x, int y, int r, Enemy* e)
 	targetX = (*e).getX();
 	targetY = (*e).getY();
 	speed = 3;
-	dX = ((targetX - x) / BLOCK_SIZE) * (float)speed;
-	dY = ((targetY - y) / BLOCK_SIZE) * (float)speed;
+	dX = ((targetX - x) / TILE_SIZE) * (float)speed;
+	dY = ((targetY - y) / TILE_SIZE) * (float)speed;
 	hit = false;
 }
 
@@ -46,21 +46,21 @@ bool Bullet::update(Enemy* e)
 	// Bullets can't travel further than the parent tower range, nor continue if they hit their target.
 	if ((abs(startX - getX()) > range || abs(startY - getY()) > range))
 	{
-		setDeleted(true);
+		destroy();
 		return true;
 	}
 	else if (e != NULL)
 	{
-		if (getX() > e->getX() && getX() < (e->getX() + BLOCK_SIZE) && getY() > e->getY() && getY() < (e->getY() + BLOCK_SIZE))
+		if (getX() > e->getX() && getX() < (e->getX() + TILE_SIZE) && getY() > e->getY() && getY() < (e->getY() + TILE_SIZE))
 		{
 			hit = true;
-			setDeleted(true);
+			destroy();
 			return true;
 		}
 	}
 	else
 	{
-		setDeleted(true);
+		destroy();
 		return true;
 	}
 	

@@ -1,9 +1,6 @@
 #include "MainMenuSkirmishSubMenu.h"
 
-MainMenuSkirmishSubMenu::MainMenuSkirmishSubMenu()
-{
-	
-}
+MainMenuSkirmishSubMenu::MainMenuSkirmishSubMenu(){}
 
 MainMenuSkirmishSubMenu::~MainMenuSkirmishSubMenu(){}
 
@@ -61,11 +58,6 @@ int MainMenuSkirmishSubMenu::getInput()
 	}
 
 	return UNCHANGED_STATE;
-}
-
-int MainMenuSkirmishSubMenu::update()
-{	
-	return getInput();
 }
 
 void MainMenuSkirmishSubMenu::draw()
@@ -146,18 +138,6 @@ void MainMenuSkirmishSubMenu::draw()
 				}
 			}
 		}
-	}
-}
-
-void MainMenuSkirmishSubMenu::select()
-{
-	if (selected)
-	{
-		selected = false;
-	}
-	else
-	{
-		selected = true;
 	}
 }
 

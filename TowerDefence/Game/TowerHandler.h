@@ -11,14 +11,14 @@ class TowerHandler
 private:
 	int counter;
 	Engine engine;
-	char terrain[BOARD_WIDTH][BOARD_HEIGHT];
+	char terrain[BOARD_TILE_W][BOARD_TILE_H];
 
 public:	
 	TowerHandler(void);
 		
 	bool build(Map &m, Cursor &cursor, Bank &b, Notification &n);
-	void sell(Map &m, int id, Bank &b, Notification &n);
-	void upgrade(int id, Bank &b, Notification &n);
+	void sell(Map &m, Bank &b, Notification &n);
+	void upgrade(Bank &b, Notification &n);
 	void destroy();
 	
 	std::vector<Tower*>  towers;
@@ -26,5 +26,6 @@ public:
 	tStats selectedStats;
 
 	void init(Engine &e, Map &map);
+	void update(Map &m, Bank &b, std::vector<Enemy*> &e);
 	void draw();
 };

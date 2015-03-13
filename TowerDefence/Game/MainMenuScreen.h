@@ -10,17 +10,16 @@ class MainMenuScreen : public Screen
 {
 private:	
 	bool gamePlaying;
-	ButtonHandler buttonHandler;
+	bool focused;
 
 	int getInput();
 	void draw();
 	void drawButtons();
 
-	bool focused;
-
 	Engine engine;
 	Cursor cursor;
 	GameScreen game;
+	ButtonHandler buttonHandler;
 
 	MainMenuSkirmishSubMenu skirmish;
 

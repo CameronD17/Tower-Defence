@@ -20,14 +20,15 @@ private:
 	void closeTransition();
 	void openTransition();
 
+	int getInput();
+	void draw();
+
 public:	
 	GameScreen();	
 	~GameScreen();
 
 	void init(Engine &e, Cursor &c);
-	int getInput();
-	int update();
-	void draw();
-
 	void loadGame(std::string game);
+
+	int update();
 };

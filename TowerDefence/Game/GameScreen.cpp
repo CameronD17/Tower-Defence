@@ -1,13 +1,8 @@
 #include "GameScreen.h"
 
-GameScreen::GameScreen()
-{
-	
-}
+GameScreen::GameScreen(){}
 
-GameScreen::~GameScreen()
-{
-}
+GameScreen::~GameScreen(){}
 
 void GameScreen::init(Engine &e, Cursor &c)
 {
@@ -41,6 +36,7 @@ void GameScreen::draw()
 	engine.graphics.renderText(24, 5, fps.str(), SMALL, 255, 255, 255);
 
 	engine.graphics.update();
+	engine.admin.updateFPS();
 }
 
 int GameScreen::getInput()
@@ -65,9 +61,9 @@ int GameScreen::getInput()
 		}
 	}
 	
-	if (k.x > BORDER_SIZE && k.x < (BORDER_SIZE + (BOARD_WIDTH*BLOCK_SIZE)) && k.y > BORDER_SIZE && k.y < (BORDER_SIZE + (BOARD_HEIGHT*BLOCK_SIZE)))
+	if (k.x > BORDER_SIZE && k.x < (BORDER_SIZE + BOARD_WIDTH) && k.y > BORDER_SIZE && k.y < (BORDER_SIZE + BOARD_HEIGHT))
 	{
-		return board.getInput(k, cursor, notification);
+		board.getInput(k, cursor, notification);
 	}
 	else
 	{
@@ -83,24 +79,18 @@ int GameScreen::update()
 {
 	if (transition.isClosed) openTransition();
 
-	int state = UNCHANGED_STATE;
-
-	state = getInput();
+	int state = getInput();
 
 	while (pauseMenu.paused)
 	{
 		state = pauseMenu.getInput();
-		pauseMenu.update();
 		draw();
 	}
 
 	board.update();
 	sidebar.update(board);
 	notification.update();
-
 	draw();
-
-	engine.admin.updateFPS();
 
 	if (state == EXIT_CURRENT_STATE || state == EXIT_APPLICATION) closeTransition();
 

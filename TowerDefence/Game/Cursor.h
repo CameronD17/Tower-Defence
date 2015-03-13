@@ -2,14 +2,12 @@
 #include "../Engine/Constants.h"
 #include "../Engine/Engine.h"
 #include "../Engine/Object.h"
-#include "Tower.h"
 
 class Cursor: public Object
 {
 private:
 	Engine engine;
 	int action;
-	tStats towerStats;
 
 public:
 	Cursor();
@@ -17,10 +15,9 @@ public:
 	~Cursor();	
 	
 	int getAction()const;
+	int getCost()const;
 	void setAction(int t); 
 	
-	tStats getStats()const;
-
 	void init(Engine &e);
 	void draw();
 	void reset();

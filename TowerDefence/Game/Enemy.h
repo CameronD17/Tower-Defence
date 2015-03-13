@@ -3,6 +3,7 @@
 #include "../Engine/Engine.h"
 #include "../Engine/Object.h"
 #include "../Engine/Pathfinder.h"
+#include "Bank.h"
 #include "Map.h"
 
 struct eStats
@@ -31,14 +32,9 @@ public:
 
 	void draw();
 	void updateTarget(int tX, int t, Map &m); 
-	void updatePath(Map &m);
-	bool reduceHealth(int h, Map &m);
-
-	int getNextMove()const;
-	int getSpeed()const;
-	eStats getStats()const;
-	Pathfinder getPath()const;
-
-	bool canWalk(Map &m);
+	void updatePath(Map &m, int x = -1, int y = -1);
+	bool reduceHealth(int h, Map &m, Bank &b);
+	
+	void move(Map &m);
 };
 

@@ -9,8 +9,7 @@
 
 class Board 
 {
-private:
-	unsigned int eTimer;			
+private:			
 	int level;
 
 public:	
@@ -25,10 +24,8 @@ public:
 	TowerHandler towerHandler;
 	EnemyHandler enemyHandler;
 
-	void deselectObject();
-
 	void setup(Engine &e, std::string g);
-	int getInput(input k, Cursor &c, Notification& n);
+	void getInput(input k, Cursor &c, Notification& n);
 	void update();
 	void draw();
 };

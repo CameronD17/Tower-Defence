@@ -48,14 +48,14 @@ private:
 	void calcPath();
 
 	int openListSize, parentXval, parentYval, startX, startY, targetX, targetY;
-	char terrain[BOARD_WIDTH][BOARD_HEIGHT];
-	int openList[BOARD_WIDTH*BOARD_HEIGHT + 2];
-	int whichList[BOARD_WIDTH + 1][BOARD_HEIGHT + 1];
-	int openX[BOARD_WIDTH*BOARD_HEIGHT + 2];
-	int openY[BOARD_WIDTH*BOARD_HEIGHT + 2];
-	int parentX[BOARD_WIDTH + 1][BOARD_HEIGHT + 1];
-	int parentY[BOARD_WIDTH + 1][BOARD_HEIGHT + 1];
-	int Fcost[BOARD_WIDTH*BOARD_HEIGHT + 2];
-	int Gcost[BOARD_WIDTH + 1][BOARD_HEIGHT + 1];
+	char terrain[BOARD_TILE_W][BOARD_TILE_H];
+	int openList[BOARD_TILE_W*BOARD_TILE_H + 2];
+	int whichList[BOARD_TILE_W + 1][BOARD_TILE_H + 1];
+	int openX[BOARD_TILE_W*BOARD_TILE_H + 2];
+	int openY[BOARD_TILE_W*BOARD_TILE_H + 2];
+	int parentX[BOARD_TILE_W + 1][BOARD_TILE_H + 1];
+	int parentY[BOARD_TILE_W + 1][BOARD_TILE_H + 1];
+	int Fcost[BOARD_TILE_W*BOARD_TILE_H + 2];
+	int Gcost[BOARD_TILE_W + 1][BOARD_TILE_H + 1];
 };
 

@@ -3,6 +3,7 @@
 #include "Bullet.h"
 #include "Enemy.h"
 #include "Map.h"
+#include "Bank.h"
 
 struct tStats
 {
@@ -12,15 +13,16 @@ struct tStats
 class Tower : public Object
 {
 private:
+	Engine engine;
 	tStats stats;
 
 public:
 	Tower() : Object(){};
 	Tower(int x, int y) : Object(){};
-	Tower(int x, int y, tStats t, int id, Map &m);
+	Tower(Engine &e, int x, int y, int t, int id, Map &m);
 	~Tower();
 
-	void update(Map &m, std::vector<Enemy*> &enemies);
+	void update(Map &m, Bank &b, std::vector<Enemy*> &enemies);
 
 	tStats getStats()const;
 	void incrementKills();

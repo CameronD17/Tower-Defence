@@ -10,6 +10,9 @@ ResourceManager::ResourceManager()
 
 ResourceManager::~ResourceManager(void)
 {
+	images.clear();
+	sounds.clear();
+	fonts.clear();
 }
 
 

@@ -37,7 +37,7 @@ int MainMenuScreen::getInput()
 			break;
 
 		case 2:		// Skirmish PLACEHOLDER
-			skirmish.select();
+			skirmish.selected = skirmish.selected ? false : true;
 			break;
 
 		case 3:		// Achievements PLACEHOLDER
@@ -83,6 +83,7 @@ void MainMenuScreen::draw()
 	engine.graphics.clear();
 
 	drawButtons();
+
 	skirmish.draw();
 
 	engine.graphics.update();
@@ -90,7 +91,7 @@ void MainMenuScreen::draw()
 
 void MainMenuScreen::drawButtons()
 {
-	engine.graphics.renderText((WINDOW_WIDTH / 2 ) - 220, BORDER_SIZE, "Tower Defence", EXTRA_LARGE, 255, 255, 255, "imagine");
+	engine.graphics.renderText((WINDOW_WIDTH / 2) - 220, BORDER_SIZE, "Tower Defence", EXTRA_LARGE, 255, 255, 255, "imagine");
 
 	if (focused)
 	{
@@ -138,7 +139,7 @@ int MainMenuScreen::update()
 	{	
 		focused = false;
 		draw();
-		state = skirmish.update();
+		state = skirmish.getInput();
 		if (state == EXIT_CURRENT_STATE)
 		{
 			skirmish.resetValues();

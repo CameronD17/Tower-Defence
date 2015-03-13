@@ -27,8 +27,8 @@ private:
 
 public:	
 	EnemyHandler(void);
+	~EnemyHandler(void);
 
-	//eStats selectedStats;
 	bool autolaunch;
 	
 	void launch(Map &m);
@@ -37,11 +37,11 @@ public:
 	void nextWave();
 	void updatePaths(int x, int y, Map &m);
 	void updateTargets(Map &m);
+	void update(Map &m);
 	void destroy();
 
 	std::vector<Enemy*>  enemies;
 	std::vector<Wave>    waves;
-	//bool selected;
 	int waveCount;
 
 	void init(Engine &e, Map &m, std::string g);

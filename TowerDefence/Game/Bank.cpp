@@ -15,10 +15,10 @@ void Bank::draw()
 
 	// Top area
 	creditText << "Credit: " << getCredit();
-	engine.graphics.renderText(SIDEBAR_X + BLOCK_SIZE, BORDER_SIZE / 2, creditText.str(), LARGE, 255, 255, 255, "bombardier");
+	engine.graphics.renderText(SIDEBAR_X + TILE_SIZE, BORDER_SIZE / 2, creditText.str(), LARGE, 255, 255, 255, "bombardier");
 
 	scoreText << "Score: " << getScore();
-	engine.graphics.renderText(SIDEBAR_X + BLOCK_SIZE, 180, scoreText.str(), LARGE, 255, 255, 255, "bombardier");
+	engine.graphics.renderText(SIDEBAR_X + TILE_SIZE, 180, scoreText.str(), LARGE, 255, 255, 255, "bombardier");
 
 }
 

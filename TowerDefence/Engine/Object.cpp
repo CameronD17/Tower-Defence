@@ -89,7 +89,7 @@ void Object::setTexture(SDL_Texture* t)
 	texture = t;
 }
 
-void Object::setDeleted(bool d)
+void Object::destroy()
 {
-	this->deleted = d;
+	this->deleted = true;
 }

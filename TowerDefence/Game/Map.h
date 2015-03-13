@@ -15,7 +15,7 @@ class Map
 {
 private:
 	Engine engine;
-	Tile tiles[BOARD_WIDTH][BOARD_HEIGHT];
+	Tile tiles[BOARD_TILE_W][BOARD_TILE_H];
 	bool loadMapFromFile(std::string filename);
 
 public:

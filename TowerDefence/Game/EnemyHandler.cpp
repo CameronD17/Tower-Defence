@@ -1,6 +1,13 @@
 #include "EnemyHandler.h"
 
 EnemyHandler::EnemyHandler(void){}
+
+EnemyHandler::~EnemyHandler(void)
+{
+	waves.clear();
+	enemies.clear();
+	awaitinglaunch.clear();
+}
 	
 void EnemyHandler::init(Engine &e, Map &m, std::string game)
 {
@@ -36,7 +43,7 @@ bool EnemyHandler::loadEnemiesFromFile(Map &m, std::string filename)
 			for (int i = 0; i < size; i++)
 			{
 				enemyCount++;
-				Enemy * enemy = new Enemy(engine, m.startX - BLOCK_SIZE, m.startY - BLOCK_SIZE, type, m.targetX, m.targetY, level, m, enemyCount);
+				Enemy * enemy = new Enemy(engine, m.startX - TILE_SIZE, m.startY - TILE_SIZE, type, m.targetX, m.targetY, level, m, enemyCount);
 				awaitinglaunch.push_back(enemy);
 			}
 			waves.push_back({ size, type, level, isBoss });
@@ -54,35 +61,12 @@ void EnemyHandler::draw()
 {
 	for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
 	{
-		/*if (selected && (*e)->getID() == selectedStats.id)
-		{
-			engine.graphics.drawRectangleOL((*e)->getX() - 1, (*e)->getY() - 1, BLOCK_SIZE + 2, BLOCK_SIZE + 2, 255, 255, 255);
-		}*/
-
 		(*e)->draw();
 	}
 
-	/*if (selected)
-	{
-		std::stringstream IDText, healthText, mHealthText, valueText, bountyText;
-		int statsStartX = SIDEBAR_X + BLOCK_SIZE;
-		int statsStartY = STATS_Y + BLOCK_SIZE;
-
-		IDText << "Enemy ID: " << selectedStats.id;
-		engine.graphics.renderText(statsStartX, statsStartY, IDText.str(), SMALL, 255, 0, 0, "anonymous");
-		healthText << "Current Health: " << selectedStats.currentHealth;
-		engine.graphics.renderText(statsStartX, statsStartY + BLOCK_SIZE, healthText.str(), SMALL, 255, 0, 0, "anonymous");
-		mHealthText << "Max Health: " << selectedStats.maxHealth;
-		engine.graphics.renderText(statsStartX, statsStartY + (BLOCK_SIZE * 2), mHealthText.str(), SMALL, 255, 0, 0, "anonymous");
-		valueText << "Value: " << selectedStats.value << " points.";
-		engine.graphics.renderText(statsStartX, statsStartY + (BLOCK_SIZE * 3), valueText.str(), SMALL, 255, 0, 0, "anonymous");
-		bountyText << "Bounty: " << selectedStats.bounty << " credits.";
-		engine.graphics.renderText(statsStartX, statsStartY + (BLOCK_SIZE * 4), bountyText.str(), SMALL, 255, 0, 0, "anonymous");
-	}*/
-
 	std::stringstream wave;
 	wave << (waveCount - waves.size() + 1) << " / " << waveCount;
-	engine.graphics.renderText(SIDEBAR_X + BLOCK_SIZE, STATS_Y - BLOCK_SIZE, wave.str(), SMALL);
+	engine.graphics.renderText(SIDEBAR_X + TILE_SIZE, STATS_Y - TILE_SIZE, wave.str(), SMALL);
 
 	if (autolaunch)
 	{
@@ -99,23 +83,40 @@ void EnemyHandler::draw()
 	}
 }
 
+void EnemyHandler::update(Map &m)
+{
+	// Destroy any enemies that have been killed, and release new enemies into the field
+	destroy();
+	launch(m);
+
+	// Update all enemies
+	for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
+	{
+		(*e)->move(m);
+	}
+}
+
 void EnemyHandler::launch(Map &m)
 {
-	if (autolaunch && waveTimer <= SDL_GetTicks()) nextWave();
-
-	if (waves.back().numberOfEnemies == launched && nextWaveWaiting)
+	if (SDL_GetTicks() > timer)
 	{
-		waves.pop_back();
-		nextWaveWaiting = false;
-		launched = 0;
-	}
+		if (autolaunch && waveTimer <= SDL_GetTicks()) nextWave();
 
-	if (waves.back().numberOfEnemies > launched)
-	{
-		enemies.push_back(awaitinglaunch.back());
-		awaitinglaunch.pop_back(); 
-		launched++;
-		timer = SDL_GetTicks() + ENEMY_TIMER;
+		if (waves.back().numberOfEnemies == launched && nextWaveWaiting)
+		{
+			waves.pop_back();
+			nextWaveWaiting = false;
+			launched = 0;
+			timer = SDL_GetTicks() + ENEMY_TIMER;
+		}
+
+		if (waves.back().numberOfEnemies > launched)
+		{
+			enemies.push_back(awaitinglaunch.back());
+			awaitinglaunch.pop_back(); 
+			launched++;
+			timer = SDL_GetTicks() + ENEMY_TIMER;
+		}
 	}
 }
 
@@ -128,7 +129,7 @@ void EnemyHandler::launch(Cursor &cursor, Map &m)
 
 void EnemyHandler::nextWave()
 {
-	if (waves.back().numberOfEnemies == launched)
+	if (waves.back().numberOfEnemies == launched && waves.size() > 0)
 	{
 		if (autolaunch)
 		{
@@ -163,32 +164,12 @@ void EnemyHandler::updatePaths(int x, int y, Map &m)
 {
 	for (std::vector<Enemy*>::iterator e = awaitinglaunch.begin(); e != awaitinglaunch.end(); ++e)
 	{
-		for (unsigned i = (*e)->getPath().getPathSize(); i > 0; i--)
-		{
-			int pathX = ((*e)->getPath().getXAt(i)*BLOCK_SIZE) + BORDER_SIZE;
-			int pathY = ((*e)->getPath().getYAt(i)*BLOCK_SIZE) + BORDER_SIZE;
-
-			if (pathX == x && pathY == y)
-			{
-				(*e)->updatePath(m);
-				break;
-			}
-		}
+		(*e)->updatePath(m, x, y);
 	}
 
 	for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
 	{
-		for (unsigned i = (*e)->getPath().getPathSize(); i > 0; i--)
-		{
-			int pathX = ((*e)->getPath().getXAt(i)*BLOCK_SIZE) + BORDER_SIZE;
-			int pathY = ((*e)->getPath().getYAt(i)*BLOCK_SIZE) + BORDER_SIZE;
-
-			if (pathX == x && pathY == y)
-			{
-				(*e)->updatePath(m);
-				break;
-			}
-		}
+		(*e)->updatePath(m, x, y);
 	}
 }
 
@@ -213,7 +194,7 @@ void EnemyHandler::destroy()
 		{
 			delete *e;
 			e = enemies.erase(e);
-		}
+		} 
 		else e++;
 	}
 }

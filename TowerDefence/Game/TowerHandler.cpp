@@ -6,11 +6,12 @@ void TowerHandler::init(Engine &e, Map &m)
 {
 	engine = e;
 	towers.clear();
-	for (int x = 0; x < BOARD_WIDTH; x++)
+	counter = 0;
+	for (int x = 0; x < BOARD_TILE_W; x++)
 	{
-		for (int y = 0; y < BOARD_HEIGHT; y++)
+		for (int y = 0; y < BOARD_TILE_H; y++)
 		{
-			terrain[x][y] = m.getTerrain(x*BLOCK_SIZE, y*BLOCK_SIZE);
+			terrain[x][y] = m.getTerrain(x * TILE_SIZE, y * TILE_SIZE);
 		}
 	}
 }
@@ -21,16 +22,16 @@ void TowerHandler::draw()
 	{
 		if (selected && (*t)->getID() == selectedStats.id)
 		{
-			engine.graphics.drawRectangleOL((*t)->getX() - 1, (*t)->getY() - 1, BLOCK_SIZE + 2, BLOCK_SIZE + 2, 255, 255, 255);
+			engine.graphics.drawRectangleOL((*t)->getX() - 1, (*t)->getY() - 1, TILE_SIZE + 2, TILE_SIZE + 2, 255, 255, 255);
 		}
 
 		if ((*t)->hasEnemy)
 		{
-			engine.graphics.drawRectangle((*t)->getX(), (*t)->getY(), BLOCK_SIZE, BLOCK_SIZE, 255, 0, 255);
+			engine.graphics.drawRectangle((*t)->getX(), (*t)->getY(), TILE_SIZE, TILE_SIZE, 255, 0, 255);
 		}
 		else
 		{
-			engine.graphics.drawRectangle((*t)->getX(), (*t)->getY(), BLOCK_SIZE, BLOCK_SIZE, 39, 64, 139);
+			engine.graphics.drawRectangle((*t)->getX(), (*t)->getY(), TILE_SIZE, TILE_SIZE, 39, 64, 139);
 		}
 
 		if ((*t)->getStats().level > 0)
@@ -61,17 +62,27 @@ void TowerHandler::draw()
 	if (selected)
 	{
 		std::stringstream IDText, damageText, rangeText, killsText;
-		int statsStartX = SIDEBAR_X + BLOCK_SIZE;
-		int statsStartY = STATS_Y + BLOCK_SIZE;
+		int statsStartX = SIDEBAR_X + TILE_SIZE;
+		int statsStartY = STATS_Y + TILE_SIZE;
 
 		IDText << "Tower ID: " << selectedStats.id;
 		engine.graphics.renderText(statsStartX, statsStartY, IDText.str(), SMALL, 255, 255, 255, "anonymous");
 		damageText << "Damage: " << selectedStats.damage;
-		engine.graphics.renderText(statsStartX, statsStartY + BLOCK_SIZE, damageText.str(), SMALL, 255, 255, 255, "anonymous");
-		rangeText << "Range: " << (selectedStats.range / BLOCK_SIZE) << " tiles.";
-		engine.graphics.renderText(statsStartX, statsStartY + (BLOCK_SIZE * 2), rangeText.str(), SMALL, 255, 255, 255, "anonymous");
+		engine.graphics.renderText(statsStartX, statsStartY + TILE_SIZE, damageText.str(), SMALL, 255, 255, 255, "anonymous");
+		rangeText << "Range: " << (selectedStats.range / TILE_SIZE) << " tiles.";
+		engine.graphics.renderText(statsStartX, statsStartY + (TILE_SIZE * 2), rangeText.str(), SMALL, 255, 255, 255, "anonymous");
 		killsText << "Total Kills: " << selectedStats.kills;
-		engine.graphics.renderText(statsStartX, statsStartY + (BLOCK_SIZE * 3), killsText.str(), SMALL, 255, 255, 255, "anonymous");
+		engine.graphics.renderText(statsStartX, statsStartY + (TILE_SIZE * 3), killsText.str(), SMALL, 255, 255, 255, "anonymous");
+	}
+}
+
+void TowerHandler::update(Map &m, Bank &b, std::vector<Enemy*> &e)
+{
+	destroy();
+
+	for (std::vector<Tower*>::iterator t = towers.begin(); t != towers.end(); ++t)
+	{
+		(*t)->update(m, b, e);
 	}
 }
 
@@ -83,7 +94,7 @@ bool TowerHandler::build(Map &map, Cursor &cursor, Bank &bank, Notification &not
 	{		
 		if (!(x == map.startX && y == map.startY))										// b) Is the player trying to build on the enemy spawn point?
 		{			
-			if (bank.getCredit() >= cursor.getStats().cost)								// c) Does the player have enough credit to purchase the tower?
+			if (bank.getCredit() >= cursor.getCost())									// c) Does the player have enough credit to purchase the tower?
 			{
 				char terrainReset = map.getTerrain(x, y);
 				Pathfinder p;
@@ -92,7 +103,7 @@ bool TowerHandler::build(Map &map, Cursor &cursor, Bank &bank, Notification &not
 				if (p.findPath(map.startX, map.startY, map.targetX, map.targetY, map))	// d) Does the new tower completely block a route from enemy spawn to player base?
 				{
 					counter++;
-					Tower * t = new Tower(cursor.getX(), cursor.getY(), cursor.getStats(), counter, map);
+					Tower * t = new Tower(engine, cursor.getX(), cursor.getY(), cursor.getAction(), counter, map);
 					map.setTower(x, y, counter);
 					towers.push_back(t);
 					bank.decreaseCredit(t->getStats().cost);
@@ -123,27 +134,27 @@ bool TowerHandler::build(Map &map, Cursor &cursor, Bank &bank, Notification &not
 	return false;
 }
 
-void TowerHandler::sell(Map &map, int id, Bank &bank, Notification &notification)
+void TowerHandler::sell(Map &map, Bank &bank, Notification &notification)
 {	
 	for (std::vector<Tower*>::iterator t = towers.begin(); t != towers.end(); ++t)
 	{
-		if ((*t)->getID() == id)
+		if ((*t)->getID() == selectedStats.id)
 		{
 			map.setTower((*t)->getX() - BORDER_SIZE, (*t)->getY() - BORDER_SIZE, 0);
-			map.setTerrain((*t)->getX() - BORDER_SIZE, (*t)->getY() - BORDER_SIZE, terrain[((*t)->getX() - BORDER_SIZE) / BLOCK_SIZE][((*t)->getY() - BORDER_SIZE) / BLOCK_SIZE]);
+			map.setTerrain((*t)->getX() - BORDER_SIZE, (*t)->getY() - BORDER_SIZE, terrain[((*t)->getX() - BORDER_SIZE) / TILE_SIZE][((*t)->getY() - BORDER_SIZE) / TILE_SIZE]);
 			bank.increaseCredit((*t)->getStats().cost / 2);
-			(*t)->setDeleted(true);
+			(*t)->destroy();
 			notification.set("Tower sold!", SUCCESS);
 			selected = false;
 		}
 	}
 }
 
-void TowerHandler::upgrade(int id, Bank &bank, Notification &notification)
+void TowerHandler::upgrade(Bank &bank, Notification &notification)
 {
 	for (std::vector<Tower*>::iterator t = towers.begin(); t != towers.end(); ++t)
 	{
-		if ((*t)->getID() == id)
+		if ((*t)->getID() == selectedStats.id)
 		{
 			if ((*t)->getStats().level < (*t)->getStats().maxLevel)
 			{

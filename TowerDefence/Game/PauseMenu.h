@@ -10,18 +10,16 @@ private:
 	Engine engine;
 	Cursor cursor;
 	ButtonHandler buttonHandler;
-	std::vector<Button*> buttons;
 
 public:	
 	PauseMenu();	
 	~PauseMenu();
+	
+	void setup(Engine &e, Cursor &c);
 
-	bool paused;
 	void pause();
+	bool paused;
 
 	int getInput();
-	int update();
 	void draw();
-
-	void setup(Engine &e, Cursor &c);
 };

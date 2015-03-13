@@ -11,8 +11,6 @@ class Sidebar
 private:
 	Engine engine;
 	ButtonHandler buttonHandler;
-	void toggleTowerSelectionButtonVisibility(bool b);
-	void toggleAutoLaunchButtons(bool b);
 	
 public:	
 	Sidebar(void);

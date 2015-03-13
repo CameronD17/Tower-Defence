@@ -12,7 +12,7 @@ private:
 	Cursor cursor;
 	ButtonHandler buttonHandler;
 
-	int getInput();
+	int whichMap;
 	void handleMapButtonClick();
 	void handleMapButtonHover();
 
@@ -21,12 +21,9 @@ public:
 	~MainMenuSkirmishSubMenu();
 	void setup(Engine &e, Cursor &c);
 
-	int whichMap;
-
-	void select();
 	bool selected;
 
-	int update();
+	int getInput();
 	void draw();
 
 	void resetValues();

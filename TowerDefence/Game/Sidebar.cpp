@@ -16,28 +16,28 @@ int Sidebar::getInput(input k, Cursor &cursor, Board &board, Notification &notif
 
 		if (button == "Sell")
 		{
-			board.towerHandler.sell(board.map, board.towerHandler.selectedStats.id, board.bank, notification);
+			board.towerHandler.sell(board.map, board.bank, notification);
 		}
 		else if (button == "Upgrade")
 		{
-			board.towerHandler.upgrade(board.towerHandler.selectedStats.id, board.bank, notification);
+			board.towerHandler.upgrade(board.bank, notification);
 		}
 		else if (button == "Laser1" || button == "Laser2" || button == "Laser3" || button == "Laser4" || button == "Laser5" 
 			|| button == "Laser6" || button == "Laser7" || button == "Laser8" || button == "Laser9" || button == "Laser0")
 		{
-			board.deselectObject();
+			board.towerHandler.selected = false;
 			buttonHandler.selectButton(button);
 			cursor.setAction(TOWER_1);
 		}
 		else if (button == "Change Target")
 		{
-			board.deselectObject();
+			board.towerHandler.selected = false;
 			buttonHandler.selectButton(button);
 			cursor.setAction(CHANGE_TARGET);
 		}
 		else if (button == "Launch Enemy")
 		{
-			board.deselectObject();
+			board.towerHandler.selected = false;
 			buttonHandler.selectButton(button);
 			cursor.setAction(LAUNCH_ENEMY);
 		}
@@ -56,7 +56,7 @@ int Sidebar::getInput(input k, Cursor &cursor, Board &board, Notification &notif
 		}
 		else if (button == "Clear")
 		{
-			board.deselectObject();
+			board.towerHandler.selected = false;
 			buttonHandler.deselectAllButtons();
 			cursor.setAction(CLEAR);
 		}
@@ -79,7 +79,7 @@ int Sidebar::getInput(input k, Cursor &cursor, Board &board, Notification &notif
 		}
 		else
 		{
-			board.deselectObject();
+			board.towerHandler.selected = false;
 			buttonHandler.deselectAllButtons();
 			cursor.setAction(0);
 		}
@@ -95,13 +95,31 @@ int Sidebar::getInput(input k, Cursor &cursor, Board &board, Notification &notif
 
 void Sidebar::update(Board &b)
 {
-	toggleTowerSelectionButtonVisibility(b.towerHandler.selected);
-	toggleAutoLaunchButtons(b.enemyHandler.autolaunch);
+	// Toggle selected tower buttons
+	if (b.towerHandler.selected)
+	{
+		buttonHandler.findButtonByName("Sell")->show();
+		buttonHandler.findButtonByName("Upgrade")->show();
+	}
+	else
+	{
+		buttonHandler.findButtonByName("Sell")->hide();
+		buttonHandler.findButtonByName("Upgrade")->hide();
+	}
+
+	// Toggle Autolaunch buttons
+	if (b.enemyHandler.autolaunch)
+	{
+		buttonHandler.findButtonByName("Next Wave")->hide();
+	}
+	else
+	{
+		buttonHandler.findButtonByName("Next Wave")->show();
+	}
 }
 
 void Sidebar::draw()
 {
-	// Divider
 	engine.graphics.drawLine(SIDEBAR_X, STATS_Y, WINDOW_WIDTH, STATS_Y);
 
 	for (std::vector<Button*>::iterator b = buttonHandler.buttons.begin(); b != buttonHandler.buttons.end(); ++b)
@@ -129,36 +147,10 @@ void Sidebar::draw()
 	if (buttonHandler.getButtonSelected())
 	{
 		std::stringstream buttonText;
-		int enemyStatsStartX = SIDEBAR_X + BLOCK_SIZE;
-		int enemyStatsStartY = STATS_Y + BLOCK_SIZE;
+		int enemyStatsStartX = SIDEBAR_X + TILE_SIZE;
+		int enemyStatsStartY = STATS_Y + TILE_SIZE;
 
 		buttonText << "Button Selected: " << buttonHandler.getSelectedButton()->text;
 		engine.graphics.renderText(enemyStatsStartX, enemyStatsStartY, buttonText.str(), SMALL, 255, 0, 0, "anonymous");
-	}
-}
-
-void Sidebar::toggleTowerSelectionButtonVisibility(bool towerSelected)
-{
-	if (towerSelected)
-	{
-		buttonHandler.findButtonByName("Sell")->show();
-		buttonHandler.findButtonByName("Upgrade")->show();
-	}
-	else
-	{
-		buttonHandler.findButtonByName("Sell")->hide();
-		buttonHandler.findButtonByName("Upgrade")->hide();
-	}
-}
-
-void Sidebar::toggleAutoLaunchButtons(bool autoLaunch)
-{
-	if (autoLaunch)
-	{
-		buttonHandler.findButtonByName("Next Wave")->hide();
-	}
-	else
-	{
-		buttonHandler.findButtonByName("Next Wave")->show();
 	}
 }

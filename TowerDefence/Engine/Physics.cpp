@@ -23,7 +23,7 @@ bool Physics::move(Object *o, int dir, int amt)
             break;
 
         case UP_RIGHT: 
-			if((o->getY() >= BORDER_SIZE) && (o->getY() <= (BOARD_WIDTH * BLOCK_SIZE) + BORDER_SIZE))
+			if((o->getY() >= BORDER_SIZE) && (o->getY() <= (BOARD_WIDTH) + BORDER_SIZE))
 			{
 				o->setY(o->getY() - amt);
 				o->setX(o->getX() + amt);
@@ -32,7 +32,7 @@ bool Physics::move(Object *o, int dir, int amt)
             break;
 
         case RIGHT:
-			if(o->getX() + amt <= BOARD_WIDTH * BLOCK_SIZE)
+			if(o->getX() + amt <= BOARD_WIDTH)
 			{
 				o->setX(o->getX() + amt);
 				return true;
@@ -40,7 +40,7 @@ bool Physics::move(Object *o, int dir, int amt)
             break;
 
         case DOWN_RIGHT:
-			if((o->getY() <= (BOARD_HEIGHT * BLOCK_SIZE) + BORDER_SIZE) && (o->getX() <= (BOARD_WIDTH * BLOCK_SIZE) + BORDER_SIZE))
+			if((o->getY() <= (BOARD_HEIGHT) + BORDER_SIZE) && (o->getX() <= (BOARD_WIDTH) + BORDER_SIZE))
 			{
 				o->setX(o->getX() + amt);
 				o->setY(o->getY() + amt);
@@ -49,7 +49,7 @@ bool Physics::move(Object *o, int dir, int amt)
             break;
 
 		case DOWN:	
-			if(o->getY() + amt <= BOARD_HEIGHT * BLOCK_SIZE)
+			if(o->getY() + amt <= BOARD_HEIGHT)
 			{
 				o->setY(o->getY() + amt);	
 				return true;
@@ -57,7 +57,7 @@ bool Physics::move(Object *o, int dir, int amt)
             break;
 
         case DOWN_LEFT:
-			if((o->getY() <= (BOARD_HEIGHT * BLOCK_SIZE) + BORDER_SIZE) && (o->getX() >= BORDER_SIZE))
+			if((o->getY() <= (BOARD_HEIGHT) + BORDER_SIZE) && (o->getX() >= BORDER_SIZE))
 			{
 				o->setY(o->getY() + amt);
 				o->setX(o->getX() - amt);
@@ -122,11 +122,11 @@ bool Physics::nonUniformMove(Object *o, float dx, float dy)
 
 bool Physics::impreciseCollision(Object *a, Object *b)
 {
-	float aX = (float)a->getX() + BLOCK_SIZE/2;		// Makes the enemy coordinates into the
-	float aY = (float)a->getY() + BLOCK_SIZE/2;		// midpoint rather than the top left corner
+	float aX = (float)a->getX() + TILE_SIZE/2;		// Makes the enemy coordinates into the
+	float aY = (float)a->getY() + TILE_SIZE/2;		// midpoint rather than the top left corner
 	float bX = (float)b->getX();
 	float bY = (float)b->getY();
 	
 	// Distance of a line formula is (root)(((x1-x2)^2) + ((y1-y2)^2). Not using square root, as it's not efficient.
-	return (((aX - bX) * (aX - bX)) + ((aY - bY) * (aY - bY))) <= BLOCK_SIZE;
+	return (((aX - bX) * (aX - bX)) + ((aY - bY) * (aY - bY))) <= TILE_SIZE;
 }

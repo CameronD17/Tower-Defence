@@ -74,7 +74,7 @@ void Enemy::initialise(int level, int x, int y, int tX, int tY, int t, Map &m)
 	}
 
 	stepsTaken = 0;
-	stepsPerSquare = (int)(BLOCK_SIZE / stats.speed);
+	stepsPerSquare = (int)(TILE_SIZE / stats.speed);
 
 	m.setEnemy(x - BORDER_SIZE, y - BORDER_SIZE, stats.id);
 }
@@ -84,38 +84,39 @@ void Enemy::draw()
 	switch (stats.type)
 	{
 	case BASIC_SOLDIER: default:
-		engine.graphics.drawRectangle(getX() + 4, getY() + 4, BLOCK_SIZE - 8, BLOCK_SIZE - 8, 237, 28, 36);
+		engine.graphics.drawRectangle(getX() + 4, getY() + 4, TILE_SIZE - 8, TILE_SIZE - 8, 237, 28, 36);
 		break; 
 	case MOTORBIKE:
-		engine.graphics.drawRectangle(getX(), getY(), BLOCK_SIZE, BLOCK_SIZE, 255, 0, 0);
+		engine.graphics.drawRectangle(getX(), getY(), TILE_SIZE, TILE_SIZE, 255, 0, 0);
 		break;
 	case JEEP:
-		engine.graphics.drawRectangle(getX(), getY(), BLOCK_SIZE, BLOCK_SIZE, 255, 165, 0);
+		engine.graphics.drawRectangle(getX(), getY(), TILE_SIZE, TILE_SIZE, 255, 165, 0);
 		break;
 	case BASIC_TANK:
-		engine.graphics.drawRectangle(getX(), getY(), BLOCK_SIZE, BLOCK_SIZE, 124, 252, 0);
+		engine.graphics.drawRectangle(getX(), getY(), TILE_SIZE, TILE_SIZE, 124, 252, 0);
 		break;
 	case SUPER_SOLDIER:
-		engine.graphics.drawRectangle(getX() + 4, getY() + 4, BLOCK_SIZE - 8, BLOCK_SIZE - 8, 128, 0, 128);
+		engine.graphics.drawRectangle(getX() + 4, getY() + 4, TILE_SIZE - 8, TILE_SIZE - 8, 128, 0, 128);
 		break;
 	case SUPER_TANK:
-		engine.graphics.drawRectangle(getX(), getY(), BLOCK_SIZE, BLOCK_SIZE, 0, 100, 0);
+		engine.graphics.drawRectangle(getX(), getY(), TILE_SIZE, TILE_SIZE, 0, 100, 0);
 		break;
 	case GHOST_SOLDIER:
-		engine.graphics.drawRectangle(getX() + 4, getY() + 4, BLOCK_SIZE - 8, BLOCK_SIZE - 8, 139, 137, 137);
+		engine.graphics.drawRectangle(getX() + 4, getY() + 4, TILE_SIZE - 8, TILE_SIZE - 8, 139, 137, 137);
 		break;
 	}
 
-	engine.graphics.drawRectangle(getX(), getY(), (int)((stats.currentHealth / stats.maxHealth) * BLOCK_SIZE), 2, 0, 255, 0);
+	engine.graphics.drawRectangle(getX(), getY(), (int)((stats.currentHealth / stats.maxHealth) * TILE_SIZE), 2, 0, 255, 0);
 }
 
-bool Enemy::reduceHealth(int i, Map &m)
+bool Enemy::reduceHealth(int i, Map &m, Bank &bank)
 {
 	stats.currentHealth -= i;
 	if (stats.currentHealth <= 0)
 	{
-		setDeleted(true);
+		destroy();
 		releaseTiles(m);
+		bank.increaseScore(stats.bounty);
 		return true;
 	}
 	return false;
@@ -123,8 +124,8 @@ bool Enemy::reduceHealth(int i, Map &m)
 
 void Enemy::updateTarget(int tX, int tY, Map &m)
 {
-	setX(getX() - getX() % BLOCK_SIZE);
-	setY(getY() - getY() % BLOCK_SIZE);
+	setX(getX() - getX() % TILE_SIZE);
+	setY(getY() - getY() % TILE_SIZE);
 	stats.targetX = tX, stats.targetY = tY;
 
 	stepsTaken = 0;
@@ -132,61 +133,56 @@ void Enemy::updateTarget(int tX, int tY, Map &m)
 	astar.findPath(getX(), getY(), tX, tY, m);
 }
 
-void Enemy::updatePath(Map &m)
+void Enemy::updatePath(Map &m, int x, int y)
 {
-	setX(getX() - getX() % BLOCK_SIZE);
-	setY(getY() - getY() % BLOCK_SIZE);
+	if (x == -1 && y == -1)
+	{
+		setX(getX() - getX() % TILE_SIZE);
+		setY(getY() - getY() % TILE_SIZE);
+		stepsTaken = 0;
+		astar.findPath(getX(), getY(), stats.targetX, stats.targetY, m);
+	}
+	else
+	{
+		for (unsigned i = astar.getPathSize(); i > 0; i--)
+		{
+			int pathX = (astar.getXAt(i) * TILE_SIZE) + BORDER_SIZE;
+			int pathY = (astar.getYAt(i) * TILE_SIZE) + BORDER_SIZE;
 
-	stepsTaken = 0;
-
-	astar.findPath(getX(), getY(), stats.targetX, stats.targetY, m);
+			if (pathX == x && pathY == y)
+			{
+				setX(getX() - getX() % TILE_SIZE);
+				setY(getY() - getY() % TILE_SIZE);
+				stepsTaken = 0;
+				astar.findPath(getX(), getY(), stats.targetX, stats.targetY, m);
+				break;
+			}
+		}
+	}
 }
 
-int Enemy::getSpeed()const
+void Enemy::move(Map &map)
 {
-	return stats.speed;
-}
-
-int Enemy::getNextMove()const
-{
-	return  astar.getNextMove();
-}
-
-eStats Enemy::getStats()const
-{
-	return stats;
-}
-
-Pathfinder Enemy::getPath()const
-{
-	return astar;
-}
-
-bool Enemy::canWalk(Map &map)
-{
-	// Check if you're there first to avoid unnecessary calculations
+	// Check if you've arrived first to avoid unnecessary calculations
 	if (stats.targetX == getX() && stats.targetY == getY())
 	{
-		setDeleted(true);
+		destroy();
 		releaseTiles(map);
-		return false;
+		return;
 	}
 
 	// Hey, you've committed to moving into the next square. Trust your instincts.
 	if (stepsTaken > 0 && stepsTaken < stepsPerSquare)
 	{
 		stepsTaken++;
-		return true;
+		engine.physics.move(this, astar.getNextMove(), stats.speed);
 	}
 
 	// Ooh, time to try and move into a new square. Just make sure you haven't reached the end of your path though. That would make everyone look silly.
-	else if (getNextMove() != 0)
+	else if (astar.getNextMove() != 0)
 	{
 		// Okay, we haven't reached the base yet. Pop-off the path coordinates of the current tile to access the next tile
-		if (stepsTaken == stepsPerSquare)
-		{
-			astar.popBack();			
-		}
+		if (stepsTaken == stepsPerSquare)	astar.popBack();
 
 		// Let's make sure that the next square isn't occupied.
 		if (map.walkable(astar.getNextX(), astar.getNextY(), stats.id, astar.getNextMove()))
@@ -195,7 +191,7 @@ bool Enemy::canWalk(Map &map)
 			releaseTiles(map);
 			lockTiles(map);
 			stepsTaken = 1;	
-			return true;
+			engine.physics.move(this, astar.getNextMove(), stats.speed);
 		}
 		
 		// Well shit, we can't move. Is there some other way we can get around to the base?
@@ -203,20 +199,16 @@ bool Enemy::canWalk(Map &map)
 		else
 		{
 			releaseTiles(map);
-			updatePath(map);
-			return false;
+		//	updatePath(map);
 		}
 	}
-
-	// You've reached the end of your path!
-	return false;	
 }
 
 void Enemy::releaseTiles(Map &map)
 {
-	for (int x = getX() - (2 * BLOCK_SIZE); (x < getX() + (2 * BLOCK_SIZE)) && (x < BOARD_WIDTH * BLOCK_SIZE); x += BLOCK_SIZE)
+	for (int x = getX() - (2 * TILE_SIZE); (x < getX() + (2 * TILE_SIZE)) && (x < BOARD_WIDTH); x += TILE_SIZE)
 	{
-		for (int y = getY() - (2 * BLOCK_SIZE); (y < getY() + (2 * BLOCK_SIZE)) && (y < BOARD_HEIGHT * BLOCK_SIZE); y += BLOCK_SIZE)
+		for (int y = getY() - (2 * TILE_SIZE); (y < getY() + (2 * TILE_SIZE)) && (y < BOARD_HEIGHT); y += TILE_SIZE)
 		{
 			if (map.getEnemy(x, y) == stats.id)
 			{
@@ -228,8 +220,8 @@ void Enemy::releaseTiles(Map &map)
 
 void Enemy::lockTiles(Map &map)
 {
-	int thisX = getX() - (getX() % BLOCK_SIZE) - BORDER_SIZE;
-	int thisY = getY() - (getY() % BLOCK_SIZE) - BORDER_SIZE;
+	int thisX = getX() - (getX() % TILE_SIZE) - BORDER_SIZE;
+	int thisY = getY() - (getY() % TILE_SIZE) - BORDER_SIZE;
 	int otherX = thisX;
 	int otherY = thisY;	
 	int nextMove = astar.getNextMove();
@@ -243,32 +235,32 @@ void Enemy::lockTiles(Map &map)
 	switch (nextMove)
 	{
 	case UP: 
-		thisY -= BLOCK_SIZE;
+		thisY -= TILE_SIZE;
 		break;
 	case RIGHT:
-		thisX += BLOCK_SIZE;
+		thisX += TILE_SIZE;
 		break;
 	case DOWN:
-		thisY += BLOCK_SIZE;
+		thisY += TILE_SIZE;
 		break;
 	case LEFT:
-		thisX -= BLOCK_SIZE;
+		thisX -= TILE_SIZE;
 		break;
 	case UP_LEFT:
-		thisX -= BLOCK_SIZE;
-		thisY -= BLOCK_SIZE;
+		thisX -= TILE_SIZE;
+		thisY -= TILE_SIZE;
 		break;
 	case UP_RIGHT:
-		thisX += BLOCK_SIZE;
-		thisY -= BLOCK_SIZE;
+		thisX += TILE_SIZE;
+		thisY -= TILE_SIZE;
 		break;
 	case DOWN_RIGHT:
-		thisX += BLOCK_SIZE;
-		thisY += BLOCK_SIZE;
+		thisX += TILE_SIZE;
+		thisY += TILE_SIZE;
 		break;
 	case DOWN_LEFT:
-		thisX -= BLOCK_SIZE;
-		thisY += BLOCK_SIZE;
+		thisX -= TILE_SIZE;
+		thisY += TILE_SIZE;
 		break;
 	default:
 		break; 

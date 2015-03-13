@@ -19,16 +19,18 @@
 #define EXTRA_LARGE 50
 
 // Board constants
-#define BOARD_WIDTH 40
-#define BOARD_HEIGHT 30
-#define BLOCK_SIZE 24
+#define BOARD_TILE_W 40
+#define BOARD_TILE_H 30
+#define TILE_SIZE 24
+#define BOARD_WIDTH (BOARD_TILE_W * TILE_SIZE)
+#define BOARD_HEIGHT (BOARD_TILE_H * TILE_SIZE)
 #define BORDER_SIZE 24
-#define	BLOCK_COUNT (BOARD_WIDTH * BOARD_HEIGHT)					// 1200
+#define	BLOCK_COUNT (BOARD_TILE_W * BOARD_TILE_H)					// 1200
 
 // Sidebar constants
-#define SIDEBAR_X (BORDER_SIZE * 2) + (BOARD_WIDTH * BLOCK_SIZE)	// 1008
+#define SIDEBAR_X (BORDER_SIZE * 2) + BOARD_WIDTH	// 1008
 #define SIDEBAR_WIDTH (WINDOW_WIDTH - SIDEBAR_X)					// 358
-#define STATS_Y (((BOARD_HEIGHT*BLOCK_SIZE) / 4) * 3)				// 540
+#define STATS_Y ((BOARD_HEIGHT / 4) * 3)				// 540
 #define STATS_HEIGHT (WINDOW_HEIGHT - STATS_Y)						// 288
 
 // Notifications
@@ -78,15 +80,25 @@
 
 // Cursor values
 #define TOWER_1 1
+#define TOWER_1_COST 50
 #define TOWER_2 2
+#define TOWER_2_COST 75
 #define TOWER_3 3
+#define TOWER_3_COST 90
 #define TOWER_4 4
+#define TOWER_4_COST 60
 #define TOWER_5 5
+#define TOWER_5_COST 110
 #define TOWER_6 6
+#define TOWER_6_COST 25
 #define TOWER_7 7
+#define TOWER_7_COST 140
 #define TOWER_8 8
+#define TOWER_8_COST 175
 #define TOWER_9 9
+#define TOWER_9_COST 0
 #define TOWER_10 10
+#define TOWER_10_COST 0
 #define CLEAR 0
 #define LAUNCH_ENEMY 11
 #define CHANGE_TARGET 12

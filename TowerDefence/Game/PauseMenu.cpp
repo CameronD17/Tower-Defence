@@ -49,13 +49,6 @@ void PauseMenu::draw()
 	}
 }
 
-int PauseMenu::update()
-{	
-	int returning = getInput();
-
-	return returning;
-}
-
 int PauseMenu::getInput()
 {
 	input k = engine.interfaces.getInput();
@@ -110,12 +103,5 @@ int PauseMenu::getInput()
 
 void PauseMenu::pause()
 {
-	if (paused)
-	{
-		paused = false;
-	}
-	else
-	{
-		paused = true;
-	}
+	paused = paused ? false : true;
 }

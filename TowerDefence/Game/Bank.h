@@ -1,8 +1,6 @@
 #pragma once
 #include "../Engine/Constants.h"
 #include "../Engine/Engine.h"
-#include "Tower.h"
-#include "Cursor.h"
  
 class Bank 
 {
