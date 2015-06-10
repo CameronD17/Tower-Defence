@@ -1,23 +1,24 @@
 #pragma once
+#include "boost/smart_ptr.hpp"
 #include "../Engine/Object.h"
-#include "Enemy.h"
 #include "Map.h"
+#include"Enemy.h"
 
 class Bullet: public Object 
 {
 private:
-	int startX, startY, targetX, targetY, range, speed;
-	float angle, dX, dY;
-	bool hit;
+	int startX, startY, range;
+	float speed, dX, dY;
+	bool hitTarget;
 
 public:
 	Bullet();
-	Bullet(int x, int y, int range, Enemy* e);
+	Bullet(int x, int y, int range, int tX, int tY);
 	~Bullet();
 
 	float getDX();
 	float getDY();
-	bool hasHit();
+	bool hit();
 	
-	bool update(Enemy* e);
+	void update(boost::shared_ptr<Enemy> e);
 };

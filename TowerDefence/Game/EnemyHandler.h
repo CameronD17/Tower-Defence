@@ -1,4 +1,5 @@
 #pragma once
+#include "boost/smart_ptr.hpp"
 #include "../Engine/Constants.h"
 #include "../Engine/Engine.h"
 #include "Enemy.h"
@@ -18,12 +19,12 @@ class EnemyHandler
 {
 private:
 	Engine engine;
-	int enemyCount;
+	int enemyCount, waveCount;
 	bool loadEnemiesFromFile(Map &m, std::string filename);
 	int launched;
 	bool nextWaveWaiting;
 	unsigned int timer, waveTimer;
-	std::vector<Enemy*> awaitinglaunch;
+	std::vector<boost::shared_ptr<Enemy>> awaitinglaunch;
 
 public:	
 	EnemyHandler(void);
@@ -40,10 +41,11 @@ public:
 	void update(Map &m);
 	void destroy();
 
-	std::vector<Enemy*>  enemies;
+	//std::vector<Enemy*>  enemies;
+	std::vector<boost::shared_ptr<Enemy>> enemies;
 	std::vector<Wave>    waves;
-	int waveCount;
 
 	void init(Engine &e, Map &m, std::string g);
 	void draw();
 };
+

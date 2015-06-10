@@ -108,21 +108,27 @@ void Tower::upgrade()
 	stats.damage *= 2;
 }
 
-void Tower::update(Map &m, Bank &bank, std::vector<Enemy*> &enemies)
+void Tower::update(Map &m, Bank &bank, std::vector<boost::shared_ptr<Enemy>> &enemies)
 {
 	hasEnemy = false;
-	for (int x = getX() - stats.range; (x < getX() + stats.range) && (x < BOARD_WIDTH) && (x > BORDER_SIZE); x += TILE_SIZE)
+	for (int x = getX() - stats.range; x < getX() + stats.range; x += TILE_SIZE)
 	{
-		for (int y = getY() - stats.range; (y < getY() + stats.range) && (y < BOARD_HEIGHT) && (y > BORDER_SIZE); y += TILE_SIZE)
+		if (x > 0 && x < BOARD_WIDTH)
 		{
-			if (m.hasEnemy(x, y))
+			for (int y = getY() - stats.range; y < getY() + stats.range; y += TILE_SIZE)
 			{
-				for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
+				if (y > 0 && y < BOARD_HEIGHT)
 				{
-					if ((*e)->getID() == m.getEnemy(x, y))
+					if (m.hasEnemy(x, y))
 					{
-						enemy = (*e);
-						hasEnemy = true;
+						for (std::vector<boost::shared_ptr<Enemy>>::iterator e = enemies.begin(); e != enemies.end(); ++e)
+						{
+							if ((*e)->getID() == m.getEnemy(x, y))
+							{
+								enemy = (*e);
+								hasEnemy = true;
+							}
+						}
 					}
 				}
 			}
@@ -131,14 +137,13 @@ void Tower::update(Map &m, Bank &bank, std::vector<Enemy*> &enemies)
 
 	if (!hasEnemy)
 	{
-		enemy = NULL;
 		bullets.clear();
 	}
 	else
 	{
 		if ((signed)bullets.size() <= stats.maxCapacity)
 		{
-			Bullet * b = new Bullet((getX() + (TILE_SIZE / 2)), (getY() + (TILE_SIZE / 2)), stats.range, enemy);
+			Bullet * b = new Bullet((getX() + (TILE_SIZE / 2)), (getY() + (TILE_SIZE / 2)), stats.range, enemy->getX(), enemy->getY());
 			bullets.push_back(b);
 		}
 		for (std::vector<Bullet*>::iterator b = bullets.begin(); b != bullets.end(); ++b)
@@ -146,11 +151,11 @@ void Tower::update(Map &m, Bank &bank, std::vector<Enemy*> &enemies)
 			(*b)->update(enemy);
 			engine.physics.nonUniformMove((*b), (*b)->getDX(), (*b)->getDY());
 
-			if ((*b)->hasHit())
+			if ((*b)->hit())
 			{
 				if (enemy->reduceHealth(stats.damage, m, bank))
 				{
-					incrementKills();
+					stats.kills++;
 				}
 			}
 		}
@@ -160,9 +165,4 @@ void Tower::update(Map &m, Bank &bank, std::vector<Enemy*> &enemies)
 tStats Tower::getStats()const
 {
 	return stats;
-}
-
-void Tower::incrementKills()
-{
-	stats.kills++;
 }

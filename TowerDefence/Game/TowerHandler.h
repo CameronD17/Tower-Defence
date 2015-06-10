@@ -1,4 +1,5 @@
 #pragma once
+#include "boost/smart_ptr.hpp"
 #include "../Engine/Constants.h"
 #include "../Engine/Engine.h"
 #include "Tower.h"
@@ -26,6 +27,6 @@ public:
 	tStats selectedStats;
 
 	void init(Engine &e, Map &map);
-	void update(Map &m, Bank &b, std::vector<Enemy*> &e);
+	void update(Map &m, Bank &b, std::vector<boost::shared_ptr<Enemy>> &e);
 	void draw();
 };

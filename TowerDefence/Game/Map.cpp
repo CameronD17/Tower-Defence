@@ -38,6 +38,8 @@ void Map::init(Engine& e, std::string map)
 				tiles[x][y].terrain = CLEAR_TERRAIN;
 				tiles[x][y].enemy = NO_ENEMY;
 				tiles[x][y].tower = NO_TOWER;
+				tiles[x][y].isEnemy = false;
+				tiles[x][y].isTower = false;
 			}
 		}
 	}
@@ -87,6 +89,8 @@ bool Map::loadMapFromFile(std::string filename)
 				tiles[x][y].terrain = nextCheck;
 				tiles[x][y].enemy = NO_ENEMY;
 				tiles[x][y].tower = NO_TOWER;
+				tiles[x][y].isEnemy = false;
+				tiles[x][y].isTower = false;
 				x++;
 			}
 			else

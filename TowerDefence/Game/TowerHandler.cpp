@@ -76,7 +76,7 @@ void TowerHandler::draw()
 	}
 }
 
-void TowerHandler::update(Map &m, Bank &b, std::vector<Enemy*> &e)
+void TowerHandler::update(Map &m, Bank &b, std::vector<boost::shared_ptr<Enemy>> &e)
 {
 	destroy();
 

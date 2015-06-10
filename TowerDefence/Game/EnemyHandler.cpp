@@ -43,8 +43,7 @@ bool EnemyHandler::loadEnemiesFromFile(Map &m, std::string filename)
 			for (int i = 0; i < size; i++)
 			{
 				enemyCount++;
-				Enemy * enemy = new Enemy(engine, m.startX - TILE_SIZE, m.startY - TILE_SIZE, type, m.targetX, m.targetY, level, m, enemyCount);
-				awaitinglaunch.push_back(enemy);
+				awaitinglaunch.push_back(boost::shared_ptr<Enemy>(new Enemy(engine, m.startX - TILE_SIZE, m.startY - TILE_SIZE, type, m.targetX, m.targetY, level, m, enemyCount)));
 			}
 			waves.push_back({ size, type, level, isBoss });
 			waveCount++;
@@ -59,7 +58,7 @@ bool EnemyHandler::loadEnemiesFromFile(Map &m, std::string filename)
 
 void EnemyHandler::draw()
 {
-	for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
+	for (std::vector<boost::shared_ptr<Enemy>>::iterator e = enemies.begin(); e != enemies.end(); ++e)
 	{
 		(*e)->draw();
 	}
@@ -90,7 +89,7 @@ void EnemyHandler::update(Map &m)
 	launch(m);
 
 	// Update all enemies
-	for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
+	for (std::vector<boost::shared_ptr<Enemy>>::iterator e = enemies.begin(); e != enemies.end(); ++e)
 	{
 		(*e)->move(m);
 	}
@@ -123,8 +122,8 @@ void EnemyHandler::launch(Map &m)
 void EnemyHandler::launch(Cursor &cursor, Map &m)
 {
 	enemyCount++;
-	Enemy * e = new Enemy(engine, cursor.getX(), cursor.getY(), 0, m.targetX, m.targetY, 1, m, enemyCount);
-	enemies.push_back(e);
+	//Enemy * e = new Enemy(engine, cursor.getX(), cursor.getY(), 0, m.targetX, m.targetY, 1, m, enemyCount);
+	//enemies.push_back(e);
 }
 
 void EnemyHandler::nextWave()
@@ -162,12 +161,12 @@ void EnemyHandler::autoLaunch(Map &m)
 
 void EnemyHandler::updatePaths(int x, int y, Map &m)
 {
-	for (std::vector<Enemy*>::iterator e = awaitinglaunch.begin(); e != awaitinglaunch.end(); ++e)
+	for (std::vector<boost::shared_ptr<Enemy>>::iterator e = awaitinglaunch.begin(); e != awaitinglaunch.end(); ++e)
 	{
 		(*e)->updatePath(m, x, y);
 	}
 
-	for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
+	for (std::vector<boost::shared_ptr<Enemy>>::iterator e = enemies.begin(); e != enemies.end(); ++e)
 	{
 		(*e)->updatePath(m, x, y);
 	}
@@ -175,12 +174,12 @@ void EnemyHandler::updatePaths(int x, int y, Map &m)
 
 void EnemyHandler::updateTargets(Map &m)
 {
-	for (std::vector<Enemy*>::iterator e = awaitinglaunch.begin(); e != awaitinglaunch.end(); ++e)
+	for (std::vector<boost::shared_ptr<Enemy>>::iterator e = awaitinglaunch.begin(); e != awaitinglaunch.end(); ++e)
 	{
 		(*e)->updateTarget(m.targetX, m.targetY, m);
 	}
 
-	for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end(); ++e)
+	for (std::vector<boost::shared_ptr<Enemy>>::iterator e = enemies.begin(); e != enemies.end(); ++e)
 	{
 		(*e)->updateTarget(m.targetX, m.targetY, m);
 	}
@@ -188,11 +187,11 @@ void EnemyHandler::updateTargets(Map &m)
 
 void EnemyHandler::destroy()
 {
-	for (std::vector<Enemy*>::iterator e = enemies.begin(); e != enemies.end();)
+	for (std::vector<boost::shared_ptr<Enemy>>::iterator e = enemies.begin(); e != enemies.end();)
 	{
 		if ((*e)->isDeleted())
 		{
-			delete *e;
+			//delete *e;
 			e = enemies.erase(e);
 		} 
 		else e++;

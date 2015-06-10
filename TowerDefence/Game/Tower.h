@@ -22,14 +22,12 @@ public:
 	Tower(Engine &e, int x, int y, int t, int id, Map &m);
 	~Tower();
 
-	void update(Map &m, Bank &b, std::vector<Enemy*> &enemies);
+	void update(Map &m, Bank &b, std::vector<boost::shared_ptr<Enemy>> &enemies);
 
 	tStats getStats()const;
-	void incrementKills();
 	void upgrade();
 
-	Enemy* enemy;
+	boost::shared_ptr<Enemy> enemy;
 	bool hasEnemy;
 	std::vector<Bullet*> bullets;
 };
-

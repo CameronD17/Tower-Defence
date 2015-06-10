@@ -78,7 +78,7 @@ void Board::draw()
 
 	if (debugMode)
 	{
-		for (std::vector<Enemy*>::iterator e = enemyHandler.enemies.begin(); e != enemyHandler.enemies.end(); ++e)
+		for (std::vector<boost::shared_ptr<Enemy>>::iterator e = enemyHandler.enemies.begin(); e != enemyHandler.enemies.end(); ++e)
 		{
 			std::stringstream idNo;
 			idNo << (*e)->getID();

@@ -124,7 +124,7 @@ SDL_Surface *ResourceManager::loadImage(std::string filepath)
 {	    
 	SDL_Surface *image = IMG_Load(filepath.c_str());
     
-	if(image == NULL) printf("Unable to load image %s! SDL Error: %s\n", filepath, SDL_GetError());
+	if(image == NULL) printf("Unable to load image %s! SDL Error: %s\n", filepath.c_str(), SDL_GetError());
     
 	return image;
 }
